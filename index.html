@@ -176,7 +176,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="O-2-—-按位运算符"><a href="#O-2-—-按位运算符" class="headerlink" title="O.2 — 按位运算符"></a>O.2 — 按位运算符</h1><p>按位运算符</p>
+        <p>按位运算符</p>
 <p>C++ 提供 6 位操作运算符，通常称为<strong>按位运算</strong>符：</p>
 <table>
 <thead>
@@ -229,7 +229,6 @@
     在以下示例中，我们将主要使用 4 位二进制值。这是为了方便和保持示例简单。在实际程序中，使用的位数取决于对象的大小（例如，一个 2 字节的对象将存储 16 位）。为了可读性，我们还将省略代码示例之外的 0b 前缀（例如，我们将只使用 0101 而不是 0b0101）。
 </p>
 
-
       
     </div>
     <footer class="article-footer">
@@ -271,7 +270,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="O-1-—-通过-std-bitset-的位标志和位操作"><a href="#O-1-—-通过-std-bitset-的位标志和位操作" class="headerlink" title="O.1 — 通过 std::bitset 的位标志和位操作"></a>O.1 — 通过 std::bitset 的位标志和位操作</h1><p>在现代计算机体系结构上，最小的可寻址内存单元是字节。由于所有对象都需要具有唯一的内存地址，这意味着对象的大小必须至少为一个字节。对于大多数变量类型，这很好。但是，对于布尔值，这有点浪费（双关语）。布尔类型只有两种状态：真 （1） 或假 （0）。这组状态只需要一个位来存储。但是，如果变量必须至少是一个字节，并且一个字节是 8 位，这意味着布尔值使用 1 位，而其他 7 位未使用。</p>
+        <p>在现代计算机体系结构上，最小的可寻址内存单元是字节。由于所有对象都需要具有唯一的内存地址，这意味着对象的大小必须至少为一个字节。对于大多数变量类型，这很好。但是，对于布尔值，这有点浪费（双关语）。布尔类型只有两种状态：真 （1） 或假 （0）。这组状态只需要一个位来存储。但是，如果变量必须至少是一个字节，并且一个字节是 8 位，这意味着布尔值使用 1 位，而其他 7 位未使用。</p>
 <p>在大多数情况下，这很好 - 我们通常不会对内存如此苛刻，以至于我们需要关心7个浪费的位（我们最好优化可理解性和可维护性）。但是，在某些存储密集型情况下，出于存储效率目的，将 8 个单独的布尔值“打包”到单个字节中可能很有用。</p>
 <p>做这些事情需要我们可以在位级别操作对象。幸运的是，C++为我们提供了做到这一点的工具。修改对象中的单个位称为<strong>位操作</strong>。</p>
 <p>位操作在加密和压缩算法中也很有用。</p>
@@ -482,7 +481,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -492,7 +491,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter0/" rel="tag">LearnCpp——Chapter	0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-9/" rel="tag">LearnCpp——Chapter 9</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-O/" rel="tag">LearnCpp——Chapter O</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter0/" rel="tag">LearnCpp——Chapter	0</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-9/" rel="tag">LearnCpp——Chapter 9</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-O/" rel="tag">LearnCpp——Chapter O</a><span class="tag-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -511,7 +510,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
