@@ -7,15 +7,15 @@
   
   <title>O.2 — 按位运算符 | wuj10n</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="O.2 — 按位运算符按位运算符 C++ 提供 6 位操作运算符，通常称为按位运算符：    操作 符号 形式 作用    左移 &lt;&lt; x &lt;&lt; y x 中的所有位左移 y 位   右移 &gt;&gt; x &gt;&gt; y x 中的所有位右移 y 位   按位非 ~ ~x x 中的所有位翻转   按位与 &amp; x &amp; y x 中的每一位 AND y 中">
+  <meta name="description" content="O.2 — 按位运算符按位运算符C++ 提供 6 位操作运算符，通常称为按位运算符：    Operator Symbol Form Operation    左移 &lt;&lt; x &lt;&lt; y x 中的所有位左移 y 位   右移 &gt;&gt; x &gt;&gt; y x 中的所有位右移 y 位   按位非 ~ ~x x 中的所有位翻转   按位与 &amp; x &amp;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="O.2 — 按位运算符">
 <meta property="og:url" content="https://wuj10n.github.io/2022/11/15/O-2-%E2%80%94-%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6/index.html">
 <meta property="og:site_name" content="wuj10n">
-<meta property="og:description" content="O.2 — 按位运算符按位运算符 C++ 提供 6 位操作运算符，通常称为按位运算符：    操作 符号 形式 作用    左移 &lt;&lt; x &lt;&lt; y x 中的所有位左移 y 位   右移 &gt;&gt; x &gt;&gt; y x 中的所有位右移 y 位   按位非 ~ ~x x 中的所有位翻转   按位与 &amp; x &amp; y x 中的每一位 AND y 中">
+<meta property="og:description" content="O.2 — 按位运算符按位运算符C++ 提供 6 位操作运算符，通常称为按位运算符：    Operator Symbol Form Operation    左移 &lt;&lt; x &lt;&lt; y x 中的所有位左移 y 位   右移 &gt;&gt; x &gt;&gt; y x 中的所有位右移 y 位   按位非 ~ ~x x 中的所有位翻转   按位与 &amp; x &amp;">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-11-15T02:58:07.000Z">
-<meta property="article:modified_time" content="2022-11-15T08:02:51.581Z">
+<meta property="article:modified_time" content="2022-11-15T13:50:20.144Z">
 <meta property="article:author" content="wuj10n">
 <meta property="article:tag" content="LearnCpp——Chapter O">
 <meta name="twitter:card" content="summary">
@@ -93,15 +93,14 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="O-2-—-按位运算符"><a href="#O-2-—-按位运算符" class="headerlink" title="O.2 — 按位运算符"></a>O.2 — 按位运算符</h1><p>按位运算符</p>
-<p>C++ 提供 6 位操作运算符，通常称为<strong>按位运算</strong>符：</p>
+        <h1 id="O-2-—-按位运算符"><a href="#O-2-—-按位运算符" class="headerlink" title="O.2 — 按位运算符"></a>O.2 — 按位运算符</h1><h2 id="按位运算符"><a href="#按位运算符" class="headerlink" title="按位运算符"></a>按位运算符</h2><p>C++ 提供 6 位操作运算符，通常称为<strong>按位运算</strong>符：</p>
 <table>
 <thead>
 <tr>
-<th align="left">操作</th>
-<th align="left">符号</th>
-<th align="left">形式</th>
-<th align="left">作用</th>
+<th align="left">Operator</th>
+<th align="left">Symbol</th>
+<th align="left">Form</th>
+<th align="left">Operation</th>
 </tr>
 </thead>
 <tbody><tr>
@@ -142,15 +141,157 @@
 </tr>
 </tbody></table>
 <div style="background-color: Lightgrey;">
-   <p >
-    作者注：</br>
-    在以下示例中，我们将主要使用 4 位二进制值。这是为了方便和保持示例简单。在实际程序中，使用的位数取决于对象的大小（例如，一个 2 字节的对象将存储 16 位）。为了可读性，我们还将省略代码示例之外的 0b 前缀（例如，我们将只使用 0101 而不是 0b0101）。</p>
+   <p >作者注：</p>
+   <p> 在以下示例中，我们将主要使用 4 位二进制值。这是为了方便和保持示例简单。在实际程序中，使用的位数取决于对象的大小（例如，一个 2 字节的对象将存储 16 位）。</p>
+    <p>为了可读性，我们还将省略代码示例之外的 0b 前缀（例如，我们将只使用 0101 而不是 0b0101）。</p>
 </div>
 
+<p>按位运算符是为整数类型和 std::bitset 定义的。我们将在示例中使用 std::bitset，因为它更容易以二进制形式打印输出。</p>
+<p><strong>避免使用带符号操作数的按位运算符</strong>，因为在 C++20 之前，许多运算符将返回实现定义的结果，或有着使用无符号操作数（或 std::bitset）可以轻松避免的其他潜在问题。</p>
+<div style="background-color: Lightgreen;">
+   <p >最佳实践：</p>
+   <p> 为避免意外，请使用带无符号操作数的按位运算符或 std::bitset。</p>
+</div>
 
+<h2 id="按位左移-lt-lt-和按位右移-gt-gt-运算符"><a href="#按位左移-lt-lt-和按位右移-gt-gt-运算符" class="headerlink" title="按位左移 (&lt;&lt;) 和按位右移 (&gt;&gt;) 运算符"></a>按位左移 (&lt;&lt;) 和按位右移 (&gt;&gt;) 运算符</h2><p><strong>按位左移</strong>(&lt;&lt;) 运算符将位向左移动。左操作数是要移位的位的表达式，右操作数是要左移的整数位数。</p>
+<p>所以当我们说 时<code>x &lt;&lt; 1</code>，我们是在说“将变量 x 中的位左移一位”。从右侧移入的新位接收值 0。</p>
+<p>0011 &lt;&lt; 1 是 0110<br>0011 &lt;&lt; 2 是 1100<br>0011 &lt;&lt; 3 是 1000</p>
+<p>请注意，在第三种情况下，我们将一个1从左端偏移出了！从二进制数末尾移出的位将永远丢失。</p>
+<p><strong>按位右移</strong>(&gt;&gt;) 运算符将位右移。</p>
+<p>1100 &gt;&gt; 1 是 0110<br>1100 &gt;&gt; 2 是 0011<br>1100 &gt;&gt; 3 是 0001</p>
+<p>请注意，在第三种情况下，我们将一个1从右端偏移出了，因此它丢失了。</p>
+<p>这是进行一些位移的示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bitset&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::bitset&lt;4&gt; x &#123; <span class="number">0b1100</span> &#125;;</span><br><span class="line">    </span><br><span class="line">    std::cout &lt;&lt; x &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    std::cout &lt;&lt; (x &gt;&gt; <span class="number">1</span>) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// shift right by 1, yielding 0110</span></span><br><span class="line">    std::cout &lt;&lt; (x &lt;&lt; <span class="number">1</span>) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// shift left by 1, yielding 1000</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1100</span><br><span class="line">0110</span><br><span class="line">1000</span><br></pre></td></tr></table></figure>
 
+<h2 id="什么！？operator-lt-lt-和-operator-gt-gt-不是用于输入和输出吗？"><a href="#什么！？operator-lt-lt-和-operator-gt-gt-不是用于输入和输出吗？" class="headerlink" title="什么！？operator&lt;&lt; 和 operator&gt;&gt; 不是用于输入和输出吗？"></a>什么！？operator&lt;&lt; 和 operator&gt;&gt; 不是用于输入和输出吗？</h2><p>他们肯定是。</p>
+<p>今天的程序通常不会大量使用按位左移和右移运算符来移位。相反，您倾向于看到与 std::cout（或其他流对象）一起使用的按位左移运算符来输出文本。考虑以下程序：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bitset&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> x &#123; <span class="number">0b0100</span> &#125;;</span><br><span class="line">    x = x &lt;&lt; <span class="number">1</span>; <span class="comment">// use operator&lt;&lt; for left shift</span></span><br><span class="line">    std::cout &lt;&lt; std::bitset&lt;4&gt;&#123; x &#125; &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// use operator&lt;&lt; for output</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p>复制</p>
+<p>这个程序打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1000</span><br></pre></td></tr></table></figure>
+
+<p>在上面的程序中，operator&lt;&lt; 是如何知道在一种情况下移位而在另一种情况下输出<em>x</em>的呢？答案是 std::cout 已经<strong>重载</strong>（提供了替代定义） operator&lt;&lt; 执行控制台输出而不是位移。</p>
+<p>当编译器看到 operator&lt;&lt; 的左操作数是 std::cout 时，它知道它应该调用 std::cout 重载的 operator&lt;&lt; 版本来进行输出。如果左操作数是整数类型，则 operator&lt;&lt; 知道它应该执行其通常的位移行为。</p>
+<p>这同样适用于运算符&gt;&gt;。</p>
+<p>请注意，如果您对输出和左移都使用运算符 &lt;&lt;，则需要括号：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bitset&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	std::bitset&lt;4&gt; x&#123; <span class="number">0b0110</span> &#125;;</span><br><span class="line"></span><br><span class="line">	std::cout &lt;&lt; x &lt;&lt; <span class="number">1</span> &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// print value of x (0110), then 1</span></span><br><span class="line">	std::cout &lt;&lt; (x &lt;&lt; <span class="number">1</span>) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// print x left shifted by 1 (1100)</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>复制</p>
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">01101</span><br><span class="line">1100</span><br></pre></td></tr></table></figure>
+
+<p>第一行打印 x 的值 (0110)，然后是文字 1。第二行打印 x 左移 1 (1100) 的值。</p>
+<p>我们将在以后的部分中更多地讨论运算符重载，包括讨论如何为您自己的目的重载运算符。</p>
+<h2 id="按位非"><a href="#按位非" class="headerlink" title="按位非"></a>按位非</h2><p><strong>按位非</strong>运算符 (~) 可能是所有按位运算符中最容易理解的。它只是将每个位从 0 翻转为 1，反之亦然。请注意，<em>按位 NOT</em>的结果取决于您的数据类型的大小。</p>
+<p>翻转 4 位：<br>~0100 是 1011</p>
+<p>翻转 8 位：<br>~0000 0100 是 1111 1011</p>
+<p>在 4 位和 8 位的情况下，我们从相同的数字开始（二进制 0100 与 0000 0100 相同，十进制 7 与 07 相同），但最终得到不同的结果。</p>
+<p>我们可以在以下程序中看到这一点：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bitset&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	std::cout &lt;&lt; ~std::bitset&lt;4&gt;&#123; <span class="number">0b0100</span> &#125; &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; ~std::bitset&lt;8&gt;&#123; <span class="number">0b0100</span> &#125; &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">这打印：</span><br><span class="line">1011 11111011</span><br></pre></td></tr></table></figure>
+
+<h2 id="按位或"><a href="#按位或" class="headerlink" title="按位或"></a>按位或</h2><p><strong>按位或</strong>(|) 的工作方式与其对应的<em>逻辑或</em>非常相似。但是，不是将<em>OR</em>应用于操作数以产生单个结果，而是<em>将按位 OR</em>应用于每一位！例如，考虑表达式<code>0b0101 | 0b0110</code>。</p>
+<p>要进行（任何）按位运算，最简单的方法是像这样将两个操作数排列起来：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0 1 0 1 OR</span><br><span class="line">0 1 1 0</span><br></pre></td></tr></table></figure>
+
+<p>然后将操作应用于每一<em>列位</em>。</p>
+<p>如果您还记得的话，如果左操作数、右操作数或两个操作数都为<em>真 (1) ，则**逻辑 OR</em>的计算结果为<em>真 (1</em> ) ，否则<em>为 0</em>。如果左侧位、右侧位或两个位都为<em>1</em>，<em>则按位或</em>计算结果为<em>1 ，否则为**0</em>。因此，表达式的计算结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0 1 0 1 OR</span><br><span class="line">0 1 1 0</span><br><span class="line">-------</span><br><span class="line">0 1 1 1</span><br></pre></td></tr></table></figure>
+
+<p>我们的结果是 0111 二进制。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bitset&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	std::cout &lt;&lt; (std::bitset&lt;<span class="number">4</span>&gt;&#123; <span class="number">0b0101</span> &#125; | std::bitset&lt;<span class="number">4</span>&gt;&#123; <span class="number">0b0110</span> &#125;) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0111</span><br></pre></td></tr></table></figure>
+
+<p>我们可以对复合 OR 表达式做同样的事情，例如<code>0b0111 | 0b0011 | 0b0001</code>. 如果一列中的任何位为<em>1</em>，则该列的结果为<em>1</em>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0 1 1 1 OR</span><br><span class="line">0 0 1 1 OR</span><br><span class="line">0 0 0 1</span><br><span class="line">--------</span><br><span class="line">0 1 1 1</span><br></pre></td></tr></table></figure>
+
+<p>这是上面的代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bitset&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	std::cout &lt;&lt; (std::bitset&lt;<span class="number">4</span>&gt;&#123; <span class="number">0b0111</span> &#125; | std::bitset&lt;<span class="number">4</span>&gt;&#123; <span class="number">0b0011</span> &#125; | std::bitset&lt;<span class="number">4</span>&gt;&#123; <span class="number">0b0001</span> &#125;) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>复制</p>
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0111</span><br></pre></td></tr></table></figure>
+
+<h2 id="按位与"><a href="#按位与" class="headerlink" title="按位与"></a>按位与</h2><p><strong>按位与</strong>(&amp;) 的工作方式与上述类似。如果左右操作数的计算结果都为 true ，则<em>逻辑 AND的计算结果为**true</em>。如果列中的两位都为<em>1</em> <em>，则按位与</em>计算结果为*真 (1)*。考虑表达式。排列每个位并对每一列位应用 AND 运算：<code>0b0101 &amp; 0b0110</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0 1 0 1 AND</span><br><span class="line">0 1 1 0</span><br><span class="line">--------</span><br><span class="line">0 1 0 0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bitset&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	std::cout &lt;&lt; (std::bitset&lt;<span class="number">4</span>&gt;&#123; <span class="number">0b0101</span> &#125; &amp; std::bitset&lt;<span class="number">4</span>&gt;&#123; <span class="number">0b0110</span> &#125;) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0100</span><br></pre></td></tr></table></figure>
+
+<p>同样，我们可以对复合 AND 表达式做同样的事情，例如<code>0b0001 &amp; 0b0011 &amp; 0b0111</code>. 如果一列中的所有位均为 1，则该列的结果为 1。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0 0 0 1 AND</span><br><span class="line">0 0 1 1 AND</span><br><span class="line">0 1 1 1</span><br><span class="line">--------</span><br><span class="line">0 0 0 1</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bitset&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	std::cout &lt;&lt; (std::bitset&lt;<span class="number">4</span>&gt;&#123; <span class="number">0b0001</span> &#125; &amp; std::bitset&lt;<span class="number">4</span>&gt;&#123; <span class="number">0b0011</span> &#125; &amp; std::bitset&lt;<span class="number">4</span>&gt;&#123; <span class="number">0b0111</span> &#125;) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0001</span><br></pre></td></tr></table></figure>
+
+<h2 id="按位异或"><a href="#按位异或" class="headerlink" title="按位异或"></a>按位异或</h2><p>最后一个运算符是<strong>按位异或</strong>(^)，也称为<strong>异或</strong>。</p>
+<p>评估两个操作数时，如果 XOR 的一个<em>且只有一个</em>操作数为true (1) ，则 XOR 的计算结果为<em>true</em> <em>(1)<em>。如果两者都不为真，则计算结果为</em>0</em>。考虑表达式：<code>0b0110 ^ 0b0011</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0 1 1 0 XOR</span><br><span class="line">0 0 1 1</span><br><span class="line">-------</span><br><span class="line">0 1 0 1</span><br></pre></td></tr></table></figure>
+
+<p>也可以评估复合 XOR 表达式列样式，例如<code>0b0001 ^ 0b0011 ^ 0b0111</code>. 如果一列中有偶数个 1 位，则结果为<em>0</em>。如果一列中有奇数个 1 位，则结果为<em>1</em>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0 0 0 1 XOR</span><br><span class="line">0 0 1 1 XOR</span><br><span class="line">0 1 1 1</span><br><span class="line">--------</span><br><span class="line">0 1 0 1</span><br></pre></td></tr></table></figure>
+
+<h2 id="按位赋值运算符"><a href="#按位赋值运算符" class="headerlink" title="按位赋值运算符"></a>按位赋值运算符</h2><p>与算术赋值运算符类似，C++ 提供了按位赋值运算符，以方便变量的修改。</p>
+<table>
+<thead>
+<tr>
+<th align="left">Operator</th>
+<th align="left">Symbol</th>
+<th align="left">Form</th>
+<th align="left">Operation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">左移分配</td>
+<td align="left">&lt;&lt;=</td>
+<td align="left">x &lt;&lt;= y</td>
+<td align="left">x 左移 y 位</td>
+</tr>
+<tr>
+<td align="left">右移分配</td>
+<td align="left">&gt;&gt;=</td>
+<td align="left">x &gt;&gt;= y</td>
+<td align="left">x 右移 y 位</td>
+</tr>
+<tr>
+<td align="left">按位或赋值</td>
+<td align="left">|=</td>
+<td align="left">x |= y</td>
+<td align="left">将 x | y 赋值给x</td>
+</tr>
+<tr>
+<td align="left">按位与赋值</td>
+<td align="left">&amp;=</td>
+<td align="left">x &amp;= y</td>
+<td align="left">将 x &amp; y 赋值给 x</td>
+</tr>
+<tr>
+<td align="left">按位异或赋值</td>
+<td align="left">^=</td>
+<td align="left">x^=y</td>
+<td align="left">将 x ^ y 赋值给 x</td>
+</tr>
+</tbody></table>
+<p>例如<code>x = x &gt;&gt; 1;</code>，您可以不写 ，而写<code>x &gt;&gt;= 1;</code>.</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bitset&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::bitset&lt;4&gt; bits &#123; <span class="number">0b0100</span> &#125;;</span><br><span class="line">    bits &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    std::cout &lt;&lt; bits &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>复制</p>
+<p>这个程序打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0010</span><br></pre></td></tr></table></figure>
+
+<h2 id="概括"><a href="#概括" class="headerlink" title="概括"></a>概括</h2><p>总结如何使用列方法按位运算：</p>
+<p>在评估<em>按位或</em>时，如果列中的任何位为 1，则该列的结果为 1。<br>在评估<em>按位与</em>时，如果列中的所有位均为 1，则该列的结果为 1。<br>在评估<em>按位异或</em>时，如果一列中有奇数个 1 位，该列的结果为 1。</p>
 
       
     </div>
