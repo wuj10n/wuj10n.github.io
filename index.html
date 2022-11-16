@@ -1,12 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-  
-  <title>wuj10n</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuj10n.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
   <meta name="description" content="wuj10n的个人博客">
 <meta property="og:type" content="website">
 <meta property="og:title" content="wuj10n">
@@ -16,83 +29,195 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="wuj10n">
 <meta name="twitter:card" content="summary">
-  
-    <link rel="alternate" href="/atom.xml" title="wuj10n" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  
-    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  
-  
-<link rel="stylesheet" href="/css/style.css">
 
-<meta name="generator" content="Hexo 5.4.2"></head>
+<link rel="canonical" href="https://wuj10n.github.io/">
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">wuj10n</a>
-      </h1>
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>wuj10n</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">wuj10n</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
       
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wuj10n.github.io"></form>
-      </div>
-    </div>
-  </div>
-</header>
-      <div class="outer">
-        <section id="main">
   
-    <article id="post-O-4-—-在二进制和十进制之间进行转换" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2022/11/15/O-4-%E2%80%94-%E5%9C%A8%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%92%8C%E5%8D%81%E8%BF%9B%E5%88%B6%E4%B9%8B%E9%97%B4%E8%BF%9B%E8%A1%8C%E8%BD%AC%E6%8D%A2/" class="article-date">
-  <time datetime="2022-11-15T02:58:47.000Z" itemprop="datePublished">2022-11-15</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/C/">C++</a>
-  </div>
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/15/O-4-%E2%80%94-%E5%9C%A8%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%92%8C%E5%8D%81%E8%BF%9B%E5%88%B6%E4%B9%8B%E9%97%B4%E8%BF%9B%E8%A1%8C%E8%BD%AC%E6%8D%A2/">
 
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/11/15/O-4-%E2%80%94-%E5%9C%A8%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%92%8C%E5%8D%81%E8%BF%9B%E5%88%B6%E4%B9%8B%E9%97%B4%E8%BF%9B%E8%A1%8C%E8%BD%AC%E6%8D%A2/">O.4 — 在二进制和十进制之间进行转换</a>
-    </h1>
-  
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
 
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/15/O-4-%E2%80%94-%E5%9C%A8%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%92%8C%E5%8D%81%E8%BF%9B%E5%88%B6%E4%B9%8B%E9%97%B4%E8%BF%9B%E8%A1%8C%E8%BD%AC%E6%8D%A2/" class="post-title-link" itemprop="url">O.4 — 在二进制和十进制之间进行转换</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-15 10:58:47" itemprop="dateCreated datePublished" datetime="2022-11-15T10:58:47+08:00">2022-11-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-16 09:46:37" itemprop="dateModified" datetime="2022-11-16T09:46:37+08:00">2022-11-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
       </header>
+
     
-    <div class="article-entry" itemprop="articleBody">
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
-        <h1 id="O-4-—-二进制和十进制之间进行转换"><a href="#O-4-—-二进制和十进制之间进行转换" class="headerlink" title="O.4 — 二进制和十进制之间进行转换"></a>O.4 — 二进制和十进制之间进行转换</h1><p>考虑一个普通的十进制数，比如 5623。我们直观地理解这些数字的意思是 (5 * 1000) + (6 * 100) + (2 * 10) + (3 * 1)。因为有 10 个十进制数，所以左边每个后续数字的值都会增加 10 倍。</p>
+          <h1 id="O-4-—-二进制和十进制之间进行转换"><a href="#O-4-—-二进制和十进制之间进行转换" class="headerlink" title="O.4 — 二进制和十进制之间进行转换"></a>O.4 — 二进制和十进制之间进行转换</h1><p>考虑一个普通的十进制数，比如 5623。我们直观地理解这些数字的意思是 (5 * 1000) + (6 * 100) + (2 * 10) + (3 * 1)。因为有 10 个十进制数，所以左边每个后续数字的值都会增加 10 倍。</p>
 <p>二进制数的工作方式相同，只是因为只有 2 个二进制数字（0 和 1），每个数字的值增加 2 倍。就像逗号通常用于使大十进制数易于阅读（例如1,427,435)，我们经常以 4 位为一组编写二进制数，以便于阅读（例如 1101 0101）。</p>
 <p>下表以十进制和二进制计数到 15：</p>
 <table>
@@ -360,46 +485,77 @@
 
       
     </div>
-    <footer class="article-footer">
-      <a data-url="https://wuj10n.github.io/2022/11/15/O-4-%E2%80%94-%E5%9C%A8%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%92%8C%E5%8D%81%E8%BF%9B%E5%88%B6%E4%B9%8B%E9%97%B4%E8%BF%9B%E8%A1%8C%E8%BD%AC%E6%8D%A2/" data-id="claizzzz6000ab8t14pctes00" class="article-share-link">Share</a>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-O/" rel="tag">LearnCpp——Chapter O</a></li></ul>
-
-    </footer>
-  </div>
   
-</article>
-
-
   
-    <article id="post-O-3-—-使用按位运算符和位掩码进行位操作" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2022/11/15/O-3-%E2%80%94-%E4%BD%BF%E7%94%A8%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E5%92%8C%E4%BD%8D%E6%8E%A9%E7%A0%81%E8%BF%9B%E8%A1%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/" class="article-date">
-  <time datetime="2022-11-15T02:58:31.000Z" itemprop="datePublished">2022-11-15</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/C/">C++</a>
-  </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/15/O-3-%E2%80%94-%E4%BD%BF%E7%94%A8%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E5%92%8C%E4%BD%8D%E6%8E%A9%E7%A0%81%E8%BF%9B%E8%A1%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/">
 
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/11/15/O-3-%E2%80%94-%E4%BD%BF%E7%94%A8%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E5%92%8C%E4%BD%8D%E6%8E%A9%E7%A0%81%E8%BF%9B%E8%A1%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/">O.3 — 使用按位运算符和位掩码进行位操作</a>
-    </h1>
-  
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
 
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/15/O-3-%E2%80%94-%E4%BD%BF%E7%94%A8%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E5%92%8C%E4%BD%8D%E6%8E%A9%E7%A0%81%E8%BF%9B%E8%A1%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/" class="post-title-link" itemprop="url">O.3 — 使用按位运算符和位掩码进行位操作</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-15 10:58:31" itemprop="dateCreated datePublished" datetime="2022-11-15T10:58:31+08:00">2022-11-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-16 09:45:57" itemprop="dateModified" datetime="2022-11-16T09:45:57+08:00">2022-11-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
       </header>
+
     
-    <div class="article-entry" itemprop="articleBody">
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
-        <h1 id="O-3-—-使用按位运算符和位掩码进行位操作"><a href="#O-3-—-使用按位运算符和位掩码进行位操作" class="headerlink" title="O.3 — 使用按位运算符和位掩码进行位操作"></a>O.3 — 使用按位运算符和位掩码进行位操作</h1><h2 id="位掩码"><a href="#位掩码" class="headerlink" title="位掩码"></a>位掩码</h2><p>为了操作单个位（例如打开或关闭它们），我们需要一些方法来识别我们想要操作的特定位。不幸的是，按位运算符不知道如何处理位位置。相反，他们使用位掩码。</p>
+          <h1 id="O-3-—-使用按位运算符和位掩码进行位操作"><a href="#O-3-—-使用按位运算符和位掩码进行位操作" class="headerlink" title="O.3 — 使用按位运算符和位掩码进行位操作"></a>O.3 — 使用按位运算符和位掩码进行位操作</h1><h2 id="位掩码"><a href="#位掩码" class="headerlink" title="位掩码"></a>位掩码</h2><p>为了操作单个位（例如打开或关闭它们），我们需要一些方法来识别我们想要操作的特定位。不幸的是，按位运算符不知道如何处理位位置。相反，他们使用位掩码。</p>
 <p><strong>位掩码</strong>是一组预定义的位，用于选择哪些特定位将被后续操作修改。</p>
 <p>考虑一个真实的案例，您想要绘制一个窗框。如果您不小心，您不仅会冒着粉刷窗框的风险，还会冒着粉刷玻璃本身的风险。您可以购买一些遮蔽胶带并将其贴在玻璃和您不想涂漆的任何其他部件上。然后，当您绘画时，遮蔽胶带会阻止油漆接触到您不想涂漆的任何东西。最后，只有未遮罩的部分（您要绘制的部分）被绘制。</p>
 <p>位掩码本质上对位执行相同的功能——<strong>位掩码阻止按位运算符接触我们不想修改的位，并允许访问我们确实想要修改的位。</strong></p>
@@ -592,46 +748,71 @@
 
       
     </div>
-    <footer class="article-footer">
-      <a data-url="https://wuj10n.github.io/2022/11/15/O-3-%E2%80%94-%E4%BD%BF%E7%94%A8%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E5%92%8C%E4%BD%8D%E6%8E%A9%E7%A0%81%E8%BF%9B%E8%A1%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/" data-id="claizzzz9000rb8t1f2lr5zc8" class="article-share-link">Share</a>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-O/" rel="tag">LearnCpp——Chapter O</a></li></ul>
-
-    </footer>
-  </div>
   
-</article>
-
-
   
-    <article id="post-O-2-—-按位运算符" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2022/11/15/O-2-%E2%80%94-%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6/" class="article-date">
-  <time datetime="2022-11-15T02:58:07.000Z" itemprop="datePublished">2022-11-15</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/C/">C++</a>
-  </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/15/O-2-%E2%80%94-%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6/">
 
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/11/15/O-2-%E2%80%94-%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6/">O.2 — 按位运算符</a>
-    </h1>
-  
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
 
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/15/O-2-%E2%80%94-%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6/" class="post-title-link" itemprop="url">O.2 — 按位运算符</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-11-15 10:58:07 / 修改时间：21:50:20" itemprop="dateCreated datePublished" datetime="2022-11-15T10:58:07+08:00">2022-11-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
       </header>
+
     
-    <div class="article-entry" itemprop="articleBody">
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
-        <h1 id="O-2-—-按位运算符"><a href="#O-2-—-按位运算符" class="headerlink" title="O.2 — 按位运算符"></a>O.2 — 按位运算符</h1><h2 id="按位运算符"><a href="#按位运算符" class="headerlink" title="按位运算符"></a>按位运算符</h2><p>C++ 提供 6 位操作运算符，通常称为<strong>按位运算</strong>符：</p>
+          <h1 id="O-2-—-按位运算符"><a href="#O-2-—-按位运算符" class="headerlink" title="O.2 — 按位运算符"></a>O.2 — 按位运算符</h1><h2 id="按位运算符"><a href="#按位运算符" class="headerlink" title="按位运算符"></a>按位运算符</h2><p>C++ 提供 6 位操作运算符，通常称为<strong>按位运算</strong>符：</p>
 <table>
 <thead>
 <tr>
@@ -833,46 +1014,71 @@
 
       
     </div>
-    <footer class="article-footer">
-      <a data-url="https://wuj10n.github.io/2022/11/15/O-2-%E2%80%94-%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6/" data-id="claizzzz50007b8t1dh1b5vux" class="article-share-link">Share</a>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-O/" rel="tag">LearnCpp——Chapter O</a></li></ul>
-
-    </footer>
-  </div>
   
-</article>
-
-
   
-    <article id="post-O-1-—-通过-std-bitset-的位标志和位操作" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2022/11/15/O-1-%E2%80%94-%E9%80%9A%E8%BF%87-std-bitset-%E7%9A%84%E4%BD%8D%E6%A0%87%E5%BF%97%E5%92%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/" class="article-date">
-  <time datetime="2022-11-15T02:57:48.000Z" itemprop="datePublished">2022-11-15</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/C/">C++</a>
-  </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/15/O-1-%E2%80%94-%E9%80%9A%E8%BF%87-std-bitset-%E7%9A%84%E4%BD%8D%E6%A0%87%E5%BF%97%E5%92%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/">
 
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/11/15/O-1-%E2%80%94-%E9%80%9A%E8%BF%87-std-bitset-%E7%9A%84%E4%BD%8D%E6%A0%87%E5%BF%97%E5%92%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/">O.1 — 通过 std::bitset 的位标志和位操作</a>
-    </h1>
-  
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
 
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/15/O-1-%E2%80%94-%E9%80%9A%E8%BF%87-std-bitset-%E7%9A%84%E4%BD%8D%E6%A0%87%E5%BF%97%E5%92%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/" class="post-title-link" itemprop="url">O.1 — 通过 std::bitset 的位标志和位操作</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-11-15 10:57:48 / 修改时间：21:53:13" itemprop="dateCreated datePublished" datetime="2022-11-15T10:57:48+08:00">2022-11-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
       </header>
+
     
-    <div class="article-entry" itemprop="articleBody">
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
-        <h1 id="O-1-—-通过-std-bitset-的位标志和位操作"><a href="#O-1-—-通过-std-bitset-的位标志和位操作" class="headerlink" title="O.1 — 通过 std::bitset 的位标志和位操作"></a>O.1 — 通过 std::bitset 的位标志和位操作</h1><p>在现代计算机体系结构上，最小的可寻址内存单元是字节。由于所有对象都需要具有唯一的内存地址，这意味着对象的大小必须至少为一个字节。对于大多数变量类型，这很好。但是，对于布尔值，这有点浪费（双关语）。布尔类型只有两种状态：真 （1） 或假 （0）。这组状态只需要一个位来存储。但是，如果变量必须至少是一个字节，并且一个字节是 8 位，这意味着布尔值使用 1 位，而其他 7 位未使用。</p>
+          <h1 id="O-1-—-通过-std-bitset-的位标志和位操作"><a href="#O-1-—-通过-std-bitset-的位标志和位操作" class="headerlink" title="O.1 — 通过 std::bitset 的位标志和位操作"></a>O.1 — 通过 std::bitset 的位标志和位操作</h1><p>在现代计算机体系结构上，最小的可寻址内存单元是字节。由于所有对象都需要具有唯一的内存地址，这意味着对象的大小必须至少为一个字节。对于大多数变量类型，这很好。但是，对于布尔值，这有点浪费（双关语）。布尔类型只有两种状态：真 （1） 或假 （0）。这组状态只需要一个位来存储。但是，如果变量必须至少是一个字节，并且一个字节是 8 位，这意味着布尔值使用 1 位，而其他 7 位未使用。</p>
 <p>在大多数情况下，这很好 - 我们通常不会对内存如此苛刻，以至于我们需要关心7个浪费的位（我们最好优化可理解性和可维护性）。但是，在某些存储密集型情况下，出于存储效率目的，将 8 个单独的布尔值“打包”到单个字节中可能很有用。</p>
 <p>做这些事情需要我们可以在位级别操作对象。幸运的是，C++为我们提供了做到这一点的工具。修改对象中的单个位称为<strong>位操作</strong>。</p>
 <p>位操作在加密和压缩算法中也很有用。</p>
@@ -916,46 +1122,71 @@
 
       
     </div>
-    <footer class="article-footer">
-      <a data-url="https://wuj10n.github.io/2022/11/15/O-1-%E2%80%94-%E9%80%9A%E8%BF%87-std-bitset-%E7%9A%84%E4%BD%8D%E6%A0%87%E5%BF%97%E5%92%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/" data-id="claizzzz20003b8t1g1iogzrn" class="article-share-link">Share</a>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-O/" rel="tag">LearnCpp——Chapter O</a></li></ul>
-
-    </footer>
-  </div>
   
-</article>
-
-
   
-    <article id="post-0-1-–-这些教程简介" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2022/11/11/0-1-%E2%80%93-%E8%BF%99%E4%BA%9B%E6%95%99%E7%A8%8B%E7%AE%80%E4%BB%8B/" class="article-date">
-  <time datetime="2022-11-11T07:55:36.000Z" itemprop="datePublished">2022-11-11</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/C/">C++</a>
-  </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/11/0-1-%E2%80%93-%E8%BF%99%E4%BA%9B%E6%95%99%E7%A8%8B%E7%AE%80%E4%BB%8B/">
 
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/11/11/0-1-%E2%80%93-%E8%BF%99%E4%BA%9B%E6%95%99%E7%A8%8B%E7%AE%80%E4%BB%8B/">0.1 – 这些教程简介</a>
-    </h1>
-  
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
 
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/11/0-1-%E2%80%93-%E8%BF%99%E4%BA%9B%E6%95%99%E7%A8%8B%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">0.1 – 这些教程简介</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-11-11 15:55:36 / 修改时间：16:33:54" itemprop="dateCreated datePublished" datetime="2022-11-11T15:55:36+08:00">2022-11-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
       </header>
+
     
-    <div class="article-entry" itemprop="articleBody">
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
-        <h1 id="0-1-–-这些教程简介"><a href="#0-1-–-这些教程简介" class="headerlink" title="0.1 – 这些教程简介"></a>0.1 – 这些教程简介</h1><h2 id="课程结构"><a href="#课程结构" class="headerlink" title="课程结构"></a>课程结构</h2><p>本介绍性章节中的课程旨在为您提供一些上下文，了解C++是什么，它是如何产生的，程序如何工作以及您需要安装哪些软件来创建自己的程序。您甚至可以编写自己的第一个程序。</p>
+          <h1 id="0-1-–-这些教程简介"><a href="#0-1-–-这些教程简介" class="headerlink" title="0.1 – 这些教程简介"></a>0.1 – 这些教程简介</h1><h2 id="课程结构"><a href="#课程结构" class="headerlink" title="课程结构"></a>课程结构</h2><p>本介绍性章节中的课程旨在为您提供一些上下文，了解C++是什么，它是如何产生的，程序如何工作以及您需要安装哪些软件来创建自己的程序。您甚至可以编写自己的第一个程序。</p>
 <p>后续章节将探讨C++语言的不同部分。在第一章（第1章）中，您将对许多基本C++概念有一个广泛而肤浅的概述，因此我们可以开始编写一些简单的程序。后续章节将深入探讨这些概念，或引入新概念。</p>
 <p>每一章都有一个主题，其下的所有部分通常都与该主题相关。没有建议您应该在每个课程或章节上花费的时间;以您舒适的速度完成材料。</p>
 <h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>在开始之前，让我们介绍这些教程的几个重要目标：</p>
@@ -985,46 +1216,77 @@
 
       
     </div>
-    <footer class="article-footer">
-      <a data-url="https://wuj10n.github.io/2022/11/11/0-1-%E2%80%93-%E8%BF%99%E4%BA%9B%E6%95%99%E7%A8%8B%E7%AE%80%E4%BB%8B/" data-id="claizzzyz0001b8t1cnfn9kt5" class="article-share-link">Share</a>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter0/" rel="tag">LearnCpp——Chapter	0</a></li></ul>
-
-    </footer>
-  </div>
   
-</article>
-
-
   
-    <article id="post-9-1-—-复合数据类型介绍" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2022/11/08/9-1-%E2%80%94-%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%BB%8B%E7%BB%8D/" class="article-date">
-  <time datetime="2022-11-08T03:16:44.000Z" itemprop="datePublished">2022-11-08</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/C/">C++</a>
-  </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/08/9-1-%E2%80%94-%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%BB%8B%E7%BB%8D/">
 
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/11/08/9-1-%E2%80%94-%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%BB%8B%E7%BB%8D/">9.1 — 复合数据类型介绍</a>
-    </h1>
-  
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
 
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/08/9-1-%E2%80%94-%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">9.1 — 复合数据类型介绍</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-08 11:16:44" itemprop="dateCreated datePublished" datetime="2022-11-08T11:16:44+08:00">2022-11-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-11 16:33:47" itemprop="dateModified" datetime="2022-11-11T16:33:47+08:00">2022-11-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
       </header>
+
     
-    <div class="article-entry" itemprop="articleBody">
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
-        <p><a name="GHQHz"></a></p>
+          <p><a name="GHQHz"></a></p>
 <h1 id="9-1-—-Introduction-to-compound-data-types"><a href="#9-1-—-Introduction-to-compound-data-types" class="headerlink" title="9.1 — Introduction to compound data types"></a>9.1 — Introduction to compound data types</h1><p><a name="XioOY"></a></p>
 <h2 id="C-支持以下复合类型："><a href="#C-支持以下复合类型：" class="headerlink" title="C++ 支持以下复合类型："></a>C++ 支持以下复合类型：</h2><ul>
 <li>Functions 函数</li>
@@ -1060,134 +1322,188 @@
 
       
     </div>
-    <footer class="article-footer">
-      <a data-url="https://wuj10n.github.io/2022/11/08/9-1-%E2%80%94-%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%BB%8B%E7%BB%8D/" data-id="claizzzz60009b8t14yb96j8f" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-9/" rel="tag">LearnCpp——Chapter 9</a></li></ul>
 
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuj10n</p>
+  <div class="site-description" itemprop="description">wuj10n的个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wuj10n" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wuj10n" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuj10n</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
     </footer>
   </div>
-  
-</article>
-
 
   
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
-</section>
-        
-          <aside id="sidebar">
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">分类</h3>
-    <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">6</span></li></ul>
-    </div>
-  </div>
+<script src="/js/schemes/pisces.js"></script>
 
 
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter0/" rel="tag">LearnCpp——Chapter	0</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-9/" rel="tag">LearnCpp——Chapter 9</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-O/" rel="tag">LearnCpp——Chapter O</a><span class="tag-list-count">4</span></li></ul>
-    </div>
-  </div>
+<script src="/js/next-boot.js"></script>
+
+
 
 
   
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签云</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter0/" style="font-size: 10px;">LearnCpp——Chapter	0</a> <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-9/" style="font-size: 10px;">LearnCpp——Chapter 9</a> <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-O/" style="font-size: 20px;">LearnCpp——Chapter O</a>
-    </div>
-  </div>
 
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">归档</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">6</span></li></ul>
-    </div>
-  </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">最新文章</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2022/11/15/O-4-%E2%80%94-%E5%9C%A8%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%92%8C%E5%8D%81%E8%BF%9B%E5%88%B6%E4%B9%8B%E9%97%B4%E8%BF%9B%E8%A1%8C%E8%BD%AC%E6%8D%A2/">O.4 — 在二进制和十进制之间进行转换</a>
-          </li>
-        
-          <li>
-            <a href="/2022/11/15/O-3-%E2%80%94-%E4%BD%BF%E7%94%A8%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E5%92%8C%E4%BD%8D%E6%8E%A9%E7%A0%81%E8%BF%9B%E8%A1%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/">O.3 — 使用按位运算符和位掩码进行位操作</a>
-          </li>
-        
-          <li>
-            <a href="/2022/11/15/O-2-%E2%80%94-%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6/">O.2 — 按位运算符</a>
-          </li>
-        
-          <li>
-            <a href="/2022/11/15/O-1-%E2%80%94-%E9%80%9A%E8%BF%87-std-bitset-%E7%9A%84%E4%BD%8D%E6%A0%87%E5%BF%97%E5%92%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/">O.1 — 通过 std::bitset 的位标志和位操作</a>
-          </li>
-        
-          <li>
-            <a href="/2022/11/11/0-1-%E2%80%93-%E8%BF%99%E4%BA%9B%E6%95%99%E7%A8%8B%E7%AE%80%E4%BB%8B/">0.1 – 这些教程简介</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
 
   
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2022 wuj10n<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-
-
-  
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-
-  
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-  </div>
 </body>
 </html>
