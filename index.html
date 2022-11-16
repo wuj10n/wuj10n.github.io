@@ -92,7 +92,272 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h1 id="O-4-—-二进制和十进制之间的转换"><a href="#O-4-—-二进制和十进制之间的转换" class="headerlink" title="O.4 — 二进制和十进制之间的转换"></a>O.4 — 二进制和十进制之间的转换</h1><p>考虑一个普通的十进制数，比如 5623。我们直观地理解这些数字的意思是 (5 * 1000) + (6 * 100) + (2 * 10) + (3 * 1)。因为有 10 个十进制数，所以左边每个后续数字的值都会增加 10 倍。</p>
+<p>二进制数的工作方式相同，只是因为只有 2 个二进制数字（0 和 1），每个数字的值增加 2 倍。就像逗号通常用于使大十进制数易于阅读（例如1,427,435)，我们经常以 4 位为一组编写二进制数，以便于阅读（例如 1101 0101）。</p>
+<p>下表以十进制和二进制计数到 15：</p>
+<table>
+<thead>
+<tr>
+<th align="left">十进制值</th>
+<th align="right">二进制值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">0</td>
+<td align="right">0</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="right">10</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="right">11</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="right">100</td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="right">101</td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="right">110</td>
+</tr>
+<tr>
+<td align="left">7</td>
+<td align="right">111</td>
+</tr>
+<tr>
+<td align="left">8</td>
+<td align="right">1000</td>
+</tr>
+<tr>
+<td align="left">9</td>
+<td align="right">1001</td>
+</tr>
+<tr>
+<td align="left">10</td>
+<td align="right">1010</td>
+</tr>
+<tr>
+<td align="left">11</td>
+<td align="right">1011</td>
+</tr>
+<tr>
+<td align="left">12</td>
+<td align="right">1100</td>
+</tr>
+<tr>
+<td align="left">13</td>
+<td align="right">1101</td>
+</tr>
+<tr>
+<td align="left">14</td>
+<td align="right">1110</td>
+</tr>
+<tr>
+<td align="left">15</td>
+<td align="right">1111</td>
+</tr>
+</tbody></table>
+<h2 id="将二进制转换为十进制"><a href="#将二进制转换为十进制" class="headerlink" title="将二进制转换为十进制"></a>将二进制转换为十进制</h2><p>在以下示例中，我们假设我们正在处理无符号整数。</p>
+<p>考虑 8 位（1 字节）二进制数 0101 1110。</p>
+<p>二进制 0101 1110 表示 (0 * 128) + (1 * 64) + (0 * 32) + (1 * 16) + (1 * 8) + (1 * 4) + (1 * 2) + (0 * 1)。如果我们将所有这些部分相加，我们得到十进制数 64 + 16 + 8 + 4 + 2 = 94。</p>
+<p>这是表格格式的相同过程。我们将每个二进制数字乘以其数字值（由其位置确定）。将所有这些值加起来就是总数。</p>
+<p>将 0101 1110 转换为十进制：</p>
+<table>
+<thead>
+<tr>
+<th>二进制数字</th>
+<th>0</th>
+<th>1</th>
+<th>0</th>
+<th>1</th>
+<th>1</th>
+<th>1</th>
+<th>1</th>
+<th>0</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>* 数字值</td>
+<td>128</td>
+<td>64</td>
+<td>32</td>
+<td>16</td>
+<td>8</td>
+<td>4</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>= 总计 (94)</td>
+<td>0</td>
+<td>64</td>
+<td>0</td>
+<td>16</td>
+<td>8</td>
+<td>4</td>
+<td>2</td>
+<td>0</td>
+</tr>
+</tbody></table>
+<p>让我们将 1001 0111 转换为十进制：</p>
+<table>
+<thead>
+<tr>
+<th>二进制数字</th>
+<th>1</th>
+<th>0</th>
+<th>0</th>
+<th>1</th>
+<th>0</th>
+<th>1</th>
+<th>1</th>
+<th>1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>* 数字值</td>
+<td>128</td>
+<td>64</td>
+<td>32</td>
+<td>16</td>
+<td>8</td>
+<td>4</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>= 总计 (151)</td>
+<td>128</td>
+<td>0</td>
+<td>0</td>
+<td>16</td>
+<td>0</td>
+<td>4</td>
+<td>2</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<p>1001 0111 二进制 = 十进制的 151。</p>
+<p>这可以很容易地扩展到 16 位或 32 位二进制数，只需添加更多列即可。请注意，最简单的方法是从右端开始，然后向左移动，边走边将数字值乘以 2。</p>
+<h2 id="十进制转二进制的方法一"><a href="#十进制转二进制的方法一" class="headerlink" title="十进制转二进制的方法一"></a>十进制转二进制的方法一</h2><p>从十进制转换为二进制有点棘手，但仍然非常简单。有两种好方法可以做到这一点。</p>
+<p>第一种方法是连续除以 2，然后记下余数。二进制数是在余数的末尾构造的，从下到上。</p>
+<p>将 148 从十进制转换为二进制（使用 r 表示余数）：</p>
+<p>148 / 2 = 74 r0<br>74 / 2 = 37 r0<br>37 / 2 = 18 r1<br>18 / 2 = 9 r0<br>9 / 2 = 4 r1<br>4 / 2 = 2 r0<br>2 / 2 = 1 r0<br>1 / 2 = 0 r1</p>
+<p><strong>从下往上</strong>写出所有余数：1001 0100</p>
+<p>148 十进制 = 1001 0100 二进制。</p>
+<p>您可以通过将二进制转换回十进制来验证此答案：</p>
+<p>(1 * 128) + (0 * 64) + (0 * 32) + (1 * 16) + (0 * 8) + (1 * 4) + (0 * 2) + (0 * 1) = 148</p>
+<h2 id="十进制转二进制的方法二"><a href="#十进制转二进制的方法二" class="headerlink" title="十进制转二进制的方法二"></a>十进制转二进制的方法二</h2><p>第二种方法涉及逆向计算每个位必须是什么。对于较小的二进制数，此方法可能更容易。</p>
+<p>再次考虑十进制数 148。小于148的2的最大次方是多少？128，所以我们将从那里开始。</p>
+<p>是 148 &gt;= 128 吗？是的，所以 128 位必须是 1. 148 - 128 = 20，这意味着我们需要再找到值 20 的位。<br>是 20 &gt;= 64 吗？不，所以64位必须是0。20<br>&gt;=32吗？不是，所以32位一定是0。20<br>&gt;= 16吗？是的，所以 16 位必须是 1. 20 - 16 = 4，这意味着我们需要找到更多的 4 位。</p>
+<p>是 4 &gt;= 8 吗？不是，所以8位一定是0。<br>是4 &gt;= 4吗？是的，所以第 4 位必须是 1。4 - 4 = 0，这意味着所有其余位必须是 0。</p>
+<p>148 = (1 * 128) + (0 * 64) + (0 * 32) + (1 * 16) + (0 * 8) + (1 * 4) + (0 * 2) + (0 * 1) = 1001 0100</p>
+<p>表格形式：</p>
+<table>
+<thead>
+<tr>
+<th>二进制数</th>
+<th>1</th>
+<th>0</th>
+<th>0</th>
+<th>1</th>
+<th>0</th>
+<th>1</th>
+<th>0</th>
+<th>0</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>* 数字值</td>
+<td>128</td>
+<td>64</td>
+<td>32</td>
+<td>16</td>
+<td>8</td>
+<td>4</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>= 总计 (148)</td>
+<td>128</td>
+<td>0</td>
+<td>0</td>
+<td>16</td>
+<td>0</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody></table>
+<p>另一个例子</p>
+<p>让我们使用方法 1 将 117 转换为二进制：</p>
+<p>117 / 2 = 58 r1<br>58 / 2 = 29 r0<br>29 / 2 = 14 r1<br>14 / 2 = 7 r0<br>7 / 2 = 3 r1<br>3 / 2 = 1 r1<br>1 / 2 = 0 r1</p>
+<p>从下往上的余数构造数，117 = 111 0101 二进制</p>
+<p>并使用方法2：</p>
+<p>2 小于 117 的最大次方是 64。</p>
+<p>是 117 &gt;= 64 吗？是的，所以 64 位必须是 1。117 - 64 = 53。53<br>&gt;= 32 吗？是的，所以 32 位必须是 1。53 - 32 = 21。21<br>&gt;= 16 吗？是的，所以 16 位必须是 1。 21 - 16 = 5。</p>
+<p>5 &gt;= 8 吗？不是，所以8位一定是0。<br>是5 &gt;= 4吗？是的，所以第 4 位必须是 1。5 - 4 = 1。1<br>&gt;= 2？不是，所以2位一定是0。<br>是1 &gt;= 1吗？是的，所以 1 位必须是 1。</p>
+<p>117 十进制 = 111 0101 二进制。</p>
+<h2 id="相加二进制数"><a href="#相加二进制数" class="headerlink" title="相加二进制数"></a>相加二进制数</h2><p>在某些情况下（稍后我们会看到），能够将两个二进制数相加是很有用的。相加二进制数出奇地容易（甚至可能比添加十进制数更容易），尽管一开始它可能看起来很奇怪，因为您不习惯它。</p>
+<p>考虑两个小的二进制数：<br>0110（十进制为 6）+<br>0111（十进制为 7）</p>
+<p>让我们添加这些。首先，像上面一样将它们排成一行。然后，从右向左开始，我们将每一列数字相加，就像我们在十进制数中所做的那样。但是，由于二进制数字只能是 0 或 1，所以只有 4 种可能：</p>
+<ul>
+<li>0 + 0 = 0</li>
+<li>0 + 1 = 1</li>
+<li>1 + 0 = 1</li>
+<li>1 + 1 = 0，将 1 移至下一列</li>
+</ul>
+<p>让我们做第一列：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0110（十进制为 6）+</span><br><span class="line">0111（十进制为 7）</span><br><span class="line">----</span><br><span class="line">   1</span><br></pre></td></tr></table></figure>
+
+<p>0 + 1 = 1。简单。</p>
+<p>第二栏：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> 1</span><br><span class="line">0110（十进制为 6）+</span><br><span class="line">0111（十进制为 7）</span><br><span class="line">----</span><br><span class="line">  01</span><br></pre></td></tr></table></figure>
+
+<p>1 + 1 = 0，带一个进位到下一列</p>
+<p>第三栏：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">11</span><br><span class="line">0110（十进制为 6）+</span><br><span class="line">0111（十进制为 7）</span><br><span class="line">----</span><br><span class="line"> 101</span><br></pre></td></tr></table></figure>
+
+<p>这个有点棘手。通常情况下，1 + 1 = 0，带一个进位到下一列。但是，我们已经从上一列中携带了一个 1，因此我们需要加 1。因此，我们在这一列中得到一个 1，并将 1 带入下一列</p>
+<p>最后一栏：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">11</span><br><span class="line">0110（十进制为 6）+</span><br><span class="line">0111（十进制为 7）</span><br><span class="line">----</span><br><span class="line">1101</span><br></pre></td></tr></table></figure>
+
+<p>0 + 0 = 0，但有一个进位的 1，所以我们加 1。1101 = 十进制的 13。</p>
+<p>现在，我们如何给任何给定的二进制数（例如 1011 0011）加 1？同上，只是最下面的数是二进制1。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">       1个（进位柱）</span><br><span class="line">1011 0011（原始二进制数）</span><br><span class="line">0000 0001（二进制为 1）</span><br><span class="line">---------</span><br><span class="line">1011 0100</span><br></pre></td></tr></table></figure>
+
+<h2 id="有符号数和补码"><a href="#有符号数和补码" class="headerlink" title="有符号数和补码"></a>有符号数和补码</h2><p>在上面的示例中，我们只处理了无符号整数。在本节中，我们将了解如何处理有符号数（可以为负数）。</p>
+<p>有符号整数通常使用称为<strong>二进制补码</strong>的方法存储。在二进制补码中，最左边（最高有效位）的位用作符号位。符号位 0 表示数字为正数，符号位 1 表示数字为负数。</p>
+<p>正符号数与无符号正数一样以二进制表示（符号位设置为 0）。</p>
+<p>负符号数以二进制表示为正数的按位取反加 1。</p>
+<p>十进制转二进制（二进制补码）</p>
+<p>例如，这是我们如何用二进制二进制补码表示 -5：</p>
+<p>首先我们找出 5 的二进制表示：0000 0101<br>然后我们反转所有位：1111 1010<br>然后我们添加 1：1111 1011</p>
+<p>将 -76 转换为二进制：</p>
+<p>二进制正 76：0100 1100<br>反转所有位：1011 0011<br>加 1：1011 0100</p>
+<p>为什么要加1？考虑数字 0。如果将负值简单地表示为正数的倒数，则 0 将有两种表示形式：0000 0000（正零）和 1111 1111（负零）。通过加 1，1111 1111 有意溢出并变成 0000 0000。这可以防止 0 有两种表示形式，并简化了一些用负数进行算术运算所需的内部逻辑。</p>
+<h2 id="将二进制（二进制补码）转换为十进制"><a href="#将二进制（二进制补码）转换为十进制" class="headerlink" title="将二进制（二进制补码）转换为十进制"></a>将二进制（二进制补码）转换为十进制</h2><p>要将二进制补码转换回十进制，首先要查看符号位。</p>
+<p>如果符号位为 0，只需按照上面无符号数所示的方式转换数字。</p>
+<p>如果符号位是1，那么我们把位取反，加1，然后转成十进制，然后让那个十进制数变成负数（因为符号位本来就是负数）。</p>
+<p>例如，要将 1001 1110 从二进制补码转换为十进制数：<br>给定：1001 1110<br>反转位：0110 0001<br>加 1：0110 0010<br>转换为十进制：(0 * 128) + (1 * 64) + (1 * 32 ) + (0 * 16) + (0 * 8) + (0 * 4) + (1 * 2) + (0 * 1) = 64 + 32 + 2 = 98<br>由于原始符号位为负，所以最后的值是-98。</p>
+<h2 id="为什么类型很重要"><a href="#为什么类型很重要" class="headerlink" title="为什么类型很重要"></a>为什么类型很重要</h2><p>考虑二进制值 1011 0100。这代表什么值？你可能会说 180，如果这是一个标准的无符号二进制数，你就是对的。</p>
+<p>但是，如果使用二进制补码存储此值，则它将是 -76。</p>
+<p>如果该值以其他方式编码，则它可能完全不同。</p>
+<p>那么 C++ 是如何知道将包含二进制 1011 0100 的变量打印为 180 还是 -76 呢？</p>
+<p>如果章节标题没有透露，这就是类型发挥作用的地方。变量的类型决定了变量的值如何编码为二进制，以及如何解码回一个值。因此，<strong>如果变量类型是无符号整数，它会知道 1011 0100 是标准二进制，应该打印为 180。如果变量是有符号整数，它会知道 1011 0100 是使用二进制补码编码的（现在保证为C++20 的），并且应该打印为 -76</strong>。</p>
+<h2 id="如何将浮点数从二进制转换为二进制？"><a href="#如何将浮点数从二进制转换为二进制？" class="headerlink" title="如何将浮点数从二进制转换为二进制？"></a>如何将浮点数从二进制转换为二进制？</h2><p>浮点数如何从二进制转换为二进制要复杂得多，而且您可能永远都不需要知道。但是，如果您很好奇，请访问<a target="_blank" rel="noopener" href="http://www.tfinley.net/notes/cps104/floating.html">此站点</a>，该站点很好地详细解释了该主题。</p>
+
       
     </div>
     <footer class="article-footer">
@@ -145,7 +410,7 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdint&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">constexpr</span> std::<span class="type">uint8_t</span> mask0&#123; <span class="number">0b0000&#x27;0001</span> &#125;; <span class="comment">// represents bit 0</span></span><br><span class="line"><span class="keyword">constexpr</span> std::<span class="type">uint8_t</span> mask1&#123; <span class="number">0b0000&#x27;0010</span> &#125;; <span class="comment">// represents bit 1</span></span><br><span class="line"><span class="keyword">constexpr</span> std::<span class="type">uint8_t</span> mask2&#123; <span class="number">0b0000&#x27;0100</span> &#125;; <span class="comment">// represents bit 2</span></span><br><span class="line"><span class="keyword">constexpr</span> std::<span class="type">uint8_t</span> mask3&#123; <span class="number">0b0000&#x27;1000</span> &#125;; <span class="comment">// represents bit 3</span></span><br><span class="line"><span class="keyword">constexpr</span> std::<span class="type">uint8_t</span> mask4&#123; <span class="number">0b0001&#x27;0000</span> &#125;; <span class="comment">// represents bit 4</span></span><br><span class="line"><span class="keyword">constexpr</span> std::<span class="type">uint8_t</span> mask5&#123; <span class="number">0b0010&#x27;0000</span> &#125;; <span class="comment">// represents bit 5</span></span><br><span class="line"><span class="keyword">constexpr</span> std::<span class="type">uint8_t</span> mask6&#123; <span class="number">0b0100&#x27;0000</span> &#125;; <span class="comment">// represents bit 6</span></span><br><span class="line"><span class="keyword">constexpr</span> std::<span class="type">uint8_t</span> mask7&#123; <span class="number">0b1000&#x27;0000</span> &#125;; <span class="comment">// represents bit 7</span></span><br></pre></td></tr></table></figure>
 
 <p>现在我们有一组代表每个位位置的符号常量。我们可以使用这些来操作位（稍后我们将展示如何操作）。</p>
-<h2 id="在-C-11-或更早版本中定义位掩码"><a href="#在-C-11-或更早版本中定义位掩码" class="headerlink" title="在 C++11 或更早版本中定义位掩码"></a>在 C++11 或更早版本中定义位掩码</h2><p>因为 C++11 不支持二进制文字，我们必须使用其他方法来设置符号常量。有两种很好的方法可以做到这一点。</p>
+<h2 id="在-C-11-或更早版本中定义位掩码"><a href="#在-C-11-或更早版本中定义位掩码" class="headerlink" title="在 C++11 或更早版本中定义位掩码"></a>在 C++11 或更早版本中定义位掩码</h2><p>因为 <strong>C++11 不支持二进制文字</strong>，我们必须使用其他方法来设置符号常量。有两种很好的方法可以做到这一点。</p>
 <p>第一种方法是使用十六进制文字。</p>
 <p>相关内容</p>
 <p><a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/literals/">我们在第4.15</a>课 - 文字中讨论了十六进制。</p>
