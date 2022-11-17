@@ -20,30 +20,33 @@
     var CONFIG = {"hostname":"wuj10n.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="wuj10n的个人博客">
-<meta property="og:type" content="website">
-<meta property="og:title" content="wuj10n">
-<meta property="og:url" content="https://wuj10n.github.io/index.html">
+  <meta name="description" content="9.5 — 通过左值引用传递在前面的课程中，我们介绍了左值引用（9.3 – 左值引用）和对 const 的左值引用（9.4 – 对 const 的左值引用）。单独来看，这些可能看起来不是很有用——当您只能使用变量本身时，为什么要为变量创建别名？ 在本课中，我们将最终深入了解是什么让引用有用。然后从本章后面开始，您将看到经常使用的参考资料。 首先，一些背景。回到第 2.4 课——我们讨论的函数参数和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="9.5 — 通过左值引用传递">
+<meta property="og:url" content="https://wuj10n.github.io/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9.5%20%E2%80%94%20%E9%80%9A%E8%BF%87%E5%B7%A6%E5%80%BC%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92/index.html">
 <meta property="og:site_name" content="wuj10n">
-<meta property="og:description" content="wuj10n的个人博客">
+<meta property="og:description" content="9.5 — 通过左值引用传递在前面的课程中，我们介绍了左值引用（9.3 – 左值引用）和对 const 的左值引用（9.4 – 对 const 的左值引用）。单独来看，这些可能看起来不是很有用——当您只能使用变量本身时，为什么要为变量创建别名？ 在本课中，我们将最终深入了解是什么让引用有用。然后从本章后面开始，您将看到经常使用的参考资料。 首先，一些背景。回到第 2.4 课——我们讨论的函数参数和">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-16T02:23:14.000Z">
+<meta property="article:modified_time" content="2022-11-17T13:14:03.771Z">
 <meta property="article:author" content="wuj10n">
+<meta property="article:tag" content="LearnCpp——Chapter 9">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://wuj10n.github.io/">
+<link rel="canonical" href="https://wuj10n.github.io/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9.5%20%E2%80%94%20%E9%80%9A%E8%BF%87%E5%B7%A6%E5%80%BC%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>wuj10n</title>
+  <title>9.5 — 通过左值引用传递 | wuj10n</title>
   
 
 
@@ -157,545 +160,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-x/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-x/" class="post-title-link" itemprop="url">9.x</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-11-16 10:23:46 / 修改时间：10:36:30" itemprop="dateCreated datePublished" datetime="2022-11-16T10:23:46+08:00">2022-11-16</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
 
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-12/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-12/" class="post-title-link" itemprop="url">9.12</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-11-16 10:23:43 / 修改时间：10:36:37" itemprop="dateCreated datePublished" datetime="2022-11-16T10:23:43+08:00">2022-11-16</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-11/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-11/" class="post-title-link" itemprop="url">9.11</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-11-16 10:23:40 / 修改时间：10:36:34" itemprop="dateCreated datePublished" datetime="2022-11-16T10:23:40+08:00">2022-11-16</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-10/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-10/" class="post-title-link" itemprop="url">9.1</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-11-16 10:23:36 / 修改时间：10:36:32" itemprop="dateCreated datePublished" datetime="2022-11-16T10:23:36+08:00">2022-11-16</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-9/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-9/" class="post-title-link" itemprop="url">9.9</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-11-16 10:23:33 / 修改时间：10:36:28" itemprop="dateCreated datePublished" datetime="2022-11-16T10:23:33+08:00">2022-11-16</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-8/" class="post-title-link" itemprop="url">9.8</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-11-16 10:23:30 / 修改时间：10:36:26" itemprop="dateCreated datePublished" datetime="2022-11-16T10:23:30+08:00">2022-11-16</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-7/" class="post-title-link" itemprop="url">9.7</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-11-16 10:23:21 / 修改时间：10:36:24" itemprop="dateCreated datePublished" datetime="2022-11-16T10:23:21+08:00">2022-11-16</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-6/" class="post-title-link" itemprop="url">9.6</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-11-16 10:23:18 / 修改时间：10:36:22" itemprop="dateCreated datePublished" datetime="2022-11-16T10:23:18+08:00">2022-11-16</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -711,10 +179,9 @@
       <meta itemprop="name" content="wuj10n">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9.5%20%E2%80%94%20%E9%80%9A%E8%BF%87%E5%B7%A6%E5%80%BC%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92/" class="post-title-link" itemprop="url">9.5 — 通过左值引用传递</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          9.5 — 通过左值引用传递
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -753,7 +220,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="9-5-—-通过左值引用传递"><a href="#9-5-—-通过左值引用传递" class="headerlink" title="9.5 — 通过左值引用传递"></a>9.5 — 通过左值引用传递</h1><p>在前面的课程中，我们介绍了左值引用（<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/lvalue-references/">9.3 – 左值引用</a>）和对 const 的左值引用（<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/lvalue-references-to-const/">9.4 – 对 const 的左值引用</a>）。单独来看，这些可能看起来不是很有用——当您只能使用变量本身时，为什么要为变量创建别名？</p>
+        <h1 id="9-5-—-通过左值引用传递"><a href="#9-5-—-通过左值引用传递" class="headerlink" title="9.5 — 通过左值引用传递"></a>9.5 — 通过左值引用传递</h1><p>在前面的课程中，我们介绍了左值引用（<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/lvalue-references/">9.3 – 左值引用</a>）和对 const 的左值引用（<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/lvalue-references-to-const/">9.4 – 对 const 的左值引用</a>）。单独来看，这些可能看起来不是很有用——当您只能使用变量本身时，为什么要为变量创建别名？</p>
 <p>在本课中，我们将最终深入了解是什么让引用有用。然后从本章后面开始，您将看到经常使用的参考资料。</p>
 <p>首先，一些背景。回到第 2.4 课——我们讨论<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/introduction-to-function-parameters-and-arguments/">的函数参数和参数简介</a><code>pass by value</code>，其中传递给函数的参数被<strong>复制</strong>到函数的参数中：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">printValue</span><span class="params">(<span class="type">int</span> y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::cout &lt;&lt; y &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125; <span class="comment">// y is destroyed here</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> x &#123; <span class="number">2</span> &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printValue</span>(x); <span class="comment">// x is passed by value (copied) into parameter y (inexpensive)</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -845,138 +312,37 @@
 <h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>如果<code>sizeof(T) &lt;= 2 * sizeof(void*)</code>没有额外的设置成本，则类型 T 的对象复制起来很便宜。</p>
 <p>复制成本低的常见类型包括所有基本类型、枚举类型和 std::string_view。<br>复制成本高昂的常见类型包括 std::array、std::string、std::vector 和 std::ostream。</p>
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
+          <div class="post-tags">
+              <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-9/" rel="tag"># LearnCpp——Chapter 9</a>
+          </div>
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9.4%20%E2%80%94%20%E5%AF%B9%20const%20%E7%9A%84%E5%B7%A6%E5%80%BC%E5%BC%95%E7%94%A8/">
+        
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9.4%20%E2%80%94%20%E5%AF%B9%20const%20%E7%9A%84%E5%B7%A6%E5%80%BC%E5%BC%95%E7%94%A8/" class="post-title-link" itemprop="url">9.4 — 对 const 的左值引用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-11-16 10:23:08" itemprop="dateCreated datePublished" datetime="2022-11-16T10:23:08+08:00">2022-11-16</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-17 15:13:56" itemprop="dateModified" datetime="2022-11-17T15:13:56+08:00">2022-11-17</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="9-4-—-对-const-的左值引用"><a href="#9-4-—-对-const-的左值引用" class="headerlink" title="9.4 — 对 const 的左值引用"></a>9.4 — 对 const 的左值引用</h1><p>在上一课（<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/lvalue-references/">9.3 – 左值引用</a>）中，我们讨论了左值引用如何只能绑定到可修改的左值。这意味着以下是非法的：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> x &#123; <span class="number">5</span> &#125;; <span class="comment">// x is a non-modifiable (const) lvalue</span></span><br><span class="line">    <span class="type">int</span>&amp; ref &#123; x &#125;; <span class="comment">// error: ref can not bind to non-modifiable lvalue</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这是不允许的，因为它允许我们<code>x</code>通过非 const 引用 ( ) 修改 const 变量 ( <code>ref</code>)。</p>
-<p>但是如果我们想要一个 const 变量，我们想要创建一个引用怎么办？一个普通的左值引用（对一个非常量值）是行不通的。</p>
-<h2 id="对-const-的左值引用"><a href="#对-const-的左值引用" class="headerlink" title="对 const 的左值引用"></a>对 const 的左值引用</h2><p>通过<code>const</code>在声明左值引用时使用关键字，我们告诉左值引用将它引用的对象视为常量。这样的引用称为<strong>对 const 值的左值引用</strong>（有时称为<strong>对 const 的引用</strong>或<strong>const 引用</strong>）。</p>
-<p>对 const 的左值引用可以绑定到不可修改的左值：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> x &#123; <span class="number">5</span> &#125;;    <span class="comment">// x is a non-modifiable lvalue</span></span><br><span class="line">    <span class="type">const</span> <span class="type">int</span>&amp; ref &#123; x &#125;; <span class="comment">// okay: ref is a an lvalue reference to a const value</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>因为对 const 的左值引用将它们引用的对象视为 const，所以它们可用于访问但不能修改被引用的值：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> x &#123; <span class="number">5</span> &#125;;    <span class="comment">// x is a non-modifiable lvalue</span></span><br><span class="line">    <span class="type">const</span> <span class="type">int</span>&amp; ref &#123; x &#125;; <span class="comment">// okay: ref is a an lvalue reference to a const value</span></span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; ref &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// okay: we can access the const object</span></span><br><span class="line">    ref = <span class="number">6</span>;                  <span class="comment">// error: we can not modify a const object</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="使用可修改的左值初始化对-const-的左值引用"><a href="#使用可修改的左值初始化对-const-的左值引用" class="headerlink" title="使用可修改的左值初始化对 const 的左值引用"></a>使用可修改的左值初始化对 const 的左值引用</h2><p>对 const 的左值引用也可以绑定到可修改的左值。在这种情况下，<strong>被引用的对象在通过引用访问时被视为 const（即使底层对象是非常量）：</strong></p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> x &#123; <span class="number">5</span> &#125;;          <span class="comment">// x is a modifiable lvalue</span></span><br><span class="line">    <span class="type">const</span> <span class="type">int</span>&amp; ref &#123; x &#125;; <span class="comment">// okay: we can bind a const reference to a modifiable lvalue</span></span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; ref &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// okay: we can access the object through our const reference</span></span><br><span class="line">    ref = <span class="number">7</span>;                 <span class="comment">// error: we can not modify an object through a const reference</span></span><br><span class="line"></span><br><span class="line">    x = <span class="number">6</span>;                <span class="comment">// okay: x is a modifiable lvalue, we can still modify it through the original identifier</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在上面的程序中，我们将 const 引用<code>ref</code>绑定到可修改的左值<code>x</code>。然后我们可以使用<code>ref</code>来访问 <code>x</code>，但是因为<code>ref</code>是 const ，我们不能通过<code>ref</code>的值修改<code>x</code>。但是，我们仍然可以直接修改的值<code>x</code>（使用标识符<code>x</code>）。</p>
-<div style="background-color:lightgreen ;">
-   <p >最佳实践：</p>
-   <p> 优先使用lvalue references to const,而不是lvalue references to non-consty，除非要修改引用的对象。
-    </p>
-</div>
-
-<h2 id="使用右值初始化对-const-的左值引用"><a href="#使用右值初始化对-const-的左值引用" class="headerlink" title="使用右值初始化对 const 的左值引用"></a>使用右值初始化对 const 的左值引用</h2><p>也许令人惊讶的是，对 const 的左值引用也可以绑定到右值：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span>&amp; ref &#123; <span class="number">5</span> &#125;; <span class="comment">// okay: 5 is an rvalue</span></span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; ref &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// prints 5</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>发生这种情况时，将创建一个临时对象并使用右值进行初始化，并且对 const 的引用将绑定到该临时对象。</p>
-<p><strong>临时对象</strong>（有时也称为<strong>匿名对象</strong>）是为在单个表达式中临时使用（然后销毁）而创建的对象。临时对象根本没有范围（这是有道理的，因为范围是标识符的属性，而临时对象没有标识符）。这意味着临时对象只能在创建它的地方直接使用，因为没有办法在那个地方之外引用它。</p>
-<h3 id="绑定到临时对象的-Const-引用延长了临时对象的生命周期"><a href="#绑定到临时对象的-Const-引用延长了临时对象的生命周期" class="headerlink" title="绑定到临时对象的 Const 引用延长了临时对象的生命周期"></a>绑定到临时对象的 Const 引用延长了临时对象的生命周期</h3><p>临时对象通常在创建它们的表达式结束时销毁。</p>
-<p>但是，请考虑如果为保存右值<code>5</code>而创建的临时对象，在初始化 <code>ref</code>的表达式末尾被销毁，在上面的示例中会发生什么。当我们尝试访问<code>ref</code>,引用<code>ref</code>将悬空（引用一个已被销毁的对象)。</p>
-<p>为了避免在这种情况下出现悬空引用，C++ 有一个特殊的规则：<strong>当一个 const 左值引用绑定到一个临时对象时，临时对象的生命周期会延长以匹配引用的生命周期。</strong></p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span>&amp; ref &#123; <span class="number">5</span> &#125;; <span class="comment">// The temporary object holding value 5 has its lifetime extended to match ref</span></span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; ref &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// Therefore, we can safely use it here</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125; <span class="comment">// Both ref and the temporary object die here</span></span><br></pre></td></tr></table></figure>
-
-<p>在上面的示例中，当<code>ref</code>初始化为右值时<code>5</code>，将创建一个临时对象并将<code>ref</code>其绑定到该临时对象。临时对象的生命周期与<code>ref</code>匹配. 因此，我们可以安全地在下一条语句中打印<code>ref</code>值。然后<code>ref</code>和临时对象都超出范围并在块的末尾被销毁。</p>
-<div style="background-color:lightgreen ;">
-   <p >关键见解：</p>
-   <p> 左值引用只能绑定到可修改的左值。对 const 的左值引用可以绑定到可修改的左值、不可修改的左值和右值。这使它们成为一种更加灵活的参考类型。
-    </p>
-</div>
-
-<p>那么，为什么 C++ 仍然允许 const 引用绑定到右值呢？我们将在下一课中回答这个问题！</p>
-
-      
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9.4%20%E2%80%94%20%E5%AF%B9%20const%20%E7%9A%84%E5%B7%A6%E5%80%BC%E5%BC%95%E7%94%A8/" rel="prev" title="9.4 — 对 const 的左值引用">
+      <i class="fa fa-chevron-left"></i> 9.4 — 对 const 的左值引用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-6/" rel="next" title="9.6">
+      9.6 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
   
-
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
 
 
 
@@ -1028,6 +394,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#9-5-%E2%80%94-%E9%80%9A%E8%BF%87%E5%B7%A6%E5%80%BC%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">1.</span> <span class="nav-text">9.5 — 通过左值引用传递</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89%E4%BA%9B%E5%AF%B9%E8%B1%A1%E5%A4%8D%E5%88%B6%E8%B5%B7%E6%9D%A5%E5%BE%88%E6%98%82%E8%B4%B5"><span class="nav-number">1.1.</span> <span class="nav-text">有些对象复制起来很昂贵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">1.2.</span> <span class="nav-text">通过引用传递</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92%E7%BB%99%E9%9D%9E%E5%B8%B8%E9%87%8F%E5%BD%A2%E5%8F%82%EF%BC%8C%E5%BD%A2%E5%8F%82%E5%8F%AA%E8%83%BD%E6%8E%A5%E5%8F%97%E5%8F%AF%E4%BF%AE%E6%94%B9%E7%9A%84%E5%B7%A6%E5%80%BC%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">通过引用传递给非常量形参，形参只能接受可修改的左值参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87-const-%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">1.4.</span> <span class="nav-text">通过 const 引用传递</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E6%8C%89%E5%80%BC%E4%BC%A0%E9%80%92%E5%92%8C%E6%8C%89%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">1.4.1.</span> <span class="nav-text">混合按值传递和按引用传递</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E9%80%9A%E8%BF%87%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">1.5.</span> <span class="nav-text">何时通过引用传递</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%89%E5%80%BC%E4%BC%A0%E9%80%92%E4%B8%8E%E6%8C%89%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92%E7%9A%84%E6%88%90%E6%9C%AC%EF%BC%88%E9%AB%98%E7%BA%A7%EF%BC%89"><span class="nav-number">1.6.</span> <span class="nav-text">按值传递与按引用传递的成本（高级）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.7.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
