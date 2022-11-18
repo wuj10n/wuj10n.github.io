@@ -28,7 +28,7 @@
 <meta property="og:description" content="9.5 — 通过左值引用传递在前面的课程中，我们介绍了左值引用（9.3 – 左值引用）和对 const 的左值引用（9.4 – 对 const 的左值引用）。单独来看，这些可能看起来不是很有用——当您只能使用变量本身时，为什么要为变量创建别名？ 在本课中，我们将最终深入了解是什么让引用有用。然后从本章后面开始，您将看到经常使用的参考资料。 首先，一些背景。回到第 2.4 课——我们讨论的函数参数和">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-11-16T02:23:14.000Z">
-<meta property="article:modified_time" content="2022-11-18T12:54:25.972Z">
+<meta property="article:modified_time" content="2022-11-18T15:18:13.250Z">
 <meta property="article:author" content="wuj10n">
 <meta property="article:tag" content="LearnCpp——Chapter 9">
 <meta name="twitter:card" content="summary">
@@ -198,7 +198,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-18 20:54:25" itemprop="dateModified" datetime="2022-11-18T20:54:25+08:00">2022-11-18</time>
+                <time title="修改时间：2022-11-18 23:18:13" itemprop="dateModified" datetime="2022-11-18T23:18:13+08:00">2022-11-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -249,7 +249,7 @@
 </div>
 函数修改传入参数值的能力可能很有用。假设您编写了一个函数来确定怪物是否已成功攻击玩家。如果是这样，怪物应该对玩家的健康造成一定程度的伤害。如果通过引用传递玩家对象，该函数可以直接修改传入的实际玩家对象的生命值。如果通过值传递玩家对象，则只能修改玩家对象副本的生命值，这没那么有用。
 
-<h2 id="通过引用传递给非常量形参，形参只能接受可修改的左值参数"><a href="#通过引用传递给非常量形参，形参只能接受可修改的左值参数" class="headerlink" title="通过引用传递给非常量形参，形参只能接受可修改的左值参数"></a>通过引用传递给非常量形参，形参只能接受可修改的左值参数</h2><p>因为对非const值的引用只能绑定到可修改的左值（本质上是非const变量），这意味着通过引用传递仅适用于作为可修改左值的参数。实际上，这极大地限制了通过引用传递非 const 的有用性，因为这意味着我们不能传递 const常量或文字。例如：</p>
+<h2 id="通过引用传递给非const形参，形参只能接受可修改的左值参数"><a href="#通过引用传递给非const形参，形参只能接受可修改的左值参数" class="headerlink" title="通过引用传递给非const形参，形参只能接受可修改的左值参数"></a>通过引用传递给非const形参，形参只能接受可修改的左值参数</h2><p>因为对非const值的引用只能绑定到可修改的左值（本质上是非const变量），这意味着通过引用传递仅适用于作为可修改左值的参数。实际上，这极大地限制了通过引用传递非 const 的有用性，因为这意味着我们不能传递 const常量或文字。例如：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">printValue</span><span class="params">(<span class="type">int</span>&amp; y)</span> <span class="comment">// y only accepts modifiable lvalues</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::cout &lt;&lt; y &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> x &#123; <span class="number">5</span> &#125;;</span><br><span class="line">    <span class="built_in">printValue</span>(x); <span class="comment">// ok: x is a modifiable lvalue</span></span><br><span class="line"></span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> z &#123; <span class="number">5</span> &#125;;</span><br><span class="line">    <span class="built_in">printValue</span>(z); <span class="comment">// error: z is a non-modifiable lvalue</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">printValue</span>(<span class="number">5</span>); <span class="comment">// error: 5 is an rvalue</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>幸运的是，有一种简单的方法可以解决这个问题。</p>
@@ -263,11 +263,12 @@
 <p>在大多数情况下，我们不希望我们的函数修改参数的值。</p>
 <div style="background-color:lightgreen ;">
    <p >最佳实践：</p>
-   <p> 赞成通过 const 引用传递而不是通过非常量引用传递，除非您有特定的理由不这样做（例如，函数需要更改参数的值）。
+   <p> 赞成通过 const 引用传递而不是通过非常量引用传递，除非您有特定的需求（例如，函数需要更改参数的值）。
     </p>
 </div>
 
-<p>现在我们可以理解允许 const 左值引用绑定到右值，即使用右值初始化const 的左值引用的原因：如果没有这种能力，就无法将文字（或其他右值）传递给使用引用传递的函数！</p>
+
+<p>现在我们可以理解允许 const 左值引用绑定到右值，即使用右值初始化对const 的左值引用的原因：如果没有这种能力，就无法将文字（或其他右值）传递给使用引用传递的函数！</p>
 <h3 id="混合按值传递和按引用传递"><a href="#混合按值传递和按引用传递" class="headerlink" title="混合按值传递和按引用传递"></a>混合按值传递和按引用传递</h3><p>具有多个参数的函数可以确定每个参数是按值传递还是单独按引用传递。</p>
 <p>例如：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span>&amp; b, <span class="type">const</span> std::string&amp; c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> x &#123; <span class="number">5</span> &#125;;</span><br><span class="line">    <span class="type">const</span> std::string s &#123; <span class="string">&quot;Hello, world!&quot;</span> &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">foo</span>(<span class="number">5</span>, x, s);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -309,7 +310,7 @@
    <p>我们在这里使用预处理器宏，以便我们可以替换为一个类型（普通函数不允许这样做）。</p>
    </div>
 
-<p>但是，很难知道类类型对象是否具有设置成本。最好假设大多数标准库类都有设置成本，除非您知道它们没有。</p>
+<p>但是，很难知道class类型对象是否具有设置成本。最好假设大多数标准库类都有设置成本，除非您知道它们没有。</p>
 <h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>如果<code>sizeof(T) &lt;= 2 * sizeof(void*)</code>没有额外的设置成本，则类型 T 的对象复制起来很便宜。</p>
 <p>复制成本低的常见类型包括所有基本类型、枚举类型和 std::string_view。<br>复制成本高昂的常见类型包括 std::array、std::string、std::vector 和 std::ostream。</p>
 
@@ -334,8 +335,8 @@
       <i class="fa fa-chevron-left"></i> 9.4 — 对 const 的左值引用
     </a></div>
       <div class="post-nav-item">
-    <a href="/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9-6/" rel="next" title="9.6">
-      9.6 <i class="fa fa-chevron-right"></i>
+    <a href="/2022/11/16/%E7%AC%AC9%E7%AB%A0%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88/9.6%20%E2%80%94%20%E6%8C%87%E9%92%88%E4%BB%8B%E7%BB%8D/" rel="next" title="9.6 — 指针介绍">
+      9.6 — 指针介绍 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -395,7 +396,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#9-5-%E2%80%94-%E9%80%9A%E8%BF%87%E5%B7%A6%E5%80%BC%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">1.</span> <span class="nav-text">9.5 — 通过左值引用传递</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89%E4%BA%9B%E5%AF%B9%E8%B1%A1%E5%A4%8D%E5%88%B6%E8%B5%B7%E6%9D%A5%E5%BE%88%E6%98%82%E8%B4%B5"><span class="nav-number">1.1.</span> <span class="nav-text">有些对象复制起来很昂贵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">1.2.</span> <span class="nav-text">通过引用传递</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92%E7%BB%99%E9%9D%9E%E5%B8%B8%E9%87%8F%E5%BD%A2%E5%8F%82%EF%BC%8C%E5%BD%A2%E5%8F%82%E5%8F%AA%E8%83%BD%E6%8E%A5%E5%8F%97%E5%8F%AF%E4%BF%AE%E6%94%B9%E7%9A%84%E5%B7%A6%E5%80%BC%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">通过引用传递给非常量形参，形参只能接受可修改的左值参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87-const-%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">1.4.</span> <span class="nav-text">通过 const 引用传递</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E6%8C%89%E5%80%BC%E4%BC%A0%E9%80%92%E5%92%8C%E6%8C%89%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">1.4.1.</span> <span class="nav-text">混合按值传递和按引用传递</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E9%80%9A%E8%BF%87%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">1.5.</span> <span class="nav-text">何时通过引用传递</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%89%E5%80%BC%E4%BC%A0%E9%80%92%E4%B8%8E%E6%8C%89%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92%E7%9A%84%E6%88%90%E6%9C%AC%EF%BC%88%E9%AB%98%E7%BA%A7%EF%BC%89"><span class="nav-number">1.6.</span> <span class="nav-text">按值传递与按引用传递的成本（高级）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.7.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#9-5-%E2%80%94-%E9%80%9A%E8%BF%87%E5%B7%A6%E5%80%BC%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">1.</span> <span class="nav-text">9.5 — 通过左值引用传递</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89%E4%BA%9B%E5%AF%B9%E8%B1%A1%E5%A4%8D%E5%88%B6%E8%B5%B7%E6%9D%A5%E5%BE%88%E6%98%82%E8%B4%B5"><span class="nav-number">1.1.</span> <span class="nav-text">有些对象复制起来很昂贵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">1.2.</span> <span class="nav-text">通过引用传递</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92%E7%BB%99%E9%9D%9Econst%E5%BD%A2%E5%8F%82%EF%BC%8C%E5%BD%A2%E5%8F%82%E5%8F%AA%E8%83%BD%E6%8E%A5%E5%8F%97%E5%8F%AF%E4%BF%AE%E6%94%B9%E7%9A%84%E5%B7%A6%E5%80%BC%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">通过引用传递给非const形参，形参只能接受可修改的左值参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87-const-%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">1.4.</span> <span class="nav-text">通过 const 引用传递</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E6%8C%89%E5%80%BC%E4%BC%A0%E9%80%92%E5%92%8C%E6%8C%89%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">1.4.1.</span> <span class="nav-text">混合按值传递和按引用传递</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E9%80%9A%E8%BF%87%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">1.5.</span> <span class="nav-text">何时通过引用传递</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%89%E5%80%BC%E4%BC%A0%E9%80%92%E4%B8%8E%E6%8C%89%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92%E7%9A%84%E6%88%90%E6%9C%AC%EF%BC%88%E9%AB%98%E7%BA%A7%EF%BC%89"><span class="nav-number">1.6.</span> <span class="nav-text">按值传递与按引用传递的成本（高级）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.7.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
