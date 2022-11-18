@@ -23,7 +23,7 @@
   <meta name="description" content="O.1 — 通过 std::bitset 的位标志和位操作在现代计算机体系结构上，最小的可寻址内存单元是字节。由于所有对象都需要具有唯一的内存地址，这意味着对象的大小必须至少为一个字节。对于大多数变量类型，这很好。但是，对于布尔值，这有点浪费（双关语）。布尔类型只有两种状态：真 （1） 或假 （0）。这组状态只需要一个位来存储。但是，如果变量必须至少是一个字节，并且一个字节是 8 位，这意味着布尔">
 <meta property="og:type" content="article">
 <meta property="og:title" content="O.1 — 通过 std::bitset 的位标志和位操作">
-<meta property="og:url" content="https://wuj10n.github.io/2022/11/15/%E4%BD%8D%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%E7%AB%A0%E8%8A%82%EF%BC%89/O.1%20%E2%80%94%20%E9%80%9A%E8%BF%87%20stdbitset%20%E7%9A%84%E4%BD%8D%E6%A0%87%E5%BF%97%E5%92%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/index.html">
+<meta property="og:url" content="https://wuj10n.github.io/2022/11/15/%E7%AC%ACO%E7%AB%A0%20%E4%BD%8D%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%E7%AB%A0%E8%8A%82%EF%BC%89/O.1%20%E2%80%94%20%E9%80%9A%E8%BF%87%20stdbitset%20%E7%9A%84%E4%BD%8D%E6%A0%87%E5%BF%97%E5%92%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/index.html">
 <meta property="og:site_name" content="wuj10n">
 <meta property="og:description" content="O.1 — 通过 std::bitset 的位标志和位操作在现代计算机体系结构上，最小的可寻址内存单元是字节。由于所有对象都需要具有唯一的内存地址，这意味着对象的大小必须至少为一个字节。对于大多数变量类型，这很好。但是，对于布尔值，这有点浪费（双关语）。布尔类型只有两种状态：真 （1） 或假 （0）。这组状态只需要一个位来存储。但是，如果变量必须至少是一个字节，并且一个字节是 8 位，这意味着布尔">
 <meta property="og:locale" content="zh_CN">
@@ -33,7 +33,7 @@
 <meta property="article:tag" content="LearnCpp——Chapter O">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://wuj10n.github.io/2022/11/15/%E4%BD%8D%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%E7%AB%A0%E8%8A%82%EF%BC%89/O.1%20%E2%80%94%20%E9%80%9A%E8%BF%87%20stdbitset%20%E7%9A%84%E4%BD%8D%E6%A0%87%E5%BF%97%E5%92%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/">
+<link rel="canonical" href="https://wuj10n.github.io/2022/11/15/%E7%AC%ACO%E7%AB%A0%20%E4%BD%8D%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%E7%AB%A0%E8%8A%82%EF%BC%89/O.1%20%E2%80%94%20%E9%80%9A%E8%BF%87%20stdbitset%20%E7%9A%84%E4%BD%8D%E6%A0%87%E5%BF%97%E5%92%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/">
 
 
 <script id="page-configurations">
@@ -139,6 +139,11 @@
     <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
 
   </li>
+        <li class="menu-item menu-item-learncpp">
+
+    <a href="/LearnCpp/" rel="section"><i class="https://cdn2.iconfinder.com/data/icons/strongicon-vol-24-free/24/filetype-16-512.png fa-fw"></i>LearnCpp</a>
+
+  </li>
   </ul>
 </nav>
 
@@ -167,7 +172,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/15/%E4%BD%8D%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%E7%AB%A0%E8%8A%82%EF%BC%89/O.1%20%E2%80%94%20%E9%80%9A%E8%BF%87%20stdbitset%20%E7%9A%84%E4%BD%8D%E6%A0%87%E5%BF%97%E5%92%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/15/%E7%AC%ACO%E7%AB%A0%20%E4%BD%8D%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%E7%AB%A0%E8%8A%82%EF%BC%89/O.1%20%E2%80%94%20%E9%80%9A%E8%BF%87%20stdbitset%20%E7%9A%84%E4%BD%8D%E6%A0%87%E5%BF%97%E5%92%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -360,7 +365,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-count">21</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

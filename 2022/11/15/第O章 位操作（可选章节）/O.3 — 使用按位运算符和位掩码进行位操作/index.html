@@ -23,7 +23,7 @@
   <meta name="description" content="O.3 — 使用按位运算符和位掩码进行位操作位掩码为了操作单个位（例如打开或关闭它们），我们需要一些方法来识别我们想要操作的特定位。不幸的是，按位运算符不知道如何处理位位置。相反，他们使用位掩码。 位掩码是一组预定义的位，用于选择哪些特定位将被后续操作修改。 考虑一个真实的案例，您想要绘制一个窗框。如果您不小心，您不仅会冒着粉刷窗框的风险，还会冒着粉刷玻璃本身的风险。您可以购买一些遮蔽胶带并将其贴">
 <meta property="og:type" content="article">
 <meta property="og:title" content="O.3 — 使用按位运算符和位掩码进行位操作">
-<meta property="og:url" content="https://wuj10n.github.io/2022/11/15/%E4%BD%8D%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%E7%AB%A0%E8%8A%82%EF%BC%89/O.3%20%E2%80%94%20%E4%BD%BF%E7%94%A8%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E5%92%8C%E4%BD%8D%E6%8E%A9%E7%A0%81%E8%BF%9B%E8%A1%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/index.html">
+<meta property="og:url" content="https://wuj10n.github.io/2022/11/15/%E7%AC%ACO%E7%AB%A0%20%E4%BD%8D%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%E7%AB%A0%E8%8A%82%EF%BC%89/O.3%20%E2%80%94%20%E4%BD%BF%E7%94%A8%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E5%92%8C%E4%BD%8D%E6%8E%A9%E7%A0%81%E8%BF%9B%E8%A1%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/index.html">
 <meta property="og:site_name" content="wuj10n">
 <meta property="og:description" content="O.3 — 使用按位运算符和位掩码进行位操作位掩码为了操作单个位（例如打开或关闭它们），我们需要一些方法来识别我们想要操作的特定位。不幸的是，按位运算符不知道如何处理位位置。相反，他们使用位掩码。 位掩码是一组预定义的位，用于选择哪些特定位将被后续操作修改。 考虑一个真实的案例，您想要绘制一个窗框。如果您不小心，您不仅会冒着粉刷窗框的风险，还会冒着粉刷玻璃本身的风险。您可以购买一些遮蔽胶带并将其贴">
 <meta property="og:locale" content="zh_CN">
@@ -33,7 +33,7 @@
 <meta property="article:tag" content="LearnCpp——Chapter O">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://wuj10n.github.io/2022/11/15/%E4%BD%8D%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%E7%AB%A0%E8%8A%82%EF%BC%89/O.3%20%E2%80%94%20%E4%BD%BF%E7%94%A8%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E5%92%8C%E4%BD%8D%E6%8E%A9%E7%A0%81%E8%BF%9B%E8%A1%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/">
+<link rel="canonical" href="https://wuj10n.github.io/2022/11/15/%E7%AC%ACO%E7%AB%A0%20%E4%BD%8D%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%E7%AB%A0%E8%8A%82%EF%BC%89/O.3%20%E2%80%94%20%E4%BD%BF%E7%94%A8%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E5%92%8C%E4%BD%8D%E6%8E%A9%E7%A0%81%E8%BF%9B%E8%A1%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/">
 
 
 <script id="page-configurations">
@@ -139,6 +139,11 @@
     <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
 
   </li>
+        <li class="menu-item menu-item-learncpp">
+
+    <a href="/LearnCpp/" rel="section"><i class="https://cdn2.iconfinder.com/data/icons/strongicon-vol-24-free/24/filetype-16-512.png fa-fw"></i>LearnCpp</a>
+
+  </li>
   </ul>
 </nav>
 
@@ -167,7 +172,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/15/%E4%BD%8D%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%E7%AB%A0%E8%8A%82%EF%BC%89/O.3%20%E2%80%94%20%E4%BD%BF%E7%94%A8%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E5%92%8C%E4%BD%8D%E6%8E%A9%E7%A0%81%E8%BF%9B%E8%A1%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/15/%E7%AC%ACO%E7%AB%A0%20%E4%BD%8D%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%E7%AB%A0%E8%8A%82%EF%BC%89/O.3%20%E2%80%94%20%E4%BD%BF%E7%94%A8%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E5%92%8C%E4%BD%8D%E6%8E%A9%E7%A0%81%E8%BF%9B%E8%A1%8C%E4%BD%8D%E6%93%8D%E4%BD%9C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -430,11 +435,11 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/11/15/%E4%BD%8D%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%E7%AB%A0%E8%8A%82%EF%BC%89/O.2%20%E2%80%94%20%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6/" rel="prev" title="O.2 — 按位运算符">
+    <a href="/2022/11/15/%E7%AC%ACO%E7%AB%A0%20%E4%BD%8D%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%E7%AB%A0%E8%8A%82%EF%BC%89/O.2%20%E2%80%94%20%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6/" rel="prev" title="O.2 — 按位运算符">
       <i class="fa fa-chevron-left"></i> O.2 — 按位运算符
     </a></div>
       <div class="post-nav-item">
-    <a href="/2022/11/15/%E4%BD%8D%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%E7%AB%A0%E8%8A%82%EF%BC%89/O.4%20%E2%80%94%20%E5%9C%A8%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%92%8C%E5%8D%81%E8%BF%9B%E5%88%B6%E4%B9%8B%E9%97%B4%E8%BF%9B%E8%A1%8C%E8%BD%AC%E6%8D%A2/" rel="next" title="O.4 — 在二进制和十进制之间进行转换">
+    <a href="/2022/11/15/%E7%AC%ACO%E7%AB%A0%20%E4%BD%8D%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%E7%AB%A0%E8%8A%82%EF%BC%89/O.4%20%E2%80%94%20%E5%9C%A8%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%92%8C%E5%8D%81%E8%BF%9B%E5%88%B6%E4%B9%8B%E9%97%B4%E8%BF%9B%E8%A1%8C%E8%BD%AC%E6%8D%A2/" rel="next" title="O.4 — 在二进制和十进制之间进行转换">
       O.4 — 在二进制和十进制之间进行转换 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
@@ -509,7 +514,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-count">21</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
