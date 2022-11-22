@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuj10n.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在第 8.1 课——隐式类型转换（强制）中，我们讨论了编译器可以通过称为implicit type conversion(隐式类型转换)的系统将值从一种数据类型隐式转换为另一种数据类型。 当您想要在数字上将值从一种数据类型提升为更广泛的数据类型时，使用隐式类型转换就可以了。 许多新的 C++ 程序员尝试这样的事情： 1double d &#x3D; 10 &#x2F; 4; &#x2F;&#x2F; does integer divi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="8.5 — 显式类型转换（转换）和 static_cast">
+<meta property="og:url" content="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.5%20%E2%80%94%20%E6%98%BE%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%EF%BC%88%E8%BD%AC%E6%8D%A2%EF%BC%89%E5%92%8C%20static_cast/index.html">
+<meta property="og:site_name" content="wuj10n">
+<meta property="og:description" content="在第 8.1 课——隐式类型转换（强制）中，我们讨论了编译器可以通过称为implicit type conversion(隐式类型转换)的系统将值从一种数据类型隐式转换为另一种数据类型。 当您想要在数字上将值从一种数据类型提升为更广泛的数据类型时，使用隐式类型转换就可以了。 许多新的 C++ 程序员尝试这样的事情： 1double d &#x3D; 10 &#x2F; 4; &#x2F;&#x2F; does integer divi">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-20T07:46:04.000Z">
+<meta property="article:modified_time" content="2022-11-22T02:54:16.288Z">
+<meta property="article:author" content="wuj10n">
+<meta property="article:tag" content="LearnCpp——Chapter 8">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.5%20%E2%80%94%20%E6%98%BE%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%EF%BC%88%E8%BD%AC%E6%8D%A2%EF%BC%89%E5%92%8C%20static_cast/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>8.5 — 显式类型转换（转换）和 static_cast | wuj10n</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">wuj10n</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.5%20%E2%80%94%20%E6%98%BE%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%EF%BC%88%E8%BD%AC%E6%8D%A2%EF%BC%89%E5%92%8C%20static_cast/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          8.5 — 显式类型转换（转换）和 static_cast
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-20 15:46:04" itemprop="dateCreated datePublished" datetime="2022-11-20T15:46:04+08:00">2022-11-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-22 10:54:16" itemprop="dateModified" datetime="2022-11-22T10:54:16+08:00">2022-11-22</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p> 在第 8.1 课——隐式类型转换（强制）中，我们讨论了编译器可以通过称为<code>implicit type conversion(隐式类型转换)</code>的系统将值从一种数据类型隐式转换为另一种数据类型。 当您想要在数字上将值从一种数据类型提升为更广泛的数据类型时，使用隐式类型转换就可以了。</p>
+<p>许多新的 C++ 程序员尝试这样的事情：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">double</span> d = <span class="number">10</span> / <span class="number">4</span>; <span class="comment">// does integer division, initializes d with value 2.0</span></span><br></pre></td></tr></table></figure>
+
+<p>因为 10 和 4 都是 int 类型，所以执行整数除法，表达式的计算结果为 int 值 2。 然后，该值在用于初始化变量 d 之前经过数字转换为双精度值 2.0。 这很可能不是预期的。</p>
+<p>在您使用文字操作数的情况下，将一个或两个整数文字替换为双精度文字将导致浮点除法发生：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">double</span> d = <span class="number">10.0</span> / <span class="number">4.0</span>; <span class="comment">// does floating point division, initializes d with value 2.5</span></span><br></pre></td></tr></table></figure>
+
+<p>但是，如果您使用变量而不是文字怎么办？ 考虑这种情况：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x &#123; <span class="number">10</span> &#125;;</span><br><span class="line"><span class="type">int</span> y &#123; <span class="number">4</span> &#125;;</span><br><span class="line"><span class="type">double</span> d = x / y; <span class="comment">// does integer division, initializes d with value 2.0</span></span><br></pre></td></tr></table></figure>
+
+<p>因为这里使用整数除法，所以变量 d 的最终值为 2.0。 在这种情况下，我们如何告诉编译器我们要使用浮点除法而不是整数除法？ 文字后缀不能与变量一起使用。 我们需要某种方法将一个（或两个）可变操作数转换为浮点类型，以便改为使用浮点除法。</p>
+<p>幸运的是，C++ 附带了许多不同的<code>type casting operators(类型转换运算符)</code>（通常称为强制转换），程序员可以使用它们来请求编译器执行类型转换。 因为强制转换是程序员的显式请求，所以这种形式的类型转换通常称为<code>explicit type conversion(显式类型转换)</code>（与隐式类型转换相反，隐式类型转换是编译器自动执行类型转换）。</p>
+<span id="more"></span>
+
+<h2 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h2><p>C++ 支持 5 种不同类型的转换： <code>C-style casts</code>, <code>static casts</code>, <code>const casts</code>, <code>dynamic casts</code>, and <code>reinterpret casts</code>. 后四种有时被称为命名转换。</p>
+<p>我们将在这节课中介绍 <code>C-style casts</code> and <code>static casts</code>。</p>
+<div style="background-color:lightgrey ;">
+   <p >相关内容：</p>
+    <p>在我们讨论了其他先决课程之后，我们在第 18.10 课 -- 动态转换中讨论动态转换。
+    </p>
+</div>
+
+<p><code>Const casts</code> 和<code>reinterpret casts</code> 通常应避免使用，因为它们仅在极少数情况下有用，如果使用不当可能有害。</p>
+<div style="background-color:Lightpink ;">
+   <p >警告：</p>
+   <p> 避免使用Const casts和reinterpret casts，除非有特殊的理由。
+    </p>
+</div>
+## C-style casts
+
+<p>在标准 C 编程中，强制转换是通过 () 运算符完成的，将要转换的值的类型名称放在括号内。 您可能仍然会在从 C 转换而来的代码（或程序员）中看到它们的使用。</p>
+<p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> x &#123; <span class="number">10</span> &#125;;</span><br><span class="line">    <span class="type">int</span> y &#123; <span class="number">4</span> &#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="type">double</span> d &#123; (<span class="type">double</span>)x / y &#125;; <span class="comment">// convert x to a double so we get floating point division</span></span><br><span class="line">    std::cout &lt;&lt; d; <span class="comment">// prints 2.5</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在上面的程序中，我们使用 C-style的强制转换来告诉编译器将其转换<code>x</code>为<code>double</code>. 因为 operator/ 的左操作数现在计算为浮点值，右操作数也将转换为浮点值，除法将使用浮点除法而不是整数除法完成！</p>
+<p>C++ 还允许您像函数调用的语法一样使用<code>C-style cast</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">double</span> d &#123; <span class="built_in">double</span>(x) / y &#125;; <span class="comment">// convert x to a double so we get floating point division</span></span><br></pre></td></tr></table></figure>
+
+<p>这与前面的示例执行相同，但具有将要转换的值括起来的好处（更容易分辨正在转换的内容）。</p>
+<p>虽然 <code>C-style cast</code>看起来是一个单一的转换，但它实际上可以根据上下文执行各种不同的转换。这可以包括 <code>static cast</code>、 <code>const cast</code>或  <code>reinterpret cast</code>（我们上面提到的后两者您应该避免）。因此，<code>C-style casts</code>存在被无意中滥用和未产生预期行为的风险，而使用 C++ 强制转换很容易避免这种情况。</p>
+<div style="background-color:Lightgrey ;">
+   <p >相关内容：</p>
+   <p> 如果您很好奇，[本文](https://anteru.net/blog/2007/c-background-static-reinterpret-and-c-style-casts/)提供了有关 C 样式转换实际工作原理的更多信息。
+    </p>
+</div>
+
+<div style="background-color:Lightgreen ;">
+   <p >最佳实践：</p>
+   <p>避免使用 C 风格的转换。
+    </p>
+</div>
+
+<h2 id="static-cast"><a href="#static-cast" class="headerlink" title="static_cast"></a><strong>static_cast</strong></h2><p>C++ 引入了一个名为<strong>static_cast</strong>的转换运算符，它可用于将一种类型的值转换为另一种类型的值。</p>
+<p>您之前已经看到<code>static_cast</code>用于将<code>char</code>转换为 <code>int</code>以便 std::cout 将其打印为整数而不是 <code>char</code>字符：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">char</span> c &#123; <span class="string">&#x27;a&#x27;</span> &#125;;</span><br><span class="line">    std::cout &lt;&lt; c &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; <span class="built_in">static_cast</span>&lt;<span class="type">int</span>&gt;(c) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// prints a 97</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该<code>static_cast</code>运算符将表达式作为输入，并返回转换为尖括号内指定类型的计算值。<code>static_cast</code>最好用于将一种基本类型转换为另一种。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> x &#123; <span class="number">10</span> &#125;;</span><br><span class="line">    <span class="type">int</span> y &#123; <span class="number">4</span> &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// static cast x to a double so we get floating point division</span></span><br><span class="line">    <span class="type">double</span> d &#123; <span class="built_in">static_cast</span>&lt;<span class="type">double</span>&gt;(x) / y &#125;;</span><br><span class="line">    std::cout &lt;&lt; d; <span class="comment">// prints 2.5</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>static_cast</code>的主要优点是它提供了编译时类型检查，使得无意中的错误更难发生。<code>static_cast</code>也（有意地）不如<code> C-style cast</code>强大,因此您不会无意中删除<code>const</code>或做其他您可能不打算做的事情。</p>
+<div style="background-color:Lightgreen ;">
+   <p >最佳实践：</p>
+   <p>当您需要将值从一种类型转换为另一种类型时，请使用 static_cast。
+    </p>
+</div>
+
+<h2 id="使用-static-cast-明确缩小转换"><a href="#使用-static-cast-明确缩小转换" class="headerlink" title="使用 static_cast 明确缩小转换"></a>使用 static_cast 明确缩小转换</h2><p>当执行可能不安全（缩小）的隐式类型转换时，编译器通常会发出警告。例如，考虑以下程序：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> i &#123; <span class="number">48</span> &#125;;</span><br><span class="line"><span class="type">char</span> ch = i; <span class="comment">// implicit narrowing conversion</span></span><br></pre></td></tr></table></figure>
+
+<p>将<code>int</code>（2 或 4 个字节）转换为<code>char</code>（1 个字节）可能不安全（因为编译器无法判断整数值是否会溢出范围<code>char</code>），因此编译器通常会打印警告。如果我们使用列表初始化，编译器会产生错误。</p>
+<p>为了解决这个问题，我们可以使用静态转换将我们的整数显式转换为 a <code>char</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> i &#123; <span class="number">48</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// explicit conversion from int to char, so that a char is assigned to variable ch</span></span><br><span class="line"><span class="type">char</span> ch &#123; <span class="built_in">static_cast</span>&lt;<span class="type">char</span>&gt;(i) &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>当我们这样做时，我们明确地告诉编译器这种转换是有意的，并且我们对后果负责（例如，如果发生这种情况，则溢出 <code>char</code> 的范围）。由于此输出的<code>static_cast</code>类型为 <code>char</code>，变量的初始化<code>ch</code>不会产生任何类型不匹配，因此不会产生警告或错误。</p>
+<p>这是另一个示例，编译器通常会抱怨将<code>double</code> 转换为 <code>int</code>可能会导致数据丢失：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> i &#123; <span class="number">100</span> &#125;;</span><br><span class="line">i = i / <span class="number">2.5</span>;</span><br></pre></td></tr></table></figure>
+
+<p>告诉编译器我们明确打算这样做：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> i &#123; <span class="number">100</span> &#125;;</span><br><span class="line">i = <span class="built_in">static_cast</span>&lt;<span class="type">int</span>&gt;(i / <span class="number">2.5</span>);</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-8/" rel="tag"># LearnCpp——Chapter 8</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.4%20%E2%80%94%20%E7%AE%97%E6%9C%AF%E8%BD%AC%E6%8D%A2/" rel="prev" title="8.4 — 算术转换">
+      <i class="fa fa-chevron-left"></i> 8.4 — 算术转换
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8-6/" rel="next" title="8.6">
+      8.6 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.</span> <span class="nav-text">类型转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#static-cast"><span class="nav-number">2.</span> <span class="nav-text">static_cast</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-static-cast-%E6%98%8E%E7%A1%AE%E7%BC%A9%E5%B0%8F%E8%BD%AC%E6%8D%A2"><span class="nav-number">3.</span> <span class="nav-text">使用 static_cast 明确缩小转换</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuj10n</p>
+  <div class="site-description" itemprop="description">wuj10n的个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wuj10n" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wuj10n" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:542211073@qq.com" title="E-Mail → mailto:542211073@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuj10n</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

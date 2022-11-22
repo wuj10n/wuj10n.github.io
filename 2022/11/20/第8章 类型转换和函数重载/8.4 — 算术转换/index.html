@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuj10n.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="8.4 — 算术转换在第5.1课——运算符优先级和结合性中，我们讨论了如何根据运算符的优先级和结合性对表达式求值。 考虑以下表达式： 1int x &amp;#123; 2 + 3 &amp;#125;;  当二元运算符+被调用时，它被赋予两个操作数，都是 int 类型。 因为两个操作数属于同一类型，所以该类型将用于执行计算并返回结果。 因此，2 + 3 将计算为 int 值 5。 但是当二元运算符的操作数是不同">
+<meta property="og:type" content="article">
+<meta property="og:title" content="8.4 — 算术转换">
+<meta property="og:url" content="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.4%20%E2%80%94%20%E7%AE%97%E6%9C%AF%E8%BD%AC%E6%8D%A2/index.html">
+<meta property="og:site_name" content="wuj10n">
+<meta property="og:description" content="8.4 — 算术转换在第5.1课——运算符优先级和结合性中，我们讨论了如何根据运算符的优先级和结合性对表达式求值。 考虑以下表达式： 1int x &amp;#123; 2 + 3 &amp;#125;;  当二元运算符+被调用时，它被赋予两个操作数，都是 int 类型。 因为两个操作数属于同一类型，所以该类型将用于执行计算并返回结果。 因此，2 + 3 将计算为 int 值 5。 但是当二元运算符的操作数是不同">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-20T07:46:01.000Z">
+<meta property="article:modified_time" content="2022-11-22T02:19:02.843Z">
+<meta property="article:author" content="wuj10n">
+<meta property="article:tag" content="LearnCpp——Chapter 8">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.4%20%E2%80%94%20%E7%AE%97%E6%9C%AF%E8%BD%AC%E6%8D%A2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>8.4 — 算术转换 | wuj10n</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">wuj10n</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.4%20%E2%80%94%20%E7%AE%97%E6%9C%AF%E8%BD%AC%E6%8D%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          8.4 — 算术转换
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-20 15:46:01" itemprop="dateCreated datePublished" datetime="2022-11-20T15:46:01+08:00">2022-11-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-22 10:19:02" itemprop="dateModified" datetime="2022-11-22T10:19:02+08:00">2022-11-22</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="8-4-—-算术转换"><a href="#8-4-—-算术转换" class="headerlink" title="8.4 — 算术转换"></a>8.4 — 算术转换</h1><p><a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/operator-precedence-and-associativity/">在第5.1</a>课——运算符优先级和结合性中，我们讨论了如何根据运算符的优先级和结合性对表达式求值。</p>
+<p>考虑以下表达式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x &#123; <span class="number">2</span> + <span class="number">3</span> &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>当二元运算符+被调用时，它被赋予两个操作数，都是 int 类型。 因为两个操作数属于同一类型，所以该类型将用于执行计算并返回结果。 因此，2 + 3 将计算为 int 值 5。</p>
+<p>但是当二元运算符的操作数是不同类型时会发生什么？</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">??? y &#123; <span class="number">2</span> + <span class="number">3.5</span> &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在这种情况下，operator+ 被赋予一个 int 类型的操作数和另一个 double 类型的操作数。 运算符的结果应该以 int、double 还是其他形式返回？ 定义变量时，我们可以选择它的类型。 在其他情况下，例如当使用 std::cout &lt;&lt; 时，计算求值的类型会更改输出内容的行为。</p>
+<p>在 C++ 中，某些运算符要求它们的操作数具有相同的类型。 如果使用不同类型的操作数调用其中一个运算符，则一个或两个操作数将使用一组称为 <strong>usual arithmetic conversions</strong>（通常算术转换）的规则，进而隐式转换为匹配类型。</p>
+<span id="more"></span>
+
+<h2 id="需要相同类型操作数的运算符"><a href="#需要相同类型操作数的运算符" class="headerlink" title="需要相同类型操作数的运算符"></a>需要相同类型操作数的运算符</h2><p>以下运算符要求它们的操作数是同一类型：</p>
+<ul>
+<li>二元算术运算符：+、-、*、/、%</li>
+<li>二元关系运算符：&lt;、&gt;、&lt;=、&gt;=、==、!=</li>
+<li>二元按位算术运算符：&amp;、^、|</li>
+<li>条件运算符 ?:（不包括条件，它应该是 bool 类型）</li>
+</ul>
+<h2 id="常用的算术转换规则"><a href="#常用的算术转换规则" class="headerlink" title="常用的算术转换规则"></a>常用的算术转换规则</h2><p>通常的算术转换规则非常简单。 编译器有一个类型的优先列表，看起来像这样：</p>
+<ul>
+<li>long double (highest)</li>
+<li>double</li>
+<li>float</li>
+<li>unsigned long long</li>
+<li>long long</li>
+<li>unsigned long</li>
+<li>long</li>
+<li>unsigned int</li>
+<li>int (lowest)</li>
+</ul>
+<p>只有两条规则：</p>
+<ul>
+<li><strong>如果至少一个操作数的类型在优先级列表中，则将具有较低优先级的操作数转换为具有较高优先级的操作数的类型。</strong></li>
+<li><strong>否则（两个操作数的类型都不在列表中），两个操作数都进行数值提升（见 8.2 – 浮点和整数提升）。</strong></li>
+</ul>
+<h2 id="一些例子"><a href="#一些例子" class="headerlink" title="一些例子"></a>一些例子</h2><p>在以下示例中，我们将使用 typeid 运算符（包含在 <typeinfo> 标头中）来显示表达式的结果类型。</p>
+<p>首先，让我们添加一个 int 和一个 double：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;typeinfo&gt;</span> <span class="comment">// for typeid()</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> i&#123; <span class="number">2</span> &#125;;</span><br><span class="line">    <span class="type">double</span> d&#123; <span class="number">3.5</span> &#125;;</span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">typeid</span>(i + d).<span class="built_in">name</span>() &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; i + d &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// show us the type of i + d</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这种情况下，double 操作数具有最高优先级，因此优先级较低的操作数（int 类型）被类型转换为 double 值 2.0。 然后添加双精度值 2.0 和 3.5 以产生双精度结果 5.5。</p>
+<p>在作者的机器上，打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">double 5.5</span><br></pre></td></tr></table></figure>
+
+<p>请注意，您的编译器显示的内容可能略有不同，因为 typeid.name() 的输出由编译器决定。</p>
+<p>现在让我们添加两个 short 类型的值：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;typeinfo&gt;</span> <span class="comment">// for typeid()</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">short</span> a&#123; <span class="number">4</span> &#125;;</span><br><span class="line">    <span class="type">short</span> b&#123; <span class="number">5</span> &#125;;</span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">typeid</span>(a + b).<span class="built_in">name</span>() &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; a + b &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// show us the type of a + b</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为两个操作数都没有出现在优先级列表中，所以两个操作数都先经过整型提升为 int 类型。 再将两个 int 相加的结果是一个 int，如您所料：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int 9</span><br></pre></td></tr></table></figure>
+
+<h2 id="有符号和无符号的问题"><a href="#有符号和无符号的问题" class="headerlink" title="有符号和无符号的问题"></a>有符号和无符号的问题</h2><p>当混合有符号和无符号值时，此优先级层次结构可能会导致一些问题。 例如，看看下面的代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;typeinfo&gt;</span> <span class="comment">// for typeid()</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">typeid</span>(<span class="number">5u</span><span class="number">-10</span>).<span class="built_in">name</span>() &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; <span class="number">5u</span> - <span class="number">10</span> &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// 5u means treat 5 as an unsigned integer</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>您可能希望表达式 5u - 10 的计算结果为 -5，因为 5 - 10 = -5。 但这是实际结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unsigned int 4294967291</span><br></pre></td></tr></table></figure>
+
+<p>因为 <strong>unsigned int 操作数具有更高的优先级</strong>，所以 int 操作数被转换为 unsigned int。 由于值 -5 超出了 unsigned int 的范围，我们得到了我们不期望的结果。</p>
+<p>这是另一个显示违反直觉结果的示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::cout &lt;&lt; std::boolalpha &lt;&lt; (<span class="number">-3</span> &lt; <span class="number">5u</span>) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>虽然我们很清楚 5 大于 -3，但在计算此表达式时，-3 会转换为大于 5 的大型无符号整数。 因此，上面打印的是 false 而不是 true 的预期结果。</p>
+<p>这是<strong>避免使用无符号整数的主要原因之一</strong>——当您在算术表达式中将它们与带符号整数混合使用时，您将面临出现意外结果的风险。 编译器甚至可能不会发出警告。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-8/" rel="tag"># LearnCpp——Chapter 8</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.3%20%E2%80%94%20%E6%95%B0%E5%80%BC%E8%BD%AC%E6%8D%A2/" rel="prev" title="8.3 — 数值转换">
+      <i class="fa fa-chevron-left"></i> 8.3 — 数值转换
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.5%20%E2%80%94%20%E6%98%BE%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%EF%BC%88%E8%BD%AC%E6%8D%A2%EF%BC%89%E5%92%8C%20static_cast/" rel="next" title="8.5 — 显式类型转换（转换）和 static_cast">
+      8.5 — 显式类型转换（转换）和 static_cast <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#8-4-%E2%80%94-%E7%AE%97%E6%9C%AF%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.</span> <span class="nav-text">8.4 — 算术转换</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E7%9B%B8%E5%90%8C%E7%B1%BB%E5%9E%8B%E6%93%8D%E4%BD%9C%E6%95%B0%E7%9A%84%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">1.1.</span> <span class="nav-text">需要相同类型操作数的运算符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E7%AE%97%E6%9C%AF%E8%BD%AC%E6%8D%A2%E8%A7%84%E5%88%99"><span class="nav-number">1.2.</span> <span class="nav-text">常用的算术转换规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E4%BE%8B%E5%AD%90"><span class="nav-number">1.3.</span> <span class="nav-text">一些例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89%E7%AC%A6%E5%8F%B7%E5%92%8C%E6%97%A0%E7%AC%A6%E5%8F%B7%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.4.</span> <span class="nav-text">有符号和无符号的问题</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuj10n</p>
+  <div class="site-description" itemprop="description">wuj10n的个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wuj10n" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wuj10n" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:542211073@qq.com" title="E-Mail → mailto:542211073@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuj10n</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
