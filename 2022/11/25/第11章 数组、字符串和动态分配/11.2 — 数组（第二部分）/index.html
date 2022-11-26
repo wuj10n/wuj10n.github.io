@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuj10n.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本课继续讨论从第 11.1 课开始的数组——数组（第一部分）。 初始化固定数组数组元素就像普通变量一样对待，因此，它们在创建时不会被初始化。 “初始化”数组的一种方法是逐个元素地进行： 123456int prime[5]; &#x2F;&#x2F; hold the first 5 prime numbersprime[0] &#x3D; 2;prime[1] &#x3D; 3;prime[2] &#x3D; 5;prime[3] &#x3D; 7;pr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="11.2 — 数组（第二部分）">
+<meta property="og:url" content="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.2%20%E2%80%94%20%E6%95%B0%E7%BB%84%EF%BC%88%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%89/index.html">
+<meta property="og:site_name" content="wuj10n">
+<meta property="og:description" content="本课继续讨论从第 11.1 课开始的数组——数组（第一部分）。 初始化固定数组数组元素就像普通变量一样对待，因此，它们在创建时不会被初始化。 “初始化”数组的一种方法是逐个元素地进行： 123456int prime[5]; &#x2F;&#x2F; hold the first 5 prime numbersprime[0] &#x3D; 2;prime[1] &#x3D; 3;prime[2] &#x3D; 5;prime[3] &#x3D; 7;pr">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-25T07:14:07.000Z">
+<meta property="article:modified_time" content="2022-11-26T02:28:51.966Z">
+<meta property="article:author" content="wuj10n">
+<meta property="article:tag" content="LearnCpp——Chapter 11">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.2%20%E2%80%94%20%E6%95%B0%E7%BB%84%EF%BC%88%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>11.2 — 数组（第二部分） | wuj10n</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">wuj10n</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.2%20%E2%80%94%20%E6%95%B0%E7%BB%84%EF%BC%88%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          11.2 — 数组（第二部分）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-25 15:14:07" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:07+08:00">2022-11-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-26 10:28:51" itemprop="dateModified" datetime="2022-11-26T10:28:51+08:00">2022-11-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本课继续讨论从<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/arrays-part-i/">第 11.1 课开始的数组——数组（第一部分）</a>。</p>
+<h2 id="初始化固定数组"><a href="#初始化固定数组" class="headerlink" title="初始化固定数组"></a>初始化固定数组</h2><p>数组元素就像普通变量一样对待，因此，它们在创建时不会被初始化。</p>
+<p>“初始化”数组的一种方法是逐个元素地进行：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> prime[<span class="number">5</span>]; <span class="comment">// hold the first 5 prime numbers</span></span><br><span class="line">prime[<span class="number">0</span>] = <span class="number">2</span>;</span><br><span class="line">prime[<span class="number">1</span>] = <span class="number">3</span>;</span><br><span class="line">prime[<span class="number">2</span>] = <span class="number">5</span>;</span><br><span class="line">prime[<span class="number">3</span>] = <span class="number">7</span>;</span><br><span class="line">prime[<span class="number">4</span>] = <span class="number">11</span>;</span><br></pre></td></tr></table></figure>
+
+<p>然而，这很痛苦，尤其是当数组变大时。此外，它不是初始化，而是赋值。如果是<code>const</code> 数组，则赋值不起作用。</p>
+<p>幸运的是，C++ 提供了一种更方便的方法来通过使用<strong>初始化列表</strong>来初始化整个数组。以下示例使用与上述相同的值初始化数组：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> prime[<span class="number">5</span>]&#123; <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">11</span> &#125;; <span class="comment">// use initializer list to initialize the fixed array</span></span><br></pre></td></tr></table></figure>
+
+<p>如果列表中的初始值设定项多于数组可容纳的数量，编译器将产生错误。</p>
+<p>但是，如果列表中的初始值设定项少于数组可以容纳的数量，则剩余元素将被初始化为 0（或者 0 转换为非整数基本类型的任何值——例如 0.0 表示双精度）。这称为<strong>零初始化</strong>。<span id="more"></span></p>
+<p>以下示例显示了这一点：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> array[<span class="number">5</span>]&#123; <span class="number">7</span>, <span class="number">4</span>, <span class="number">5</span> &#125;; <span class="comment">// only initialize first 3 elements</span></span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; array[<span class="number">0</span>] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    std::cout &lt;&lt; array[<span class="number">1</span>] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    std::cout &lt;&lt; array[<span class="number">2</span>] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    std::cout &lt;&lt; array[<span class="number">3</span>] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    std::cout &lt;&lt; array[<span class="number">4</span>] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">7</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">0</span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+
+<p>因此，要将数组的所有元素初始化为 0，您可以这样做：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> array[<span class="number">5</span>]&#123;&#125;;          <span class="comment">// Initialize all elements to 0</span></span><br><span class="line"><span class="type">double</span> array[<span class="number">5</span>] &#123;&#125;;      <span class="comment">// Initialize all elements to 0.0</span></span><br><span class="line">std::string array[<span class="number">5</span>] &#123;&#125;; <span class="comment">// Initialize all elements to an empty string</span></span><br></pre></td></tr></table></figure>
+
+<p>如果省略初始化器列表，则元素未初始化，除非它们是自初始化的类类型。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> array[<span class="number">5</span>];         <span class="comment">// uninitialized (since int doesn&#x27;t self-initialize)</span></span><br><span class="line"><span class="type">double</span> array[<span class="number">5</span>];      <span class="comment">// uninitialized (since double doesn&#x27;t self-initialize)</span></span><br><span class="line">std::string array[<span class="number">5</span>]; <span class="comment">// Initialize all elements to an empty string</span></span><br></pre></td></tr></table></figure>
+
+<div style="background-color:lightgreen ;">
+   <p >最佳实践：</p>
+   <p>
+显式初始化数组（即使元素类型是自初始化的）。
+    </p>
+</div>
+
+<h2 id="省略长度"><a href="#省略长度" class="headerlink" title="省略长度"></a>省略长度</h2><p>如果您使用初始化列表初始化一个固定的元素数组，编译器可以为您算出数组的长度，您可以省略显式声明数组的长度。</p>
+<p>下面两行是等价的：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> array[<span class="number">5</span>]&#123; <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> &#125;; <span class="comment">// explicitly define the length of the array</span></span><br><span class="line"><span class="type">int</span> array[]&#123; <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> &#125;; <span class="comment">// let the initializer list set length of the array</span></span><br></pre></td></tr></table></figure>
+
+<p>这不仅节省了输入，还意味着如果您稍后添加或删除元素，则不必更新数组长度。</p>
+<h2 id="数组和枚举"><a href="#数组和枚举" class="headerlink" title="数组和枚举"></a>数组和枚举</h2><p>数组的一大文档问题是整数索引不向程序员提供任何关于索引含义的信息。考虑一班 5 名学生：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">constexpr</span> <span class="type">int</span> numberOfStudents&#123;<span class="number">5</span>&#125;;</span><br><span class="line"><span class="type">int</span> testScores[numberOfStudents]&#123;&#125;;</span><br><span class="line">testScores[<span class="number">2</span>] = <span class="number">76</span>;</span><br></pre></td></tr></table></figure>
+
+<p>testScores[2]代表谁？目前还不清楚。</p>
+<p>这可以通过设置一个枚举来解决，其中一个枚举器映射到每个可能的数组索引：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">StudentNames</span></span><br><span class="line">&#123;</span><br><span class="line">    kenny, <span class="comment">// 0</span></span><br><span class="line">    kyle, <span class="comment">// 1</span></span><br><span class="line">    stan, <span class="comment">// 2</span></span><br><span class="line">    butters, <span class="comment">// 3</span></span><br><span class="line">    cartman, <span class="comment">// 4</span></span><br><span class="line">    max_students <span class="comment">// 5</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> testScores[max_students]&#123;&#125;; <span class="comment">// allocate 5 integers</span></span><br><span class="line">    testScores[stan] = <span class="number">76</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样一来，每个数组元素代表什么就更加清晰了。请注意，已添加一个名为 max_students 的额外枚举器。在数组声明期间使用此枚举数以确保数组具有适当的长度（因为数组长度应比最大索引大 1）。这对于文档目的很有用，因为如果添加另一个枚举器，数组将自动调整大小：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">StudentNames</span></span><br><span class="line">&#123;</span><br><span class="line">    kenny, <span class="comment">// 0</span></span><br><span class="line">    kyle, <span class="comment">// 1</span></span><br><span class="line">    stan, <span class="comment">// 2</span></span><br><span class="line">    butters, <span class="comment">// 3</span></span><br><span class="line">    cartman, <span class="comment">// 4</span></span><br><span class="line">    wendy, <span class="comment">// 5</span></span><br><span class="line">    max_students <span class="comment">// 6</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> testScores[max_students]&#123;&#125;; <span class="comment">// allocate 6 integers</span></span><br><span class="line">    testScores[stan] = <span class="number">76</span>; <span class="comment">// still works</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>请注意，此“技巧”仅在您不手动更改枚举器值时才有效！</p>
+<h2 id="数组和枚举类"><a href="#数组和枚举类" class="headerlink" title="数组和枚举类"></a>数组和枚举类</h2><p>枚举类没有到整数的隐式转换，因此如果您尝试以下操作：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum class</span> <span class="title class_">StudentNames</span></span><br><span class="line">&#123;</span><br><span class="line">    kenny, <span class="comment">// 0</span></span><br><span class="line">    kyle, <span class="comment">// 1</span></span><br><span class="line">    stan, <span class="comment">// 2</span></span><br><span class="line">    butters, <span class="comment">// 3</span></span><br><span class="line">    cartman, <span class="comment">// 4</span></span><br><span class="line">    wendy, <span class="comment">// 5</span></span><br><span class="line">    max_students <span class="comment">// 6</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> testScores[StudentNames::max_students]&#123;&#125;; <span class="comment">// allocate 6 integers</span></span><br><span class="line">    testScores[StudentNames::stan] = <span class="number">76</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你会得到一个编译器错误。这可以通过使用 static_cast 将枚举数转换为整数来解决：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> testScores[<span class="built_in">static_cast</span>&lt;<span class="type">int</span>&gt;(StudentNames::max_students)]&#123;&#125;; <span class="comment">// allocate 6 integers</span></span><br><span class="line">    testScores[<span class="built_in">static_cast</span>&lt;<span class="type">int</span>&gt;(StudentNames::stan)] = <span class="number">76</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然而，这样做有点痛苦，所以最好在命名空间内使用标准枚举：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> StudentNames</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">enum</span> <span class="title class_">StudentNames</span></span><br><span class="line">    &#123;</span><br><span class="line">        kenny, <span class="comment">// 0</span></span><br><span class="line">        kyle, <span class="comment">// 1</span></span><br><span class="line">        stan, <span class="comment">// 2</span></span><br><span class="line">        butters, <span class="comment">// 3</span></span><br><span class="line">        cartman, <span class="comment">// 4</span></span><br><span class="line">        wendy, <span class="comment">// 5</span></span><br><span class="line">        max_students <span class="comment">// 6</span></span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> testScores[StudentNames::max_students]&#123;&#125;; <span class="comment">// allocate 6 integers</span></span><br><span class="line">    testScores[StudentNames::stan] = <span class="number">76</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="将数组传递给函数"><a href="#将数组传递给函数" class="headerlink" title="将数组传递给函数"></a>将数组传递给函数</h2><p>尽管将数组传递给函数乍一看就像传递普通变量一样，但在幕后，C++ 对数组的处理方式不同。</p>
+<p>当按值传递普通变量时，C++ 将参数的值复制到函数参数中。因为参数是一个副本，所以更改参数的值不会更改原始参数的值。</p>
+<p>但是，因为复制大型数组的开销可能非常大，所以当将数组传递给函数时，C++ 不会复制数组<em>。</em>相反，*<em>传递的是</em>实际数组。这具有的副作用：允许函数直接更改数组元素值！**</p>
+<p>下面的例子说明了这个概念：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">passValue</span><span class="params">(<span class="type">int</span> value)</span> <span class="comment">// value is a copy of the argument</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    value = <span class="number">99</span>; <span class="comment">// so changing it here won&#x27;t change the value of the argument</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">passArray</span><span class="params">(<span class="type">int</span> prime[<span class="number">5</span>])</span> <span class="comment">// prime is the actual array</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    prime[<span class="number">0</span>] = <span class="number">11</span>; <span class="comment">// so changing it here will change the original argument!</span></span><br><span class="line">    prime[<span class="number">1</span>] = <span class="number">7</span>;</span><br><span class="line">    prime[<span class="number">2</span>] = <span class="number">5</span>;</span><br><span class="line">    prime[<span class="number">3</span>] = <span class="number">3</span>;</span><br><span class="line">    prime[<span class="number">4</span>] = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> value&#123; <span class="number">1</span> &#125;;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;before passValue: &quot;</span> &lt;&lt; value &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    <span class="built_in">passValue</span>(value);</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;after passValue: &quot;</span> &lt;&lt; value &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> prime[<span class="number">5</span>]&#123; <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">11</span> &#125;;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;before passArray: &quot;</span> &lt;&lt; prime[<span class="number">0</span>] &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; prime[<span class="number">1</span>] &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; prime[<span class="number">2</span>] &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; prime[<span class="number">3</span>] &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; prime[<span class="number">4</span>] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    <span class="built_in">passArray</span>(prime);</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;after passArray: &quot;</span> &lt;&lt; prime[<span class="number">0</span>] &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; prime[<span class="number">1</span>] &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; prime[<span class="number">2</span>] &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; prime[<span class="number">3</span>] &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; prime[<span class="number">4</span>] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">before passValue: 1</span><br><span class="line">after passValue: 1</span><br><span class="line">before passArray: 2 3 5 7 11</span><br><span class="line">after passArray: 11 7 5 3 2</span><br></pre></td></tr></table></figure>
+
+<p>在上面的示例中，main() 中的值没有更改，因为函数 passValue() 中的参数值是函数 main() 中变量值的副本，而不是实际变量。但是，因为函数 passArray() 中的参数数组是实际的数组，所以 passArray() 可以直接改变元素的值！</p>
+<p>为什么会发生这种情况与数组在 C++ 中的实现方式有关，我们将在第<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/pointers-and-arrays/">11.8 课中重新讨论这个主题——指针和数组</a>。现在，您可以将其视为语言的怪癖。</p>
+<p>作为旁注，如果你想确保一个函数不修改传递给它的数组元素，你可以使数组常量：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// even though prime is the actual array, within this function it should be treated as a constant</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">passArray</span><span class="params">(<span class="type">const</span> <span class="type">int</span> prime[<span class="number">5</span>])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// so each of these lines will cause a compile error!</span></span><br><span class="line">    prime[<span class="number">0</span>] = <span class="number">11</span>;</span><br><span class="line">    prime[<span class="number">1</span>] = <span class="number">7</span>;</span><br><span class="line">    prime[<span class="number">2</span>] = <span class="number">5</span>;</span><br><span class="line">    prime[<span class="number">3</span>] = <span class="number">3</span>;</span><br><span class="line">    prime[<span class="number">4</span>] = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="确定数组的长度"><a href="#确定数组的长度" class="headerlink" title="确定数组的长度"></a>确定数组的长度</h2><p><iterator> 标头中的 std::size() 函数可用于确定数组的长度。</p>
+<p>这是一个例子：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span> <span class="comment">// for std::size</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> array[]&#123; <span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">8</span>, <span class="number">13</span>, <span class="number">21</span> &#125;;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;The array has: &quot;</span> &lt;&lt; std::<span class="built_in">size</span>(array) &lt;&lt; <span class="string">&quot; elements\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The array has: 8 elements</span><br></pre></td></tr></table></figure>
+
+<p>请注意，由于 C++ 将数组传递给函数的方式，这<em>不适</em>用于已传递给函数的数组！</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">printSize</span><span class="params">(<span class="type">int</span> array[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::cout &lt;&lt; std::<span class="built_in">size</span>(array) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// Error</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> array[]&#123; <span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">8</span>, <span class="number">13</span>, <span class="number">21</span> &#125;;</span><br><span class="line">    std::cout &lt;&lt; std::<span class="built_in">size</span>(array) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// will print the size of the array</span></span><br><span class="line">    <span class="built_in">printSize</span>(array);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>std::size() 将与其他类型的对象一起工作（例如 std::array 和 std::vector），如果您尝试在已传递给一个函数的固定数组上使用它会导致编译器错误功能！请注意，std::size 返回一个无符号值。如果你需要一个带符号的值，你可以转换结果，或者从 C++20 开始，使用 std::ssize() （代表带符号的大小）。</p>
+<p>std::size() 是在 C++17 中添加的。如果您仍在使用旧的编译器，则必须改用 sizeof 运算符。sizeof 不像 std::size() 那样容易使用，有几件事你必须注意。如果您使用的是支持 C++17 的编译器，则可以跳至“索引超出范围的数组”部分。</p>
+<p>sizeof 运算符可用于数组，它将返回数组的总大小（数组长度乘以元素大小）。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> array[]&#123; <span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">8</span>, <span class="number">13</span>, <span class="number">21</span> &#125;;</span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">sizeof</span>(array) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// will print the size of the array multiplied by the size of an int</span></span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">sizeof</span>(<span class="type">int</span>) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在一台有 4 字节整数和 8 字节指针的机器上，打印出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">32</span><br><span class="line">4</span><br></pre></td></tr></table></figure>
+
+<p>（如果类型的大小不同，您可能会得到不同的结果）。</p>
+<p>一个巧妙的技巧：我们可以通过将整个数组的大小除以数组元素的大小来确定固定数组的长度：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> array[]&#123; <span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">8</span>, <span class="number">13</span>, <span class="number">21</span> &#125;;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;The array has: &quot;</span> &lt;&lt; <span class="built_in">sizeof</span>(array) / <span class="built_in">sizeof</span>(array[<span class="number">0</span>]) &lt;&lt; <span class="string">&quot; elements\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这打印</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The array has: 8 elements</span><br></pre></td></tr></table></figure>
+
+<p>这是如何运作的？首先，请注意整个数组的大小等于数组的长度乘以一个元素的大小。更紧凑地说：数组大小=数组长度*元素大小。</p>
+<p>使用代数，我们可以重新排列这个等式：数组长度 = 数组大小/元素大小。sizeof(array) 是数组大小，sizeof(array[0]) 是元素大小，所以我们的等式变成数组长度 = sizeof(array) / sizeof(array[0])。我们通常使用数组元素 0 作为数组元素，因为无论数组长度是多少，它都是保证存在的唯一元素。</p>
+<p>请注意，这仅在数组是固定长度数组时才有效，并且您在声明数组的同一函数中执行此技巧（我们将在本章的后续课程中详细讨论为什么存在此限制).</p>
+<p>当 sizeof 用于已传递给函数的数组时，它不会像 std::size() 那样出错。相反，它返回指针的大小。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">printSize</span><span class="params">(<span class="type">int</span> array[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">sizeof</span>(array) / <span class="built_in">sizeof</span>(array[<span class="number">0</span>]) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> array[]&#123; <span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">8</span>, <span class="number">13</span>, <span class="number">21</span> &#125;;</span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">sizeof</span>(array) / <span class="built_in">sizeof</span>(array[<span class="number">0</span>]) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    <span class="built_in">printSize</span>(array);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再次假设 8 字节指针和 4 字节整数，这打印</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">8</span><br><span class="line">2</span><br></pre></td></tr></table></figure>
+
+<div style="background-color:lightgrey ;">
+   <p >作者注：</p>
+    <p>如果您尝试在传递给函数的数组上使用 sizeof() ，则正确配置的编译器应该打印一条警告。
+    </p>
+</div>
+
+<p>main()中的计算是正确的，但是printSize()中的sizeof()返回了8（一个指针的大小），8除以4就是2。</p>
+<p>因此，在数组上使用 sizeof() 时要小心！</p>
+<p>注意：在常见用法中，术语“数组大小”和“数组长度”最常用于指代数组的长度（数组的大小在大多数情况下没有用，除了我们展示的技巧之外你在上面）。</p>
+<h2 id="索引超出范围的数组"><a href="#索引超出范围的数组" class="headerlink" title="索引超出范围的数组"></a>索引超出范围的数组</h2><p>请记住，长度为 N 的数组具有数组元素 0 到 N-1。那么，如果您尝试访问下标超出该范围的数组，会发生什么情况？</p>
+<p>考虑以下程序：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> prime[<span class="number">5</span>]&#123;&#125;; <span class="comment">// hold the first 5 prime numbers</span></span><br><span class="line">    prime[<span class="number">5</span>] = <span class="number">13</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个程序中，我们的数组长度为 5，但我们试图将一个素数写入第 6 个元素（索引 5）。</p>
+<p>C++ 不<em>进行</em>任何检查以确保您的索引对于数组的长度有效。所以在上面的例子中，值 13 将被插入到内存中，如果第 6 个元素存在的话。发生这种情况时，您将得到未定义的行为——例如，这可能会覆盖另一个变量的值，或导致您的程序崩溃。</p>
+<p>尽管这种情况很少发生，但 C++ 也允许您使用负数索引，但会产生类似的不良结果。</p>
+<div style="background-color:lightgreen ;">
+   <p >规则：</p>
+   <p>
+使用数组时，请确保您的索引在数组范围内有效！
+    </p>
+</div>
+
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-11/" rel="tag"># LearnCpp——Chapter 11</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.1%20%E2%80%94%20%E6%95%B0%E7%BB%84%EF%BC%88%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%89/" rel="prev" title="11.1 — 数组（第一部分）">
+      <i class="fa fa-chevron-left"></i> 11.1 — 数组（第一部分）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.3%20%E2%80%94%20%E6%95%B0%E7%BB%84%E5%92%8C%E5%BE%AA%E7%8E%AF/" rel="next" title="11.3 — 数组和循环">
+      11.3 — 数组和循环 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%9B%BA%E5%AE%9A%E6%95%B0%E7%BB%84"><span class="nav-number">1.</span> <span class="nav-text">初始化固定数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9C%81%E7%95%A5%E9%95%BF%E5%BA%A6"><span class="nav-number">2.</span> <span class="nav-text">省略长度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E5%92%8C%E6%9E%9A%E4%B8%BE"><span class="nav-number">3.</span> <span class="nav-text">数组和枚举</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E5%92%8C%E6%9E%9A%E4%B8%BE%E7%B1%BB"><span class="nav-number">4.</span> <span class="nav-text">数组和枚举类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86%E6%95%B0%E7%BB%84%E4%BC%A0%E9%80%92%E7%BB%99%E5%87%BD%E6%95%B0"><span class="nav-number">5.</span> <span class="nav-text">将数组传递给函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AE%E5%AE%9A%E6%95%B0%E7%BB%84%E7%9A%84%E9%95%BF%E5%BA%A6"><span class="nav-number">6.</span> <span class="nav-text">确定数组的长度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E8%B6%85%E5%87%BA%E8%8C%83%E5%9B%B4%E7%9A%84%E6%95%B0%E7%BB%84"><span class="nav-number">7.</span> <span class="nav-text">索引超出范围的数组</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuj10n</p>
+  <div class="site-description" itemprop="description">wuj10n的个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wuj10n" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wuj10n" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:542211073@qq.com" title="E-Mail → mailto:542211073@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuj10n</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

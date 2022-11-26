@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuj10n.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在上一课中，我们讨论了 C 风格的字符串，以及使用它们的危险。C 风格的字符串速度很快，但它们不如std::string. 但是std::string（我们在第 4.17 课– std::string 简介中介绍过）有其自身的一些缺点，尤其是涉及到 const 字符串时。 考虑以下示例： 12345678910111213#include &lt;iostream&gt;#include &lt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="11.7 — std::string_view（第 2 部分）">
+<meta property="og:url" content="https://wuj10n.github.io/2022/11/19/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.7%20%E2%80%94%20stdstring_view%EF%BC%88%E7%AC%AC%202%20%E9%83%A8%E5%88%86%EF%BC%89/index.html">
+<meta property="og:site_name" content="wuj10n">
+<meta property="og:description" content="在上一课中，我们讨论了 C 风格的字符串，以及使用它们的危险。C 风格的字符串速度很快，但它们不如std::string. 但是std::string（我们在第 4.17 课– std::string 简介中介绍过）有其自身的一些缺点，尤其是涉及到 const 字符串时。 考虑以下示例： 12345678910111213#include &lt;iostream&gt;#include &lt;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-19T15:45:04.000Z">
+<meta property="article:modified_time" content="2022-11-26T06:33:02.160Z">
+<meta property="article:author" content="wuj10n">
+<meta property="article:tag" content="LearnCpp——Chapter 11">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://wuj10n.github.io/2022/11/19/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.7%20%E2%80%94%20stdstring_view%EF%BC%88%E7%AC%AC%202%20%E9%83%A8%E5%88%86%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>11.7 — std::string_view（第 2 部分） | wuj10n</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">wuj10n</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/19/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.7%20%E2%80%94%20stdstring_view%EF%BC%88%E7%AC%AC%202%20%E9%83%A8%E5%88%86%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          11.7 — std::string_view（第 2 部分）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-19 23:45:04" itemprop="dateCreated datePublished" datetime="2022-11-19T23:45:04+08:00">2022-11-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-26 14:33:02" itemprop="dateModified" datetime="2022-11-26T14:33:02+08:00">2022-11-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在上一课中，我们讨论了 C 风格的字符串，以及使用它们的危险。C 风格的字符串速度很快，但它们不如<code>std::string</code>.</p>
+<p>但是<code>std::string</code>（我们在第 4.17 课<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/introduction-to-stdstring/">– std::string 简介中介绍过</a>）有其自身的一些缺点，尤其是涉及到 const 字符串时。</p>
+<p>考虑以下示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">char</span> text[]&#123; <span class="string">&quot;hello&quot;</span> &#125;;</span><br><span class="line">  std::string str&#123; text &#125;;</span><br><span class="line">  std::string more&#123; str &#125;;</span><br><span class="line"></span><br><span class="line">  std::cout &lt;&lt; text &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; str &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; more &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这打印</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hello hello hello</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<p>在内部，main 将字符串“hello”复制了 3 次，得到 4 个副本。 首先是字符串字面量“hello”，它在编译时已知并存储在二进制文件中。 当我们创建 char[] 时创建一个副本。 以下两个 std::string 对象各自创建一个字符串副本。</p>
+<p>那么为什么 std::string 会复制用于初始化它的字符串呢？ std::string 为它管理的字符串数据提供了一些有用的保证：</p>
+<ul>
+<li>只要字符串对象还活着，字符串数据就会有效，并在字符串对象死亡时被清理。</li>
+<li>字符串的值只能由字符串对象修改。</li>
+<li>可以修改字符串的值而不影响其他对象（对于非常量字符串）。</li>
+</ul>
+<p>std::string 对象无法控制使用哪种字符串来初始化它（这是调用者的责任）——调用者可以在 std::string 对象初始化后立即销毁或修改初始化字符串。 初始化后，字符串对象不能以任何方式依赖初始化值，否则可能违反上述保证。</p>
+<p>通过复制初始化字符串（只有它可以访问），字符串对象可以确保字符串数据的值和生存期独立于其他对象（包括初始化字符串）。</p>
+<p>然而，在某些情况下，我们不需要这些好处（特别是对于 const std::string 对象，它们不能修改它们的值）。 考虑这样一种情况，我们知道 std::string 的寿命不会超过它的初始化字符串，并且初始化字符串不会被修改。 在这种情况下，我们为不需要的好处（独立于初始化字符串）付出了高昂的代价（制作初始化字符串的副本）。</p>
+<h2 id="介绍-std-string-view"><a href="#介绍-std-string-view" class="headerlink" title="介绍 std::string_view"></a>介绍 std::string_view</h2><p>考虑一下您家中的一扇窗户，看着停在街上的汽车。 您可以透过窗户看到汽车，但不能触摸或移动汽车。 你的窗户只是提供了汽车的视野，这是一个完全独立的对象。</p>
+<p>C++17 引入了另一种使用字符串的方法，<code>std::string_view</code>，它位于 <string_view> 标头中。</p>
+<p>与保留自己的字符串副本的 std::string 不同，<code>std::string_view</code> 提供在别处定义的字符串的视图（view）。</p>
+<p>我们可以通过用 <code>std::string_view </code>替换每个 <code>std::string </code>和 C 风格的字符串来重写上面的代码以使用<code> std::string_view</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string_view&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  std::string_view text&#123; <span class="string">&quot;hello&quot;</span> &#125;; <span class="comment">// view the text &quot;hello&quot;, which is stored in the binary</span></span><br><span class="line">  std::string_view str&#123; text &#125;; <span class="comment">// view of the same &quot;hello&quot;</span></span><br><span class="line">  std::string_view more&#123; str &#125;; <span class="comment">// view of the same &quot;hello&quot;</span></span><br><span class="line"></span><br><span class="line">  std::cout &lt;&lt; text &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; str &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; more &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出相同，但不再创建字符串“hello”的副本。 字符串“hello”存储在二进制文件中，不会在运行时分配。 text 只是字符串“hello”的视图，因此无需创建副本。 当我们复制 std::string_view 时，新的 std::string_view 观察到与复制自 std::string_view 观察到的相同的字符串。 这意味着 str 和 more 都不会创建字符串的任何副本。 它们是对现有字符串“hello”的视图（view）。</p>
+<p>std::string_view 不仅速度快，而且具有我们从 std::string 中了解到的许多功能。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string_view&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  std::string_view str&#123; <span class="string">&quot;Trains are fast!&quot;</span> &#125;;</span><br><span class="line"></span><br><span class="line">  std::cout &lt;&lt; str.<span class="built_in">length</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// 16</span></span><br><span class="line">  std::cout &lt;&lt; str.<span class="built_in">substr</span>(<span class="number">0</span>, str.<span class="built_in">find</span>(<span class="string">&#x27; &#x27;</span>)) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// Trains</span></span><br><span class="line">  std::cout &lt;&lt; (str == <span class="string">&quot;Trains are fast!&quot;</span>) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// 1</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// Since C++20</span></span><br><span class="line">  std::cout &lt;&lt; str.<span class="built_in">starts_with</span>(<span class="string">&quot;Boats&quot;</span>) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// 0</span></span><br><span class="line">  std::cout &lt;&lt; str.<span class="built_in">ends_with</span>(<span class="string">&quot;fast!&quot;</span>) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// 1</span></span><br><span class="line"></span><br><span class="line">  std::cout &lt;&lt; str &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// Trains are fast!</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为 std::string_view 不创建字符串的副本，所以如果我们更改查看的字符串，更改会反映在 std::string_view 中。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string_view&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">char</span> arr[]&#123; <span class="string">&quot;Gold&quot;</span> &#125;;</span><br><span class="line">  std::string_view str&#123; arr &#125;;</span><br><span class="line"></span><br><span class="line">  std::cout &lt;&lt; str &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// Gold</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// Change &#x27;d&#x27; to &#x27;f&#x27; in arr</span></span><br><span class="line">  arr[<span class="number">3</span>] = <span class="string">&#x27;f&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  std::cout &lt;&lt; str &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// Golf</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们修改了 arr，但 str 似乎也在发生变化。 那是因为 arr 和 str 共享它们的字符串。 当您使用 std::string_view 时，最好避免在 std::string_view 的剩余生命周期内修改底层字符串，以防止混淆和错误。</p>
+<div style="background-color:lightgreen ;">
+   <p >最佳实践：</p>
+   <p>当您只需要对字符串进行只读访问时，首选 std::string_view 而不是 std::string 和 C 风格的字符串（除非您不能保证正在查看的字符串在 std::string_view 的生命周期内保持活动状态，在这种情况下，您应该更倾向使用 std::string)。
+    </p>
+</div>
+
+<h2 id="view修改函数"><a href="#view修改函数" class="headerlink" title="view修改函数"></a>view修改函数</h2><p>回到我们的窗户类比，考虑一个带窗帘的窗户。 我们可以关闭左侧或右侧的窗帘以减少我们能看到的东西。 我们不改变外面的东西，我们只是减少可见区域。</p>
+<p>类似地，std::string_view 包含让我们操作字符串视图的函数。 这允许我们在不修改查看字符串的情况下更改视图。</p>
+<p>用于此的函数是 remove_prefix，它从视图的左侧删除字符，remove_suffix，它从视图的右侧删除字符。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string_view&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  std::string_view str&#123; <span class="string">&quot;Peach&quot;</span> &#125;;</span><br><span class="line"></span><br><span class="line">  std::cout &lt;&lt; str &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Ignore the first character.</span></span><br><span class="line">  str.<span class="built_in">remove_prefix</span>(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">  std::cout &lt;&lt; str &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Ignore the last 2 characters.</span></span><br><span class="line">  str.<span class="built_in">remove_suffix</span>(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">  std::cout &lt;&lt; str &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该程序产生以下输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Peach</span><br><span class="line">each</span><br><span class="line">ea</span><br></pre></td></tr></table></figure>
+
+<p>与真正的窗帘不同，std::string_view 无法打开备份。 <strong>缩小区域后，重新加宽它的唯一方法是通过再次将源字符串重新分配给它来重置视图。</strong></p>
+<h2 id="std-string-view-适用于非空终止字符串-non-null-terminated-strings"><a href="#std-string-view-适用于非空终止字符串-non-null-terminated-strings" class="headerlink" title="std::string_view 适用于非空终止字符串(non-null-terminated strings)"></a>std::string_view 适用于非空终止字符串(non-null-terminated strings)</h2><p>与 C 风格的字符串和 std::string 不同，std::string_view 不使用空终止符来标记字符串的结尾。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span> <span class="comment">// For std::size</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string_view&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">// No null-terminator.</span></span><br><span class="line">  <span class="type">char</span> vowels[]&#123; <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;e&#x27;</span>, <span class="string">&#x27;i&#x27;</span>, <span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;u&#x27;</span> &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// vowels isn&#x27;t null-terminated. We need to pass the length manually.</span></span><br><span class="line">  <span class="comment">// Because vowels is an array, we can use std::size to get its length.</span></span><br><span class="line">  std::string_view str&#123; vowels, std::<span class="built_in">size</span>(vowels) &#125;;</span><br><span class="line"></span><br><span class="line">  std::cout &lt;&lt; str &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// This is safe. std::cout knows how to print std::string_view.</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个程序打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aeiou</span><br></pre></td></tr></table></figure>
+
+<h2 id="将-std-string-view-转换为-C-风格的字符串"><a href="#将-std-string-view-转换为-C-风格的字符串" class="headerlink" title="将 std::string_view 转换为 C 风格的字符串"></a>将 std::string_view 转换为 C 风格的字符串</h2><p>一些旧函数（例如旧的 strlen 函数）仍然需要 C 风格的字符串。 要将 std::string_view 转换为 C 风格的字符串，我们可以先转换为 std::string：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string_view&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  std::string_view sv&#123; <span class="string">&quot;balloon&quot;</span> &#125;;</span><br><span class="line"></span><br><span class="line">  sv.<span class="built_in">remove_suffix</span>(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Create a std::string from the std::string_view</span></span><br><span class="line">  std::string str&#123; sv &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Get the null-terminated C-style string.</span></span><br><span class="line">  <span class="keyword">auto</span> szNullTerminated&#123; str.<span class="built_in">c_str</span>() &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Pass the null-terminated string to the function that we want to use.</span></span><br><span class="line">  std::cout &lt;&lt; str &lt;&lt; <span class="string">&quot; has &quot;</span> &lt;&lt; std::<span class="built_in">strlen</span>(szNullTerminated) &lt;&lt; <span class="string">&quot; letter(s)\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ball has 4 letter(s)</span><br></pre></td></tr></table></figure>
+
+<p>然而，每次我们想要将 std::string_view 作为 C 风格字符串传递时都创建一个 std::string 是昂贵的，因此应尽可能避免这种情况。</p>
+<h2 id="通过-const-std-string-amp-或-std-string-view-传递字符串？"><a href="#通过-const-std-string-amp-或-std-string-view-传递字符串？" class="headerlink" title="通过 const std::string&amp; 或 std::string_view 传递字符串？"></a>通过 const std::string&amp; 或 std::string_view 传递字符串？</h2><p>一个经常出现的问题：通过 const std::string&amp; 或 std::string_view 传递字符串更好吗？</p>
+<p>如果我们想写一个接受字符串参数的函数，使参数成为 std::string_view 是最灵活的选择，因为它可以高效地处理 C 风格的字符串参数（包括字符串文字）、std::string 参数（这将隐式转换为 std::string_view) 和 std::string_view 参数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string_view&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">printSV</span><span class="params">(std::string_view sv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::cout &lt;&lt; sv &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::string s&#123; <span class="string">&quot;Hello, world&quot;</span> &#125;;</span><br><span class="line">    std::string_view sv &#123; s &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printSV</span>(s);              <span class="comment">// ok: pass std::string</span></span><br><span class="line">    <span class="built_in">printSV</span>(sv);             <span class="comment">// ok: pass std::string_view</span></span><br><span class="line">    <span class="built_in">printSV</span>(<span class="string">&quot;Hello, world&quot;</span>); <span class="comment">// ok: pass C-style string literal</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>请注意，我们通过值而不是 const 引用传递 std::string_view。 这是因为 std::string_view 通常可以快速复制，而按值传递是廉价复制类型的最佳选择。</p>
+<p>在一种情况下，将参数设为 const std::string&amp; 通常会更好：如果您的函数需要调用其他采用 C 风格字符串或 std::string 参数的函数，那么 const std::string&amp; 可能是更好的选择，因为不能保证 std::string_view 以 null 终止（C 风格字符串函数期望的东西）并且不能有效地转换回 std::string。</p>
+<div style="background-color:lightgreen ;">
+   <p >最佳实践：</p>
+   <p>优先使用 std::string_view（按值）而不是 const std::string& 传递字符串，除非您的函数调用其他需要 C 风格字符串或 std::string 参数的函数。
+    </p>
+</div>
+
+<div style="background-color:lightgrey ;">
+   <p >作者的话：</p>
+    <p>未来课程中的许多示例都是在引入 std::string_view 之前编写的，并且在应该首选 std::string_view 时仍然使用 const std::string& 作为函数参数。 我们正在努力清理这些。
+    </p>
+</div>
+
+<h2 id="所有权问题"><a href="#所有权问题" class="headerlink" title="所有权问题"></a>所有权问题</h2><p><code>std::string_view</code> 的生命周期独立于它正在查看的字符串（意味着正在查看的字符串可以在 <code>std::string_view</code> 对象之前销毁）。 如果发生这种情况，那么访问 <code>std::string_view </code>将导致未定义的行为。</p>
+<p><code>std::string_view </code>正在查看的字符串必须在其他地方创建。 它可能是一个与程序一样长的字符串文字，或者是一个 std::string，在这种情况下，字符串一直存在，直到 std::string 决定销毁它或 std::string 死亡。</p>
+<p><code>std::string_view </code>不能自己创建任何字符串，因为它只是一个视图。</p>
+<p>下面是一个存在所有权问题的程序示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string_view&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">std::string_view <span class="title">askForName</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;What&#x27;s your name?\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Use a std::string, because std::cin needs to modify it.</span></span><br><span class="line">  std::string name&#123;&#125;;</span><br><span class="line">  std::cin &gt;&gt; name;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// We&#x27;re switching to std::string_view for demonstrative purposes only.</span></span><br><span class="line">  <span class="comment">// If you already have a std::string, there&#x27;s no reason to switch to</span></span><br><span class="line">  <span class="comment">// a std::string_view.</span></span><br><span class="line">  std::string_view view&#123; name &#125;;</span><br><span class="line"></span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;Hello &quot;</span> &lt;&lt; view &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> view;</span><br><span class="line">&#125; <span class="comment">// name dies, and so does the string that name created.</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  std::string_view view&#123; <span class="built_in">askForName</span>() &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// view is observing a string that already died.</span></span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;Your name is &quot;</span> &lt;&lt; view &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// Undefined behavior</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">What&#x27;s your name?</span><br><span class="line">nascardriver</span><br><span class="line">Hello nascardriver</span><br><span class="line">Your name is �P@�P@</span><br></pre></td></tr></table></figure>
+
+<p>在函数 askForName() 中，我们创建名称并用来自 std::cin 的数据填充它。 然后我们创建视图，它可以查看该字符串。 在函数结束时，我们返回视图，但它正在查看的字符串（名称）已被销毁，因此视图现在指向已释放的内存。 该函数返回<strong>悬挂的 std::string_view</strong>。</p>
+<p>在 main 中访问返回的 <code>std::string_view </code>会导致未定义的行为，这在作者的机器上会产生奇怪的字符。</p>
+<p>当我们从 <code>std::string</code> 创建 <code>std::string_view</code> 然后修改 <code>std::string</code> 时，也会发生同样的情况。 修改<code>std::string</code>可能会导致其内部字符串消失并在不同位置被新字符串替换。 <code>std::string_view </code>仍会查看旧字符串所在的位置，但它不再存在了。</p>
+<div style="background-color:Lightpink ;">
+   <p >警告：</p>
+   <p> 确保使用 std::string_view 查看的底层字符串不会超出范围并且在使用 std::string_view 时不会被修改。
+    </p>
+</div>
+
+<p>通过 data() 函数打开窗口（有点）</p>
+<p>可以使用 data() 函数访问 std::string_view 查看的字符串，该函数返回 C 风格的字符串。 这提供了对正在查看的字符串的快速访问（作为 C 字符串）。 但它也应该仅在 std::string_view 的视图未被修改（例如通过 remove_prefix 或 remove_suffix）并且正在查看的字符串以 null 结尾的情况下使用。</p>
+<p>在下面的示例中，std::strlen 不知道 std::string_view 是什么，因此我们需要将其传递给 str.data()：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span> <span class="comment">// For std::strlen</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string_view&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  std::string_view str&#123; <span class="string">&quot;balloon&quot;</span> &#125;;</span><br><span class="line"></span><br><span class="line">  std::cout &lt;&lt; str &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// We use std::strlen because it&#x27;s simple, this could be any other function</span></span><br><span class="line">  <span class="comment">// that needs a null-terminated string.</span></span><br><span class="line">  <span class="comment">// It&#x27;s okay to use data() because we haven&#x27;t modified the view, and the</span></span><br><span class="line">  <span class="comment">// string is null-terminated.</span></span><br><span class="line">  std::cout &lt;&lt; std::<span class="built_in">strlen</span>(str.<span class="built_in">data</span>()) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>COPY</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">balloon</span><br><span class="line">7</span><br></pre></td></tr></table></figure>
+
+<p>当一个 std::string_view 被修改时，data() 并不总是做我们希望它做的事情。 以下示例演示了在修改视图后访问 data() 时发生的情况：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string_view&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  std::string_view str&#123; <span class="string">&quot;balloon&quot;</span> &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Remove the &quot;b&quot;</span></span><br><span class="line">  str.<span class="built_in">remove_prefix</span>(<span class="number">1</span>);</span><br><span class="line">  <span class="comment">// remove the &quot;oon&quot;</span></span><br><span class="line">  str.<span class="built_in">remove_suffix</span>(<span class="number">3</span>);</span><br><span class="line">  <span class="comment">// Remember that the above doesn&#x27;t modify the string, it only changes</span></span><br><span class="line">  <span class="comment">// the region that str is observing.</span></span><br><span class="line"></span><br><span class="line">  std::cout &lt;&lt; str &lt;&lt; <span class="string">&quot; has &quot;</span> &lt;&lt; std::<span class="built_in">strlen</span>(str.<span class="built_in">data</span>()) &lt;&lt; <span class="string">&quot; letter(s)\n&quot;</span>;</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;str.data() is &quot;</span> &lt;&lt; str.<span class="built_in">data</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;str is &quot;</span> &lt;&lt; str &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>COPY</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">all has 6 letter(s)</span><br><span class="line">str.data() is alloon</span><br><span class="line">str is all</span><br></pre></td></tr></table></figure>
+
+<p>显然这不是我们想要的，而是试图访问已修改的 std::string_view 的 data() 的结果。 当我们访问 data() 时，关于字符串的长度信息丢失了。 std::strlen 和 std::cout 不断从底层字符串中读取字符，直到找到位于“balloon”末尾的空终止符。</p>
+<div style="background-color:Lightpink ;">
+   <p >警告：</p>
+   <p> 仅当 std::string_view 的视图未被修改且正在查看的字符串以 null 终止时才使用 std::string_view::data()。 使用非空终止字符串的 std::string_view::data() 会导致未定义的行为。
+    </p>
+</div>
+
+<h2 id="实施不完整"><a href="#实施不完整" class="headerlink" title="实施不完整"></a>实施不完整</h2><p>作为一个相对较新的特性，std::string_view 并没有像它应该的那样实现。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">std::string s&#123; <span class="string">&quot;hello&quot;</span> &#125;;</span><br><span class="line">std::string_view v&#123; <span class="string">&quot;world&quot;</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Doesn&#x27;t work</span></span><br><span class="line">std::cout &lt;&lt; (s + v) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">std::cout &lt;&lt; (v + s) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Potentially unsafe, or not what we want, because we&#x27;re treating</span></span><br><span class="line"><span class="comment">// the std::string_view as a C-style string.</span></span><br><span class="line">std::cout &lt;&lt; (s + v.<span class="built_in">data</span>()) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">std::cout &lt;&lt; (v.<span class="built_in">data</span>() + s) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Ok, but ugly and wasteful because we have to construct a new std::string.</span></span><br><span class="line">std::cout &lt;&lt; (s + std::string&#123; v &#125;) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">std::cout &lt;&lt; (std::string&#123; v &#125; + s) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">std::cout &lt;&lt; (s + <span class="built_in">static_cast</span>&lt;std::string&gt;(v)) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">std::cout &lt;&lt; (<span class="built_in">static_cast</span>&lt;std::string&gt;(v) + s) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>第 5 行和第 6 行没有理由不工作。 它们可能会在未来的 C++ 版本中得到支持。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-11/" rel="tag"># LearnCpp——Chapter 11</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/18/HTML&CSS/CSS/" rel="prev" title="CSS">
+      <i class="fa fa-chevron-left"></i> CSS
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.13%20%E2%80%94%20%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF/" rel="next" title="8.13 — 函数模板">
+      8.13 — 函数模板 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D-std-string-view"><span class="nav-number">1.</span> <span class="nav-text">介绍 std::string_view</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#view%E4%BF%AE%E6%94%B9%E5%87%BD%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">view修改函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#std-string-view-%E9%80%82%E7%94%A8%E4%BA%8E%E9%9D%9E%E7%A9%BA%E7%BB%88%E6%AD%A2%E5%AD%97%E7%AC%A6%E4%B8%B2-non-null-terminated-strings"><span class="nav-number">3.</span> <span class="nav-text">std::string_view 适用于非空终止字符串(non-null-terminated strings)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86-std-string-view-%E8%BD%AC%E6%8D%A2%E4%B8%BA-C-%E9%A3%8E%E6%A0%BC%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">4.</span> <span class="nav-text">将 std::string_view 转换为 C 风格的字符串</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87-const-std-string-amp-%E6%88%96-std-string-view-%E4%BC%A0%E9%80%92%E5%AD%97%E7%AC%A6%E4%B8%B2%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">通过 const std::string&amp; 或 std::string_view 传递字符串？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%80%E6%9C%89%E6%9D%83%E9%97%AE%E9%A2%98"><span class="nav-number">6.</span> <span class="nav-text">所有权问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E6%96%BD%E4%B8%8D%E5%AE%8C%E6%95%B4"><span class="nav-number">7.</span> <span class="nav-text">实施不完整</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuj10n</p>
+  <div class="site-description" itemprop="description">wuj10n的个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wuj10n" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wuj10n" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:542211073@qq.com" title="E-Mail → mailto:542211073@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuj10n</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

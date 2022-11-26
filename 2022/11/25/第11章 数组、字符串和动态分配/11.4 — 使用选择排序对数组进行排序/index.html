@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuj10n.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="排序案例对数组进行排序是按特定顺序排列数组中所有元素的过程。在许多不同的情况下，对数组进行排序很有用。例如，您的电子邮件程序通常按收到时间的顺序显示电子邮件，因为较新的电子邮件通常被认为更相关。当您转到联系人列表时，姓名通常按字母顺序排列，因为这样更容易找到您要查找的姓名。这两种演示都涉及在演示前对数据进行排序。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="11.4 — 使用选择排序对数组进行排序">
+<meta property="og:url" content="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.4%20%E2%80%94%20%E4%BD%BF%E7%94%A8%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F%E5%AF%B9%E6%95%B0%E7%BB%84%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F/index.html">
+<meta property="og:site_name" content="wuj10n">
+<meta property="og:description" content="排序案例对数组进行排序是按特定顺序排列数组中所有元素的过程。在许多不同的情况下，对数组进行排序很有用。例如，您的电子邮件程序通常按收到时间的顺序显示电子邮件，因为较新的电子邮件通常被认为更相关。当您转到联系人列表时，姓名通常按字母顺序排列，因为这样更容易找到您要查找的姓名。这两种演示都涉及在演示前对数据进行排序。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-25T07:14:14.000Z">
+<meta property="article:modified_time" content="2022-11-26T01:09:06.204Z">
+<meta property="article:author" content="wuj10n">
+<meta property="article:tag" content="LearnCpp——Chapter 11">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.4%20%E2%80%94%20%E4%BD%BF%E7%94%A8%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F%E5%AF%B9%E6%95%B0%E7%BB%84%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>11.4 — 使用选择排序对数组进行排序 | wuj10n</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">wuj10n</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.4%20%E2%80%94%20%E4%BD%BF%E7%94%A8%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F%E5%AF%B9%E6%95%B0%E7%BB%84%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          11.4 — 使用选择排序对数组进行排序
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-25 15:14:14" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:14+08:00">2022-11-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-26 09:09:06" itemprop="dateModified" datetime="2022-11-26T09:09:06+08:00">2022-11-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="排序案例"><a href="#排序案例" class="headerlink" title="排序案例"></a>排序案例</h1><p>对数组进行排序是按特定顺序排列数组中所有元素的过程。在许多不同的情况下，对数组进行排序很有用。例如，您的电子邮件程序通常按收到时间的顺序显示电子邮件，因为较新的电子邮件通常被认为更相关。当您转到联系人列表时，姓名通常按字母顺序排列，因为这样更容易找到您要查找的姓名。这两种演示都涉及在演示前对数据进行排序。<span id="more"></span></p>
+<p>对数组进行排序可以提高搜索数组的效率，不仅对人类如此，对计算机也是如此。例如，考虑我们想知道一个名字是否出现在一个名字列表中的情况。为了查看某个名称是否在列表中，我们必须检查数组中的每个元素以查看该名称是否出现。对于包含许多元素的数组，搜索所有元素的代价可能很高。</p>
+<p>但是，现在假设我们的姓名数组是按字母顺序排序的。在这种情况下，我们只需要搜索到遇到按字母顺序大于我们要查找的名称的名称为止。到那时，如果我们还没有找到这个名字，我们就知道它不存在于数组的其余部分，因为我们没有在数组中查看的所有名字都保证按字母顺序排列更大！</p>
+<p>事实证明，还有更好的算法来搜索排序的数组。使用一个简单的算法，我们可以仅使用 20 次比较来搜索包含 1,000,000 个元素的排序数组！当然，缺点是对数组进行排序相对昂贵，而且通常不值得对数组进行排序以加快搜索速度，除非您要多次搜索它。</p>
+<p>在某些情况下，对数组进行排序可以使搜索变得不必要。考虑另一个我们想要找到最佳考试成绩的例子。如果数组未排序，我们必须遍历数组中的每个元素以找到最大的测试分数。如果列表是排序的，最好的测试分数将在第一个或最后一个位置（取决于我们是按升序还是降序排序），所以我们根本不需要搜索！</p>
+<h2 id="排序的工作原理"><a href="#排序的工作原理" class="headerlink" title="排序的工作原理"></a>排序的工作原理</h2><p>排序通常是通过重复比较成对的数组元素来执行的，如果它们满足某些预定义的条件，则交换它们。这些元素的比较顺序因使用的排序算法而异。标准取决于列表的排序方式（例如升序或降序）。</p>
+<p>要交换两个元素，我们可以使用 C++ 标准库中的 std::swap() 函数，该函数在头文件<utility>中定义。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;utility&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> x&#123; <span class="number">2</span> &#125;;</span><br><span class="line">    <span class="type">int</span> y&#123; <span class="number">4</span> &#125;;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Before swap: x = &quot;</span> &lt;&lt; x &lt;&lt; <span class="string">&quot;, y = &quot;</span> &lt;&lt; y &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    std::<span class="built_in">swap</span>(x, y); <span class="comment">// swap the values of x and y</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;After swap:  x = &quot;</span> &lt;&lt; x &lt;&lt; <span class="string">&quot;, y = &quot;</span> &lt;&lt; y &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个程序打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">交换前：x = 2, y = 4</span><br><span class="line">交换后：x = 4, y = 2</span><br></pre></td></tr></table></figure>
+
+<p>请注意，交换后，x 和 y 的值已互换！</p>
+<h2 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h2><p>有很多方法可以对数组进行排序。选择排序可能是最容易理解的排序，这使它成为教学的一个很好的候选者，尽管它是速度较慢的排序之一。</p>
+<p>选择排序执行以下步骤将数组从小到大排序：</p>
+<ol>
+<li>从数组索引 0 开始，搜索整个数组以找到最小值</li>
+<li>将数组中找到的最小值与索引 0 处的值交换</li>
+<li>从下一个索引开始重复步骤 1 和 2</li>
+</ol>
+<p>换句话说，我们要找到数组中最小的元素，并将其交换到第一个位置。然后我们要找到下一个最小的元素，并将它交换到第二个位置。将重复此过程，直到我们用完所有元素。</p>
+<p>这是该算法处理 5 个元素的示例。让我们从一个示例数组开始：</p>
+<p>{ 30, 50, 20, 10, 40 }</p>
+<p>首先，我们找到最小的元素，从索引 0 开始：</p>
+<p>{ 30, 50, 20, <strong>10</strong>, 40 }</p>
+<p>然后我们将其与索引 0 处的元素交换：</p>
+<p>{ <strong>10</strong>, 50, 20, <strong>30</strong>, 40 }</p>
+<p>现在第一个元素已经排序，我们可以忽略它。现在，我们找到最小的元素，从索引 1 开始：</p>
+<p>{ <em>10</em>, 50, <strong>20</strong>, 30, 40 }</p>
+<p>并将其与索引 1 中的元素交换：</p>
+<p>{ <em>10</em>, <strong>20</strong>, <strong>50</strong>, 30, 40 }</p>
+<p>现在我们可以忽略前两个元素。找到从索引 2 开始的最小元素：</p>
+<p>{ <em>10</em>, <em>20</em>, 50, <strong>30</strong>, 40 }</p>
+<p>并将其与索引 2 中的元素交换：</p>
+<p>{ <em>10</em>, <em>20</em>, <strong>30</strong>, <strong>50</strong>, 40 }</p>
+<p>找到从索引 3 开始的最小元素：</p>
+<p>{ <em>10</em>, <em>20</em>, <em>30</em>, 50, <strong>40</strong> }</p>
+<p>并将其与索引 3 中的元素交换：</p>
+<p>{ <em>10</em>, <em>20</em>, <em>30</em>, <strong>40</strong>, <strong>50</strong> }</p>
+<p>最后，找到从索引 4 开始的最小元素：</p>
+<p>{ <em>10</em>, <em>20</em>, <em>30</em>, <em>40</em>, <strong>50</strong> }</p>
+<p>并将它与索引 4 中的元素交换（它什么都不做）：</p>
+<p>{ <em>10</em>, <em>20</em>, <em>30</em>, <em>40</em>, <strong>50</strong> }</p>
+<p>完毕！</p>
+<p>{ 10, 20, 30, 40, 50 }</p>
+<p>请注意，最后一次比较将始终与自身进行比较（这是多余的），因此我们实际上可以在数组末尾之前停止 1 个元素。</p>
+<h2 id="C-中的选择排序"><a href="#C-中的选择排序" class="headerlink" title="C++中的选择排序"></a>C++中的选择排序</h2><p>以下是该算法在 C++ 中的实现方式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;utility&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> array[]&#123; <span class="number">30</span>, <span class="number">50</span>, <span class="number">20</span>, <span class="number">10</span>, <span class="number">40</span> &#125;;</span><br><span class="line">	<span class="keyword">constexpr</span> <span class="type">int</span> length&#123; <span class="built_in">static_cast</span>&lt;<span class="type">int</span>&gt;(std::<span class="built_in">size</span>(array)) &#125;;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Step through each element of the array</span></span><br><span class="line">	<span class="comment">// (except the last one, which will already be sorted by the time we get there)</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> startIndex&#123; <span class="number">0</span> &#125;; startIndex &lt; length - <span class="number">1</span>; ++startIndex)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">// smallestIndex is the index of the smallest element we’ve encountered this iteration</span></span><br><span class="line">		<span class="comment">// Start by assuming the smallest element is the first element of this iteration</span></span><br><span class="line">		<span class="type">int</span> smallestIndex&#123; startIndex &#125;;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Then look for a smaller element in the rest of the array</span></span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> currentIndex&#123; startIndex + <span class="number">1</span> &#125;; currentIndex &lt; length; ++currentIndex)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="comment">// If we&#x27;ve found an element that is smaller than our previously found smallest</span></span><br><span class="line">			<span class="keyword">if</span> (array[currentIndex] &lt; array[smallestIndex])</span><br><span class="line">				<span class="comment">// then keep track of it</span></span><br><span class="line">				smallestIndex = currentIndex;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// smallestIndex is now the smallest element in the remaining array</span></span><br><span class="line">                <span class="comment">// swap our start element with our smallest element (this sorts it into the correct place)</span></span><br><span class="line">		std::<span class="built_in">swap</span>(array[startIndex], array[smallestIndex]);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Now that the whole array is sorted, print our sorted array as proof it works</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> index&#123; <span class="number">0</span> &#125;; index &lt; length; ++index)</span><br><span class="line">		std::cout &lt;&lt; array[index] &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line"></span><br><span class="line">	std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该算法最令人困惑的部分是另一个循环（称为<strong>嵌套循环</strong>）内的循环。外部循环 (startIndex) 逐一遍历每个元素。对于外循环的每次迭代，内循环（currentIndex）用于寻找剩余数组中的最小元素（从startIndex+1开始）。smallestIndex 跟踪内部循环找到的最小元素的索引。然后将 smallestIndex 与 startIndex 交换。最后，外层循环（startIndex）前进一个元素，重复这个过程。</p>
+<p>提示：如果您无法弄清楚上述程序是如何工作的，那么在一张纸上完成示例案例可能会有所帮助。将起始（未排序）数组元素水平写在纸的顶部。绘制箭头指示哪些元素 startIndex、currentIndex 和 smallestIndex 正在建立索引。手动跟踪程序并在索引更改时重新绘制箭头。对于外循环的每次迭代，开始一个新行显示数组的当前状态。</p>
+<p>排序名称使用相同的算法。只需将数组类型从 int 更改为 std::string，并使用适当的值进行初始化。</p>
+<h2 id="std-sort"><a href="#std-sort" class="headerlink" title="std::sort"></a>std::sort</h2><p>因为排序数组是如此普遍，所以 C++ 标准库包含一个名为<code>std::sort</code>. <code>std::sort</code>存在于 <algorithm> 标头中，可以像这样在数组上调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span> <span class="comment">// for std::sort</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span> <span class="comment">// for std::size</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> array[]&#123; <span class="number">30</span>, <span class="number">50</span>, <span class="number">20</span>, <span class="number">10</span>, <span class="number">40</span> &#125;;</span><br><span class="line"></span><br><span class="line">	std::<span class="built_in">sort</span>(std::<span class="built_in">begin</span>(array), std::<span class="built_in">end</span>(array));</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i&#123; <span class="number">0</span> &#125;; i &lt; <span class="built_in">static_cast</span>&lt;<span class="type">int</span>&gt;(std::<span class="built_in">size</span>(array)); ++i)</span><br><span class="line">		std::cout &lt;&lt; array[i] &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line"></span><br><span class="line">	std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>默认情况下，std::sort 使用 operator&lt;以升序排序，以比较元素对并在必要时交换它们（很像我们上面的选择排序示例所做的）。</p>
+<p>我们将<code>std::sort</code>在以后的章节中详细讨论。 </p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-11/" rel="tag"># LearnCpp——Chapter 11</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.3%20%E2%80%94%20%E6%95%B0%E7%BB%84%E5%92%8C%E5%BE%AA%E7%8E%AF/" rel="prev" title="11.3 — 数组和循环">
+      <i class="fa fa-chevron-left"></i> 11.3 — 数组和循环
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.5%20%E2%80%94%20%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84/" rel="next" title="11.5 — 多维数组">
+      11.5 — 多维数组 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E6%A1%88%E4%BE%8B"><span class="nav-number">1.</span> <span class="nav-text">排序案例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">排序的工作原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F"><span class="nav-number">1.2.</span> <span class="nav-text">选择排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E4%B8%AD%E7%9A%84%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F"><span class="nav-number">1.3.</span> <span class="nav-text">C++中的选择排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#std-sort"><span class="nav-number">1.4.</span> <span class="nav-text">std::sort</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuj10n</p>
+  <div class="site-description" itemprop="description">wuj10n的个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wuj10n" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wuj10n" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:542211073@qq.com" title="E-Mail → mailto:542211073@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuj10n</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

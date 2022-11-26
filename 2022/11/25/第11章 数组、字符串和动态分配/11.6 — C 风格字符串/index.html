@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuj10n.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="11.6 — C 风格字符串在第4.17课– std::string 简介中，我们将字符串定义为连续字符的集合，例如“Hello, world!”。字符串是我们在 C++ 中处理文本的主要方式，而 std::string 使在 C++ 中处理字符串变得容易。 现代 C++ 支持两种不同类型的字符串：std::string（作为标准库的一部分）和 C 风格的字符串（从 C 语言继承而来）。事实证明，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="11.6 — C 风格字符串">
+<meta property="og:url" content="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.6%20%E2%80%94%20C%20%E9%A3%8E%E6%A0%BC%E5%AD%97%E7%AC%A6%E4%B8%B2/index.html">
+<meta property="og:site_name" content="wuj10n">
+<meta property="og:description" content="11.6 — C 风格字符串在第4.17课– std::string 简介中，我们将字符串定义为连续字符的集合，例如“Hello, world!”。字符串是我们在 C++ 中处理文本的主要方式，而 std::string 使在 C++ 中处理字符串变得容易。 现代 C++ 支持两种不同类型的字符串：std::string（作为标准库的一部分）和 C 风格的字符串（从 C 语言继承而来）。事实证明，">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-25T07:14:20.000Z">
+<meta property="article:modified_time" content="2022-11-26T05:00:20.075Z">
+<meta property="article:author" content="wuj10n">
+<meta property="article:tag" content="LearnCpp——Chapter 11">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.6%20%E2%80%94%20C%20%E9%A3%8E%E6%A0%BC%E5%AD%97%E7%AC%A6%E4%B8%B2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>11.6 — C 风格字符串 | wuj10n</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">wuj10n</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.6%20%E2%80%94%20C%20%E9%A3%8E%E6%A0%BC%E5%AD%97%E7%AC%A6%E4%B8%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          11.6 — C 风格字符串
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-25 15:14:20" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:20+08:00">2022-11-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-26 13:00:20" itemprop="dateModified" datetime="2022-11-26T13:00:20+08:00">2022-11-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="11-6-—-C-风格字符串"><a href="#11-6-—-C-风格字符串" class="headerlink" title="11.6 — C 风格字符串"></a>11.6 — C 风格字符串</h1><p><a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/introduction-to-stdstring/">在第4.17</a>课– std::string 简介中，我们将字符串定义为连续字符的集合，例如“Hello, world!”。字符串是我们在 C++ 中处理文本的主要方式，而 std::string 使在 C++ 中处理字符串变得容易。</p>
+<p>现代 C++ 支持两种不同类型的字符串：std::string（作为标准库的一部分）和 C 风格的字符串（从 C 语言继承而来）。事实证明，std::string 是使用 C 风格的字符串实现的。在本课中，我们将仔细研究 C 风格的字符串。<span id="more"></span></p>
+<h1 id="C-style字符串"><a href="#C-style字符串" class="headerlink" title="C-style字符串"></a>C-style字符串</h1><p><strong>C-style</strong>的字符串<strong>只是一个使用空终止符的字符数组。</strong>空终止符( null terminator**)是用于指示字符串结束的特殊字符（’\0’，ascii 码 0）。更一般地说，C 风格的字符串称为**空终止字符串(null-terminated string)**。</p>
+<p>要定义 C 风格的字符串，只需声明一个 char 数组并使用字符串文字对其进行初始化：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> myString[]&#123; <span class="string">&quot;string&quot;</span> &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>虽然“string”只有 6 个字母，但 C++ 会自动为我们在字符串的末尾添加一个 null 终止符（我们不需要自己包含它）。因此，myString 实际上是一个长度为 7 的数组！</p>
+<p>我们可以在下面的程序中看到这一点的证据，它打印出字符串的长度，然后是所有字符的 ASCII 值：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span> <span class="comment">// for std::size</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">char</span> myString[]&#123; <span class="string">&quot;string&quot;</span> &#125;;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> length&#123; <span class="built_in">static_cast</span>&lt;<span class="type">int</span>&gt;(std::<span class="built_in">size</span>(myString)) &#125;;</span><br><span class="line"><span class="comment">//  const int length&#123; sizeof(myString) / sizeof(myString[0]) &#125;; // use instead if not C++17 capable</span></span><br><span class="line">    std::cout &lt;&lt; myString &lt;&lt; <span class="string">&quot; has &quot;</span> &lt;&lt; length &lt;&lt; <span class="string">&quot; characters.\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> index&#123; <span class="number">0</span> &#125;; index &lt; length; ++index)</span><br><span class="line">        std::cout &lt;&lt; <span class="built_in">static_cast</span>&lt;<span class="type">int</span>&gt;(myString[index]) &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这会产生结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">string has 7 characters.</span><br><span class="line">115 116 114 105 110 103 0</span><br></pre></td></tr></table></figure>
+
+<p>该 0 是已附加到字符串末尾的空终止符的 ASCII 代码。</p>
+<p>以这种方式声明字符串时，最好使用 [] 并让编译器计算数组的长度。这样，如果您以后更改字符串，就不必手动调整数组长度。</p>
+<p>需要注意的重要一点是 C-style的字符串遵循与数组相同的<em>所有规则。</em>这意味着您可以在创建字符串时对其进行初始化，但之后您不能使用赋值运算符为其赋值！</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> myString[]&#123; <span class="string">&quot;string&quot;</span> &#125;; <span class="comment">// ok</span></span><br><span class="line">myString = <span class="string">&quot;rope&quot;</span>; <span class="comment">// not ok!</span></span><br></pre></td></tr></table></figure>
+
+<p>由于 C 风格的字符串是数组，您可以使用 [] 运算符来更改字符串中的单个字符：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">char</span> myString[]&#123; <span class="string">&quot;string&quot;</span> &#125;;</span><br><span class="line">    myString[<span class="number">1</span>] = <span class="string">&#x27;p&#x27;</span>;</span><br><span class="line">    std::cout &lt;&lt; myString &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个程序打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring</span><br></pre></td></tr></table></figure>
+
+<p>打印 C 风格字符串时，std::cout 打印字符，直到遇到空终止符。如果您不小心覆盖了字符串中的空终止符（例如，通过将某些内容分配给 myString[6]），您不仅会获得字符串中的所有字符，而且 std::cout 只会继续打印相邻内存槽中的所有内容，直到它恰好打了一个0！</p>
+<p>请注意，如果数组大于它包含的字符串，则没有问题：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">char</span> name[<span class="number">20</span>]&#123; <span class="string">&quot;Alex&quot;</span> &#125;; <span class="comment">// only use 5 characters (4 letters + null terminator)</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;My name is: &quot;</span> &lt;&lt; name &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这种情况下，将打印字符串“Alex”，并且 std::cout 将在空终止符处停止。数组中的其余字符将被忽略。</p>
+<h2 id="C-风格的字符串和-std-cin"><a href="#C-风格的字符串和-std-cin" class="headerlink" title="C 风格的字符串和 std::cin"></a>C 风格的字符串和 std::cin</h2><p>在很多情况下，我们事先并不知道字符串的长度。例如，考虑编写一个程序的问题，我们需要让用户输入他们的名字。他们的名字有多长？在他们进入之前我们不知道！</p>
+<p>在这种情况下，我们可以声明一个比我们需要的更大的数组：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">char</span> name[<span class="number">255</span>] &#123;&#125;; <span class="comment">// declare array large enough to hold 254 characters + null terminator</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Enter your name: &quot;</span>;</span><br><span class="line">    std::cin &gt;&gt; name;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;You entered: &quot;</span> &lt;&lt; name &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在上面的程序中，我们为 name 分配了一个 255 个字符的数组，猜测用户不会输入这么多字符。尽管这在 C/C++ 编程中很常见，但这是一种糟糕的编程习惯，因为没有什么能阻止用户输入超过 254 个字符（无论是无意的还是恶意的）。</p>
+<p>推荐的读取 C 风格字符串的方法<code>std::cin</code>如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span> <span class="comment">// for std::size</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">char</span> name[<span class="number">255</span>] &#123;&#125;; <span class="comment">// declare array large enough to hold 254 characters + null terminator</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Enter your name: &quot;</span>;</span><br><span class="line">    std::cin.<span class="built_in">getline</span>(name, std::<span class="built_in">size</span>(name));</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;You entered: &quot;</span> &lt;&lt; name &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>调用 cin.getline() 会将最多 254 个字符读入名称（为空终止符留出空间！）。任何多余的字符都将被丢弃。这样我们就保证不会溢出数组！</p>
+<h2 id="操作-C-风格的字符串"><a href="#操作-C-风格的字符串" class="headerlink" title="操作 C 风格的字符串"></a>操作 C 风格的字符串</h2><p>C++ 提供了许多作为 <cstring> 标头的一部分的函数来操作 C 风格的字符串。以下是一些最有用的：</p>
+<p>strcpy() 允许您将一个字符串复制到另一个字符串。更常见的是，这用于为字符串赋值：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">char</span> source[]&#123; <span class="string">&quot;Copy this!&quot;</span> &#125;;</span><br><span class="line">    <span class="type">char</span> dest[<span class="number">50</span>];</span><br><span class="line">    std::<span class="built_in">strcpy</span>(dest, source);</span><br><span class="line">    std::cout &lt;&lt; dest &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// prints &quot;Copy this!&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是，strcpy()一不小心很容易造成数组溢出！在下面的程序中，dest 的大小不足以容纳整个字符串，因此会导致数组溢出。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">char</span> source[]&#123; <span class="string">&quot;Copy this!&quot;</span> &#125;;</span><br><span class="line">    <span class="type">char</span> dest[<span class="number">5</span>]; <span class="comment">// note that the length of dest is only 5 chars!</span></span><br><span class="line">    std::<span class="built_in">strcpy</span>(dest, source); <span class="comment">// overflow!</span></span><br><span class="line">    std::cout &lt;&lt; dest &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>许多程序员建议改用 strncpy()，它允许您指定缓冲区的大小，并确保不会发生溢出。不幸的是，strncpy() 不能确保字符串以 null 终止，这仍然为数组溢出留下足够的空间。</p>
+<p>在 C++11 中，strcpy_s() 是首选，它添加了一个新参数来定义目标的大小。然而，并不是所有的编译器都支持这个函数，要使用它，你必须用整数值 1定义<strong>STDC_WANT_LIB_EXT1 。</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> __STDC_WANT_LIB_EXT1__ 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span> <span class="comment">// for strcpy_s</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">char</span> source[]&#123; <span class="string">&quot;Copy this!&quot;</span> &#125;;</span><br><span class="line">    <span class="type">char</span> dest[<span class="number">5</span>]; <span class="comment">// note that the length of dest is only 5 chars!</span></span><br><span class="line">    <span class="built_in">strcpy_s</span>(dest, <span class="number">5</span>, source); <span class="comment">// A runtime error will occur in debug mode</span></span><br><span class="line">    std::cout &lt;&lt; dest &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为并非所有编译器都支持 strcpy_s()，strlcpy() 是一种流行的替代方法——尽管它是非标准的，因此没有包含在很多编译器中。它也有自己的一系列问题。简而言之，如果您需要复制 C 风格的字符串，这里没有普遍推荐的解决方案。</p>
+<p>另一个有用的函数是 strlen() 函数，它返回 C 风格字符串的长度（不带空终止符）。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span> <span class="comment">// for std::size</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">char</span> name[<span class="number">20</span>]&#123; <span class="string">&quot;Alex&quot;</span> &#125;; <span class="comment">// only use 5 characters (4 letters + null terminator)</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;My name is: &quot;</span> &lt;&lt; name &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    std::cout &lt;&lt; name &lt;&lt; <span class="string">&quot; has &quot;</span> &lt;&lt; std::<span class="built_in">strlen</span>(name) &lt;&lt; <span class="string">&quot; letters.\n&quot;</span>;</span><br><span class="line">    std::cout &lt;&lt; name &lt;&lt; <span class="string">&quot; has &quot;</span> &lt;&lt; std::<span class="built_in">size</span>(name) &lt;&lt; <span class="string">&quot; characters in the array.\n&quot;</span>; <span class="comment">// use sizeof(name) / sizeof(name[0]) if not C++17 capable</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的例子打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">My name is: Alex</span><br><span class="line">Alex has 4 letters.</span><br><span class="line">Alex has 20 characters in the array.</span><br></pre></td></tr></table></figure>
+
+<p>注意 strlen() 和 std::size() 之间的区别。strlen() 打印空终止符之前的字符数，而 std::size （或 sizeof() 技巧）返回整个数组的大小，而不管其中的内容。</p>
+<p>其他有用的函数：<br>strcat() – 将一个字符串附加到另一个字符串（危险）<br>strncat() – 将一个字符串附加到另一个字符串（带缓冲区长度检查）<br>strcmp() – 比较两个字符串（如果相等则返回 0）<br>strncmp() – 比较两个字符串直到指定数量的字符（如果相等则返回 0）</p>
+<p>这是一个使用本课中的一些概念的示例程序：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span> <span class="comment">// for std::size</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Ask the user to enter a string</span></span><br><span class="line">    <span class="type">char</span> buffer[<span class="number">255</span>] &#123;&#125;;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Enter a string: &quot;</span>;</span><br><span class="line">    std::cin.<span class="built_in">getline</span>(buffer, std::<span class="built_in">size</span>(buffer));</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> spacesFound&#123; <span class="number">0</span> &#125;;</span><br><span class="line">    <span class="type">int</span> bufferLength&#123; <span class="built_in">static_cast</span>&lt;<span class="type">int</span>&gt;(std::<span class="built_in">strlen</span>(buffer)) &#125;;</span><br><span class="line">    <span class="comment">// Loop through all of the characters the user entered</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> index&#123; <span class="number">0</span> &#125;; index &lt; bufferLength; ++index)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// If the current character is a space, count it</span></span><br><span class="line">        <span class="keyword">if</span> (buffer[index] == <span class="string">&#x27; &#x27;</span>)</span><br><span class="line">            ++spacesFound;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;You typed &quot;</span> &lt;&lt; spacesFound &lt;&lt; <span class="string">&quot; spaces!\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>请注意，我们放在<code>strlen(buffer)</code>循环之外，以便只计算一次字符串长度，而不是每次检查循环条件时。</p>
+<h2 id="不要使用-C-风格的字符串"><a href="#不要使用-C-风格的字符串" class="headerlink" title="不要使用 C 风格的字符串"></a>不要使用 C 风格的字符串</h2><p>了解 C 风格的字符串很重要，因为它们在很多代码中使用。但是，既然我们已经解释了它们的工作原理，我们将建议您尽可能完全避免使用它们！除非您有特定的、令人信服的理由使用 C 风格的字符串，否则请改用 std::string（在 <string> 标头中定义）。std::string 更简单、更安全、更灵活。在极少数情况下，您确实需要使用固定的缓冲区大小和 C 风格的字符串（例如，对于内存有限的设备），我们建议使用为此目的设计的经过良好测试的第 3 方字符串库，或者<code>std::string_view</code>，它是而是在下一课中介绍。</p>
+<div style="background-color:lightgreen ;">
+   <p >规则</p>
+   <p>
+使用std::string或std::string_view（下一课）代替 C 风格的字符串。
+    </p>
+</div>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-11/" rel="tag"># LearnCpp——Chapter 11</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.5%20%E2%80%94%20%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84/" rel="prev" title="11.5 — 多维数组">
+      <i class="fa fa-chevron-left"></i> 11.5 — 多维数组
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11-8/" rel="next" title="11.8">
+      11.8 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#11-6-%E2%80%94-C-%E9%A3%8E%E6%A0%BC%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.</span> <span class="nav-text">11.6 — C 风格字符串</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#C-style%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">2.</span> <span class="nav-text">C-style字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E9%A3%8E%E6%A0%BC%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C-std-cin"><span class="nav-number">2.1.</span> <span class="nav-text">C 风格的字符串和 std::cin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C-C-%E9%A3%8E%E6%A0%BC%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">2.2.</span> <span class="nav-text">操作 C 风格的字符串</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E8%A6%81%E4%BD%BF%E7%94%A8-C-%E9%A3%8E%E6%A0%BC%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">2.3.</span> <span class="nav-text">不要使用 C 风格的字符串</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuj10n</p>
+  <div class="site-description" itemprop="description">wuj10n的个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wuj10n" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wuj10n" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:542211073@qq.com" title="E-Mail → mailto:542211073@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuj10n</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuj10n.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="11.1 — 数组（第一部分）注意：本章比前几章难一些。如果您感到有点气馁，请坚持下去。最好的东西还在后面！ 在第 10.5 课- 结构、成员和成员选择简介中，您了解到可以使用结构将许多不同的数据类型聚合到一个标识符中。这对于我们想要对具有许多不同属性的单个对象建模的情况非常有用。然而，这对于我们想要跟踪某些事物的许多相关实例的情况来说并不是很好。 幸运的是，结构并不是 C++ 中唯一的聚合数据类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="11.1 — 数组（第一部分）">
+<meta property="og:url" content="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.1%20%E2%80%94%20%E6%95%B0%E7%BB%84%EF%BC%88%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%89/index.html">
+<meta property="og:site_name" content="wuj10n">
+<meta property="og:description" content="11.1 — 数组（第一部分）注意：本章比前几章难一些。如果您感到有点气馁，请坚持下去。最好的东西还在后面！ 在第 10.5 课- 结构、成员和成员选择简介中，您了解到可以使用结构将许多不同的数据类型聚合到一个标识符中。这对于我们想要对具有许多不同属性的单个对象建模的情况非常有用。然而，这对于我们想要跟踪某些事物的许多相关实例的情况来说并不是很好。 幸运的是，结构并不是 C++ 中唯一的聚合数据类">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-25T07:14:04.000Z">
+<meta property="article:modified_time" content="2022-11-25T07:25:03.366Z">
+<meta property="article:author" content="wuj10n">
+<meta property="article:tag" content="LearnCpp——Chapter 11">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.1%20%E2%80%94%20%E6%95%B0%E7%BB%84%EF%BC%88%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>11.1 — 数组（第一部分） | wuj10n</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">wuj10n</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.1%20%E2%80%94%20%E6%95%B0%E7%BB%84%EF%BC%88%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          11.1 — 数组（第一部分）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-11-25 15:14:04 / 修改时间：15:25:03" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:04+08:00">2022-11-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="11-1-—-数组（第一部分）"><a href="#11-1-—-数组（第一部分）" class="headerlink" title="11.1 — 数组（第一部分）"></a>11.1 — 数组（第一部分）</h1><p>注意：本章比前几章难一些。如果您感到有点气馁，请坚持下去。最好的东西还在后面！</p>
+<p>在第 10.5 课<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/introduction-to-structs-members-and-member-selection/">- 结构、成员和成员选择简介中</a>，您了解到可以使用结构将许多不同的数据类型聚合到一个标识符中。这对于我们想要对具有许多不同属性的单个对象建模的情况非常有用。然而，这对于我们想要跟踪某些事物的许多相关实例的情况来说并不是很好。</p>
+<p>幸运的是，结构并不是 C++ 中唯一的聚合数据类型。</p>
+<p><strong>数组</strong>是一种聚合数据类型，它使我们可以通过单个标识符访问同一类型的多个变量。<span id="more"></span></p>
+<p>考虑一下您要记录一个班级 30 名学生的考试成绩的情况。如果没有数组，您将不得不分配 30 个几乎相同的变量！</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// allocate 30 integer variables (each with a different name)</span></span><br><span class="line"><span class="type">int</span> testScoreStudent1&#123;&#125;;</span><br><span class="line"><span class="type">int</span> testScoreStudent2&#123;&#125;;</span><br><span class="line"><span class="type">int</span> testScoreStudent3&#123;&#125;;</span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="type">int</span> testScoreStudent30&#123;&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>数组为我们提供了一种更简单的方法来做到这一点。下面的数组定义本质上是等价的：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> testScore[<span class="number">30</span>]&#123;&#125;; <span class="comment">// allocate 30 integer variables in a fixed array</span></span><br></pre></td></tr></table></figure>
+
+<p>在数组变量声明中，我们使用方括号 [] 告诉编译器这是一个数组变量（而不是普通变量），以及要分配多少个变量（称为<strong>数组长度</strong>）。</p>
+<p>在上面的例子中，我们声明了一个名为testScore的固定数组，长度为30。<strong>固定数组</strong>（也称为<strong>固定长度数组</strong>或<strong>固定大小数组</strong>）是在编译时已知长度的数组。实例化 testScore 时，将分配 30 个整数。</p>
+<h2 id="数组元素和下标"><a href="#数组元素和下标" class="headerlink" title="数组元素和下标"></a>数组元素和下标</h2><p>数组中的每个变量都称为一个<strong>元素</strong>。元素没有自己唯一的名称。相反，要访问数组的各个元素，我们使用数组名称以及<strong>下标运算符[]**和一个称为</strong>下标<strong>（或</strong>索引<strong>）的参数，该参数告诉编译器我们想要哪个元素。此过程称为</strong>下标**(subscript)或**索引(index)**数组。</p>
+<p>在上面的示例中，数组中的第一个元素是 testScore[0]。第二个是 testScore[1]。第十个是 testScore[9]。testScore 数组中的最后一个元素是 testScore[29]。这很棒，因为我们不再需要跟踪一堆不同（但相关）的名称——我们只需改变下标即可访问不同的元素。</p>
+<p><em>重要提示：与我们通常从 1 开始计数的日常生活不同，在 C++ 中，数组总是从 0 开始计数！</em></p>
+<p>对于长度为 N 的数组，数组元素的编号为 0 到 N-1。这称为数组的<strong>范围</strong>。</p>
+<h2 id="示例数组程序"><a href="#示例数组程序" class="headerlink" title="示例数组程序"></a>示例数组程序</h2><p>这是一个将数组的定义和索引放在一起的示例程序：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> prime[<span class="number">5</span>]&#123;&#125;; <span class="comment">// hold the first 5 prime numbers</span></span><br><span class="line">    prime[<span class="number">0</span>] = <span class="number">2</span>; <span class="comment">// The first element has index 0</span></span><br><span class="line">    prime[<span class="number">1</span>] = <span class="number">3</span>;</span><br><span class="line">    prime[<span class="number">2</span>] = <span class="number">5</span>;</span><br><span class="line">    prime[<span class="number">3</span>] = <span class="number">7</span>;</span><br><span class="line">    prime[<span class="number">4</span>] = <span class="number">11</span>; <span class="comment">// The last element has index 4 (array length-1)</span></span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;The lowest prime number is: &quot;</span> &lt;&lt; prime[<span class="number">0</span>] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;The sum of the first 5 primes is: &quot;</span> &lt;&lt; prime[<span class="number">0</span>] + prime[<span class="number">1</span>] + prime[<span class="number">2</span>] + prime[<span class="number">3</span>] + prime[<span class="number">4</span>] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">The lowest prime number is: 2</span><br><span class="line">The sum of the first 5 primes is: 28</span><br></pre></td></tr></table></figure>
+
+<h2 id="数组数据类型"><a href="#数组数据类型" class="headerlink" title="数组数据类型"></a>数组数据类型</h2><p>数组可以由任何数据类型构成。考虑以下示例，我们在其中声明了一个双精度数组：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">double</span> batteryLifeInHours[<span class="number">3</span>]&#123;&#125;; <span class="comment">// allocate 3 doubles</span></span><br><span class="line">    batteryLifeInHours[<span class="number">0</span>] = <span class="number">2.0</span>;</span><br><span class="line">    batteryLifeInHours[<span class="number">1</span>] = <span class="number">3.0</span>;</span><br><span class="line">    batteryLifeInHours[<span class="number">2</span>] = <span class="number">4.3</span>;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;The average battery life is &quot;</span> &lt;&lt; (batteryLifeInHours[<span class="number">0</span>] + batteryLifeInHours[<span class="number">1</span>] + batteryLifeInHours[<span class="number">2</span>]) / <span class="number">3.0</span> &lt;&lt; <span class="string">&quot; hour(s)\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该程序产生结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The average battery life is 3.1 hour(s)</span><br></pre></td></tr></table></figure>
+
+<p>数组也可以由结构组成。考虑以下示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Rectangle</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> length&#123;&#125;;</span><br><span class="line">    <span class="type">int</span> width&#123;&#125;;</span><br><span class="line">&#125;;</span><br><span class="line">Rectangle rects[<span class="number">5</span>]&#123;&#125;; <span class="comment">// declare an array of 5 Rectangle</span></span><br></pre></td></tr></table></figure>
+
+<p>要访问数组元素的结构成员，首先选择您想要的数组元素，然后使用成员选择运算符选择您想要的结构成员：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rects[<span class="number">0</span>].length = <span class="number">24</span>;</span><br></pre></td></tr></table></figure>
+
+<p>数组甚至可以由数组组成，这是我们将在以后的课程中介绍的主题。</p>
+<h2 id="数组下标"><a href="#数组下标" class="headerlink" title="数组下标"></a>数组下标</h2><p>在 C++ 中，数组下标必须始终是整数类型。这包括 char、short、int、long、long long 等……奇怪的是，bool（其中 false 的索引为 0，true 的索引为 1）。数组下标可以是文字值、变量（常量或非常量）或计算结果为整数类型的表达式。</p>
+<p>这里有些例子：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> array[<span class="number">5</span>]&#123;&#125;; <span class="comment">// declare an array of length 5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// using a literal (constant) index:</span></span><br><span class="line">array[<span class="number">1</span>] = <span class="number">7</span>; <span class="comment">// ok</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// using an enum (constant) index</span></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">Animals</span></span><br><span class="line">&#123;</span><br><span class="line">    animal_cat = <span class="number">2</span></span><br><span class="line">&#125;;</span><br><span class="line">array[animal_cat] = <span class="number">4</span>; <span class="comment">// ok</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// using a variable (non-constant) index:</span></span><br><span class="line"><span class="type">int</span> index&#123; <span class="number">3</span> &#125;;</span><br><span class="line">array[index] = <span class="number">7</span>; <span class="comment">// ok</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// using an expression that evaluates to an integer index:</span></span><br><span class="line">array[<span class="number">1</span>+<span class="number">2</span>] = <span class="number">7</span>; <span class="comment">// ok</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="固定数组声明"><a href="#固定数组声明" class="headerlink" title="固定数组声明"></a>固定数组声明</h2><p>声明固定数组时，数组的长度（方括号之间）<strong>必须是编译时常量</strong>。这是因为在编译时必须知道固定数组的长度。以下是声明固定数组的一些不同方法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// using a literal constant</span></span><br><span class="line"><span class="type">int</span> numberOfLessonsPerDay[<span class="number">7</span>]&#123;&#125;; <span class="comment">// Ok</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// using a constexpr symbolic constant</span></span><br><span class="line"><span class="keyword">constexpr</span> <span class="type">int</span> daysPerWeek&#123; <span class="number">7</span> &#125;;</span><br><span class="line"><span class="type">int</span> numberOfLessonsPerDay[daysPerWeek]&#123;&#125;; <span class="comment">// Ok</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// using an enumerator</span></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">DaysOfWeek</span></span><br><span class="line">&#123;</span><br><span class="line">    monday,</span><br><span class="line">    tuesday,</span><br><span class="line">    wednesday,</span><br><span class="line">    thursday,</span><br><span class="line">    friday,</span><br><span class="line">    saturday,</span><br><span class="line">    sunday,</span><br><span class="line"></span><br><span class="line">    maxDaysOfWeek</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">int</span> numberOfLessonsPerDay[maxDaysOfWeek]&#123;&#125;; <span class="comment">// Ok</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// using a macro</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DAYS_PER_WEEK 7</span></span><br><span class="line"><span class="type">int</span> numberOfLessonsPerDay[DAYS_PER_WEEK]&#123;&#125;; <span class="comment">// Works, but don&#x27;t do this (use a constexpr symbolic constant instead)</span></span><br></pre></td></tr></table></figure>
+
+<p>请注意，不能使用非常量变量或运行时常量：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// using a non-const variable</span></span><br><span class="line"><span class="type">int</span> daysPerWeek&#123;&#125;;</span><br><span class="line">std::cin &gt;&gt; daysPerWeek;</span><br><span class="line"><span class="type">int</span> numberOfLessonsPerDay[daysPerWeek]&#123;&#125;; <span class="comment">// Not ok -- daysPerWeek is not a compile-time constant!</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// using a runtime const variable</span></span><br><span class="line"><span class="type">int</span> temp&#123; <span class="number">5</span> &#125;;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> daysPerWeek&#123; temp &#125;; <span class="comment">// the value of daysPerWeek isn&#x27;t known until runtime, so this is a runtime constant, not a compile-time constant!</span></span><br><span class="line"><span class="type">int</span> numberOfLessonsPerDay[daysPerWeek]&#123;&#125;; <span class="comment">// Not ok</span></span><br></pre></td></tr></table></figure>
+
+<p>请注意，在最后两种情况下，应该会导致错误，因为长度不是编译时常量。某些编译器可能允许这些类型的数组（出于 C99 兼容性原因），但它们在 C++ 中无效，不应在 C++ 程序中使用。如果您的编译器允许这些数组，您可能忘记禁用编译器扩展（第<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/configuring-your-compiler-compiler-extensions/">0.10 课——配置您的编译器：编译器扩展</a>）。</p>
+<h2 id="关于动态数组的注释"><a href="#关于动态数组的注释" class="headerlink" title="关于动态数组的注释"></a>关于动态数组的注释</h2><p>因为固定数组在编译时分配内存，所以引入了两个限制：</p>
+<ul>
+<li>固定数组的长度不能基于用户输入或运行时计算的其他值。</li>
+<li>固定数组具有固定长度，无法更改。</li>
+</ul>
+<p>在许多情况下，这些限制是有问题的。幸运的是，C++ 支持第二种数组，称为<strong>动态数组</strong>。动态数组的长度可以在运行时设置，并且可以更改它们的长度。然而，动态数组的实例化有点复杂，所以我们将在本章后面介绍它们。</p>
+<h2 id="概括"><a href="#概括" class="headerlink" title="概括"></a>概括</h2><p>固定数组提供了一种简单的方法来分配和使用相同类型的多个变量，只要数组的长度在编译时已知即可。</p>
+<p>在下一课中，我们将讨论有关固定数组的更多内容。 </p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-11/" rel="tag"># LearnCpp——Chapter 11</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/24/%E8%AF%81%E5%88%B8%E6%8A%95%E8%B5%84%E5%AD%A6/%E7%AC%AC%2010%20%E5%9B%9E%20%E8%AF%81%E5%88%B8%E6%B6%A8%E8%B7%8C%E4%BA%A4%E6%98%93%E6%9C%89%E5%BA%A6%20%E5%8A%A3%E4%BC%81%E9%80%80%E5%B8%82%E5%BC%BA%E8%80%85%E7%94%9F%E5%AD%98/" rel="prev" title="第 10 回 证券涨跌交易有度 劣企退市强者生存">
+      <i class="fa fa-chevron-left"></i> 第 10 回 证券涨跌交易有度 劣企退市强者生存
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.2%20%E2%80%94%20%E6%95%B0%E7%BB%84%EF%BC%88%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%89/" rel="next" title="11.2 — 数组（第二部分）">
+      11.2 — 数组（第二部分） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#11-1-%E2%80%94-%E6%95%B0%E7%BB%84%EF%BC%88%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">11.1 — 数组（第一部分）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E5%85%83%E7%B4%A0%E5%92%8C%E4%B8%8B%E6%A0%87"><span class="nav-number">1.1.</span> <span class="nav-text">数组元素和下标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E6%95%B0%E7%BB%84%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.2.</span> <span class="nav-text">示例数组程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.3.</span> <span class="nav-text">数组数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E4%B8%8B%E6%A0%87"><span class="nav-number">1.4.</span> <span class="nav-text">数组下标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E6%95%B0%E7%BB%84%E5%A3%B0%E6%98%8E"><span class="nav-number">1.5.</span> <span class="nav-text">固定数组声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%8A%A8%E6%80%81%E6%95%B0%E7%BB%84%E7%9A%84%E6%B3%A8%E9%87%8A"><span class="nav-number">1.6.</span> <span class="nav-text">关于动态数组的注释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E6%8B%AC"><span class="nav-number">1.7.</span> <span class="nav-text">概括</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuj10n</p>
+  <div class="site-description" itemprop="description">wuj10n的个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wuj10n" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wuj10n" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:542211073@qq.com" title="E-Mail → mailto:542211073@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuj10n</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
