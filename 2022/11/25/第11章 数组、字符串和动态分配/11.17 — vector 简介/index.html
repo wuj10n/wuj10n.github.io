@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuj10n.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="11.17 — std::vector 简介在上一课中，我们介绍了std::array，它以更安全、更易用的形式提供了C++内置固定数组的功能。 类似地，C++ 标准库提供的功能使使用动态数组更安全、更容易。 此功能名为 std::vector。 与严格遵循固定数组的基本功能的 std::array 不同，std::vector 带有一些额外的技巧。 这些有助于使 std::vector 成为 C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="11.17 — std::vector 简介">
+<meta property="og:url" content="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.17%20%E2%80%94%20vector%20%E7%AE%80%E4%BB%8B/index.html">
+<meta property="og:site_name" content="wuj10n">
+<meta property="og:description" content="11.17 — std::vector 简介在上一课中，我们介绍了std::array，它以更安全、更易用的形式提供了C++内置固定数组的功能。 类似地，C++ 标准库提供的功能使使用动态数组更安全、更容易。 此功能名为 std::vector。 与严格遵循固定数组的基本功能的 std::array 不同，std::vector 带有一些额外的技巧。 这些有助于使 std::vector 成为 C">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-25T07:14:57.000Z">
+<meta property="article:modified_time" content="2022-12-01T15:30:38.370Z">
+<meta property="article:author" content="wuj10n">
+<meta property="article:tag" content="LearnCpp——Chapter 11">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.17%20%E2%80%94%20vector%20%E7%AE%80%E4%BB%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>11.17 — std::vector 简介 | wuj10n</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">wuj10n</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.17%20%E2%80%94%20vector%20%E7%AE%80%E4%BB%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          11.17 — std::vector 简介
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-25 15:14:57" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:57+08:00">2022-11-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-12-01 23:30:38" itemprop="dateModified" datetime="2022-12-01T23:30:38+08:00">2022-12-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="11-17-—-std-vector-简介"><a href="#11-17-—-std-vector-简介" class="headerlink" title="11.17 — std::vector 简介"></a>11.17 — std::vector 简介</h1><p>在上一课中，我们介绍了std::array，它以更安全、更易用的形式提供了C++内置固定数组的功能。</p>
+<p>类似地，C++ 标准库提供的功能使使用动态数组更安全、更容易。 此功能名为 std::vector。</p>
+<p>与严格遵循固定数组的基本功能的 std::array 不同，std::vector 带有一些额外的技巧。 这些有助于使 std::vector 成为 C++ 工具包中最有用和最通用的工具之一。<span id="more"></span></p>
+<h2 id="std-vector-简介"><a href="#std-vector-简介" class="headerlink" title="std::vector 简介"></a>std::vector 简介</h2><p>在 C++03 中引入，<code>std::vector </code>提供动态数组功能来处理其自身的内存管理。 这意味着您可以创建在运行时设置长度的数组，而不必使用 new 和 delete 显式分配和释放内存。<code>std::vector</code> 位于 <vector> 标头中。</p>
+<p>声明一个 <code>std::vector</code> 很简单：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// no need to specify length at the declaration</span></span><br><span class="line">std::vector&lt;<span class="type">int</span>&gt; array;</span><br><span class="line">std::vector&lt;<span class="type">int</span>&gt; array2 = &#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125;; <span class="comment">// use initializer list to initialize array (before C++11)</span></span><br><span class="line">std::vector&lt;<span class="type">int</span>&gt; array3 &#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125;; <span class="comment">// use uniform initialization to initialize array</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// as with std::array, the type can be omitted since C++17</span></span><br><span class="line">std::vector array4 &#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125;; <span class="comment">// deduced to std::vector&lt;int&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>请注意，在未初始化和已初始化的情况下，您不需要在编译时包括数组长度。 这是因为 std::vector 将根据请求为其内容动态分配内存。</p>
+<p>就像 std::array 一样，可以通过 [] 运算符（不进行边界检查）或 at() 函数（进行边界检查）来访问数组元素：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">array[<span class="number">6</span>] = <span class="number">2</span>; <span class="comment">// no bounds checking</span></span><br><span class="line">array.<span class="built_in">at</span>(<span class="number">7</span>) = <span class="number">3</span>; <span class="comment">// does bounds checking</span></span><br></pre></td></tr></table></figure>
+
+<p>在任何一种情况下，如果您请求一个位于数组末尾的元素，vector都不会自动调整大小。</p>
+<p>从 C++11 开始，您还可以使用初始化列表为 std::vector 赋值：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">array = &#123; <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> &#125;; <span class="comment">// okay, array length is now 5</span></span><br><span class="line">array = &#123; <span class="number">9</span>, <span class="number">8</span>, <span class="number">7</span> &#125;; <span class="comment">// okay, array length is now 3</span></span><br></pre></td></tr></table></figure>
+
+<p>在这种情况下，vector将自行调整大小以匹配提供的元素数量。</p>
+<h2 id="自清理防止内存泄漏"><a href="#自清理防止内存泄漏" class="headerlink" title="自清理防止内存泄漏"></a>自清理防止内存泄漏</h2><p>当vector变量超出范围时，它会自动释放它控制的内存（如果需要）。 这不仅方便（因为您不必自己做），还有助于防止内存泄漏。 考虑以下片段：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">doSomething</span><span class="params">(<span class="type">bool</span> earlyExit)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span>* array&#123; <span class="keyword">new</span> <span class="type">int</span>[<span class="number">5</span>] &#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125; &#125;; <span class="comment">// allocated memory using new</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (earlyExit)</span><br><span class="line">        <span class="keyword">return</span>; <span class="comment">// exits the function without deallocating the memory allocated above</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// do stuff here</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">delete</span>[] array; <span class="comment">// never called</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果 earlyExit 设置为 true，array 将永远不会被释放，并且会泄漏内存。</p>
+<p>但是，如果 <code>array</code> 是一个 <code>std::vector</code>，则不会发生这种情况，因为一旦 array 超出范围，内存就会被释放（无论函数是否提前退出）。 这使得 <code>std::vector </code>使用起来比自己分配内存更安全。</p>
+<h2 id="vector会记住它们的长度"><a href="#vector会记住它们的长度" class="headerlink" title="vector会记住它们的长度"></a>vector会记住它们的长度</h2><p>与不知道它们指向的数组长度的内置动态数组不同，std::vector 会跟踪它的长度。 我们可以通过 size() 函数请求vector的长度：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">printLength</span><span class="params">(<span class="type">const</span> std::vector&lt;<span class="type">int</span>&gt;&amp; array)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;The length is: &quot;</span> &lt;&lt; array.<span class="built_in">size</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::vector array &#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125;;</span><br><span class="line">    <span class="built_in">printLength</span>(array);</span><br><span class="line"></span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; empty &#123;&#125;;</span><br><span class="line">    <span class="built_in">printLength</span>(empty);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的例子打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">The length is: 5</span><br><span class="line">The length is: 0</span><br></pre></td></tr></table></figure>
+
+<p>与 std::array 一样，size() 返回嵌套类型 size_type 的值（上例中的完整类型为 std::vector<int>::size_type），这是一个无符号整数。</p>
+<h2 id="调整vector大小"><a href="#调整vector大小" class="headerlink" title="调整vector大小"></a>调整vector大小</h2><p>调整内置动态分配数组的大小很复杂。 调整 <code>std::vector</code> 的大小就像调用 <code>resize() </code>函数一样简单：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::vector array &#123; <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span> &#125;;</span><br><span class="line">    array.<span class="built_in">resize</span>(<span class="number">5</span>); <span class="comment">// set size to 5</span></span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;The length is: &quot;</span> &lt;&lt; array.<span class="built_in">size</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i : array)</span><br><span class="line">        std::cout &lt;&lt; i &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">The length is: 5</span><br><span class="line">0 1 2 0 0</span><br></pre></td></tr></table></figure>
+
+<p>这里有两点需要注意。 首先，当我们调整vector大小时，现有的元素值被保留了下来！ 其次，新元素被初始化为类型的默认值（整数为 0）。</p>
+<p>vector可以调整为更小：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::vector array &#123; <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> &#125;;</span><br><span class="line">    array.<span class="built_in">resize</span>(<span class="number">3</span>); <span class="comment">// set length to 3</span></span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;The length is: &quot;</span> &lt;&lt; array.<span class="built_in">size</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i : array)</span><br><span class="line">        std::cout &lt;&lt; i &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">The length is: 3</span><br><span class="line">0 1 2</span><br></pre></td></tr></table></figure>
+
+<h2 id="将vector初始化为特定大小"><a href="#将vector初始化为特定大小" class="headerlink" title="将vector初始化为特定大小"></a>将vector初始化为特定大小</h2><p>调整vector大小的计算量很大，因此您应该尽量减少这样做的次数。 如果您需要一个具有特定数量元素的vector，但在声明时不知道元素的值，您可以创建一个具有默认元素的vector，如下所示：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Using direct initialization, we can create a vector with 5 elements,</span></span><br><span class="line">    <span class="comment">// each element is a 0. If we use brace initialization, the vector would</span></span><br><span class="line">    <span class="comment">// have 1 element, a 5.</span></span><br><span class="line">    <span class="function">std::vector&lt;<span class="type">int</span>&gt; <span class="title">array</span><span class="params">(<span class="number">5</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;The length is: &quot;</span> &lt;&lt; array.<span class="built_in">size</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i : array)</span><br><span class="line">        std::cout &lt;&lt; i &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">The length is: 5</span><br><span class="line">0 0 0 0 0</span><br></pre></td></tr></table></figure>
+
+<h2 id="关键见解："><a href="#关键见解：" class="headerlink" title="关键见解："></a>关键见解：</h2><p> 初始化vector时：</p>
+<pre><code>   - 当您想用特定值初始化vector时，请使用大括号初始化。
+</code></pre>
+<ul>
+<li><p>当您想要将vector初始化为特定大小时（值将被值初始化），请使用小括号初始化。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">std::vector a &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> &#125;; <span class="comment">// allocate 3 elements with values 1, 2, and 3</span></span><br><span class="line">std::vector b &#123; <span class="number">3</span> &#125;; <span class="comment">// allocate 1 element with value 3</span></span><br><span class="line">std::<span class="built_in">vectorc</span> ( <span class="number">3</span> ); <span class="comment">// allocate 3 elements with values 0, 0, and 0</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>我们将在第 16.7 课——std::initializer_list中讨论为什么直接初始化和大括号初始化(direct and brace-initialization)被区别对待。 根据经验，如果类型是某种列表，并且您不想使用值列表初始化对象，请使用直接初始化。</p>
+<h2 id="压缩布尔值"><a href="#压缩布尔值" class="headerlink" title="压缩布尔值"></a>压缩布尔值</h2><p>std::vector 还有另一个很酷的技巧。 bool 类型的 std::vector 有一个特殊的实现，它将 8 个布尔值压缩成一个字节！ 这发生在幕后，不会改变您使用 std::vector 的方式。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::vector&lt;<span class="type">bool</span>&gt; array &#123; <span class="literal">true</span>, <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">true</span>, <span class="literal">true</span> &#125;;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;The length is: &quot;</span> &lt;&lt; array.<span class="built_in">size</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i : array)</span><br><span class="line">        std::cout &lt;&lt; i &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">The length is: 5</span><br><span class="line">1 0 0 1 1</span><br></pre></td></tr></table></figure>
+
+<h2 id="更多精彩即将到来"><a href="#更多精彩即将到来" class="headerlink" title="更多精彩即将到来"></a>更多精彩即将到来</h2><p>请注意，这是一篇介绍性文章，旨在介绍 <code>std::vector </code>的基础知识。 在第 12.3 课——<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/stdvector-capacity-and-stack-behavior/">std::vector 容量和堆栈行为</a>中，我们将介绍 <code>std::vector</code> 的一些额外功能，包括vector长度和容量之间的差异，并深入了解 std::vector 如何处理内存分配。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>因为 <code>std::vector </code>类型的变量处理它们自己的内存管理（这有助于防止内存泄漏）、记住它们的长度并且可以轻松调整大小，所以我们建议在大多数需要动态数组的情况下使用<code> std::vector</code>。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-11/" rel="tag"># LearnCpp——Chapter 11</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.16%20%E2%80%94%20array%20%E7%AE%80%E4%BB%8B/" rel="prev" title="11.16 — std::array 简介">
+      <i class="fa fa-chevron-left"></i> 11.16 — std::array 简介
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11-18/" rel="next" title="11.18 — 迭代器简介">
+      11.18 — 迭代器简介 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#11-17-%E2%80%94-std-vector-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">11.17 — std::vector 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#std-vector-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">std::vector 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E6%B8%85%E7%90%86%E9%98%B2%E6%AD%A2%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">1.2.</span> <span class="nav-text">自清理防止内存泄漏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vector%E4%BC%9A%E8%AE%B0%E4%BD%8F%E5%AE%83%E4%BB%AC%E7%9A%84%E9%95%BF%E5%BA%A6"><span class="nav-number">1.3.</span> <span class="nav-text">vector会记住它们的长度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E6%95%B4vector%E5%A4%A7%E5%B0%8F"><span class="nav-number">1.4.</span> <span class="nav-text">调整vector大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86vector%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%BA%E7%89%B9%E5%AE%9A%E5%A4%A7%E5%B0%8F"><span class="nav-number">1.5.</span> <span class="nav-text">将vector初始化为特定大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E8%A7%81%E8%A7%A3%EF%BC%9A"><span class="nav-number">1.6.</span> <span class="nav-text">关键见解：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%8B%E7%BC%A9%E5%B8%83%E5%B0%94%E5%80%BC"><span class="nav-number">1.7.</span> <span class="nav-text">压缩布尔值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E5%A4%9A%E7%B2%BE%E5%BD%A9%E5%8D%B3%E5%B0%86%E5%88%B0%E6%9D%A5"><span class="nav-number">1.8.</span> <span class="nav-text">更多精彩即将到来</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">1.9.</span> <span class="nav-text">结论</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuj10n</p>
+  <div class="site-description" itemprop="description">wuj10n的个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">72</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wuj10n" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wuj10n" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:542211073@qq.com" title="E-Mail → mailto:542211073@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuj10n</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

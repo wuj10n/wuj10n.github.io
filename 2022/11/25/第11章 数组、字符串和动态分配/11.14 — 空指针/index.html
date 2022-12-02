@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuj10n.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="11.14 — 空指针void 指针，也称为泛型指针，是一种特殊类型的指针，可以指向任何数据类型的对象！void 指针像普通指针一样声明，使用 void 关键字作为指针的类型： 1void* ptr; &#x2F;&#x2F; ptr is a void pointer  void 指针可以指向任何数据类型的对象： 123456789101112131415int nValue;float fValue;struct">
+<meta property="og:type" content="article">
+<meta property="og:title" content="11.14 — 空指针">
+<meta property="og:url" content="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.14%20%E2%80%94%20%E7%A9%BA%E6%8C%87%E9%92%88/index.html">
+<meta property="og:site_name" content="wuj10n">
+<meta property="og:description" content="11.14 — 空指针void 指针，也称为泛型指针，是一种特殊类型的指针，可以指向任何数据类型的对象！void 指针像普通指针一样声明，使用 void 关键字作为指针的类型： 1void* ptr; &#x2F;&#x2F; ptr is a void pointer  void 指针可以指向任何数据类型的对象： 123456789101112131415int nValue;float fValue;struct">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-25T07:14:49.000Z">
+<meta property="article:modified_time" content="2022-12-01T15:30:33.343Z">
+<meta property="article:author" content="wuj10n">
+<meta property="article:tag" content="LearnCpp——Chapter 11">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.14%20%E2%80%94%20%E7%A9%BA%E6%8C%87%E9%92%88/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>11.14 — 空指针 | wuj10n</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">wuj10n</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.14%20%E2%80%94%20%E7%A9%BA%E6%8C%87%E9%92%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          11.14 — 空指针
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-25 15:14:49" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:49+08:00">2022-11-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-12-01 23:30:33" itemprop="dateModified" datetime="2022-12-01T23:30:33+08:00">2022-12-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="11-14-—-空指针"><a href="#11-14-—-空指针" class="headerlink" title="11.14 — 空指针"></a>11.14 — 空指针</h1><p><strong>void 指针</strong>，也称为泛型指针，是一种特殊类型的指针，可以指向任何数据类型的对象！void 指针像普通指针一样声明，使用 void 关键字作为指针的类型：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span>* ptr; <span class="comment">// ptr is a void pointer</span></span><br></pre></td></tr></table></figure>
+
+<p>void 指针可以指向任何数据类型的对象：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> nValue;</span><br><span class="line"><span class="type">float</span> fValue;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Something</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    <span class="type">float</span> f;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Something sValue;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span>* ptr;</span><br><span class="line">ptr = &amp;nValue; <span class="comment">// valid</span></span><br><span class="line">ptr = &amp;fValue; <span class="comment">// valid</span></span><br><span class="line">ptr = &amp;sValue; <span class="comment">// valid</span></span><br></pre></td></tr></table></figure>
+
+<p>但是，因为 void 指针不知道它指向什么类型的对象，所以解引用 void 指针是非法的。相反，必须先将 void 指针转换为另一种指针类型，然后才能执行解引用。<span id="more"></span></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> value&#123; <span class="number">5</span> &#125;;</span><br><span class="line"><span class="type">void</span>* voidPtr&#123; &amp;value &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// std::cout &lt;&lt; *voidPtr &lt;&lt; &#x27;\n&#x27;; // illegal: dereference of void pointer</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span>* intPtr&#123; <span class="built_in">static_cast</span>&lt;<span class="type">int</span>*&gt;(voidPtr) &#125;; <span class="comment">// however, if we cast our void pointer to an int pointer...</span></span><br><span class="line"></span><br><span class="line">std::cout &lt;&lt; *intPtr &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// then we can dereference the result</span></span><br></pre></td></tr></table></figure>
+
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">5</span><br></pre></td></tr></table></figure>
+
+<p>下一个明显的问题是：如果 void 指针不知道它指向什么，我们怎么知道要将它转换成什么？最终，这取决于您进行跟踪。</p>
+<p>这是一个正在使用的 void 指针的示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cassert&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">enum class</span> <span class="title class_">Type</span></span><br><span class="line">&#123;</span><br><span class="line">    tInt, <span class="comment">// note: we can&#x27;t use &quot;int&quot; here because it&#x27;s a keyword, so we&#x27;ll use &quot;tInt&quot; instead</span></span><br><span class="line">    tFloat,</span><br><span class="line">    tCString</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">printValue</span><span class="params">(<span class="type">void</span>* ptr, Type type)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (type)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="keyword">case</span> Type::tInt:</span><br><span class="line">        std::cout &lt;&lt; *<span class="built_in">static_cast</span>&lt;<span class="type">int</span>*&gt;(ptr) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// cast to int pointer and perform indirection</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> Type::tFloat:</span><br><span class="line">        std::cout &lt;&lt; *<span class="built_in">static_cast</span>&lt;<span class="type">float</span>*&gt;(ptr) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// cast to float pointer and perform indirection</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> Type::tCString:</span><br><span class="line">        std::cout &lt;&lt; <span class="built_in">static_cast</span>&lt;<span class="type">char</span>*&gt;(ptr) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// cast to char pointer (no indirection)</span></span><br><span class="line">        <span class="comment">// std::cout will treat char* as a C-style string</span></span><br><span class="line">        <span class="comment">// if we were to perform indirection through the result, then we&#x27;d just print the single char that ptr is pointing to</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="built_in">assert</span>(<span class="literal">false</span> &amp;&amp; <span class="string">&quot;type not found&quot;</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> nValue&#123; <span class="number">5</span> &#125;;</span><br><span class="line">    <span class="type">float</span> fValue&#123; <span class="number">7.5f</span> &#125;;</span><br><span class="line">    <span class="type">char</span> szValue[]&#123; <span class="string">&quot;Mollie&quot;</span> &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printValue</span>(&amp;nValue, Type::tInt);</span><br><span class="line">    <span class="built_in">printValue</span>(&amp;fValue, Type::tFloat);</span><br><span class="line">    <span class="built_in">printValue</span>(szValue, Type::tCString);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这个程序打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">5</span><br><span class="line">7.5</span><br><span class="line">Mollie</span><br></pre></td></tr></table></figure>
+
+<h2 id="Void-pointer-杂项"><a href="#Void-pointer-杂项" class="headerlink" title="Void pointer 杂项"></a><strong>Void pointer</strong> 杂项</h2><p><strong>Void pointer</strong> 可以设置为null值：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span>* ptr&#123; <span class="literal">nullptr</span> &#125;; <span class="comment">// ptr is a void pointer that is currently a null pointer</span></span><br></pre></td></tr></table></figure>
+
+<p>尽管某些编译器允许删除指向动态分配内存的void pointer，但应避免这样做，因为它会导致未定义的行为。</p>
+<p>不可能对 void pointer进行指针运算。这是因为指针算法需要指针知道它指向的对象大小，因此它可以适当地递增或递减指针。</p>
+<p>请注意，没有void reference这样的东西。这是因为 void reference的类型为 void &amp;，并不知道它引用的值是什么类型。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>通常，除非绝对必要，否则最好避免使用 void 指针，因为它们可以有效地避免类型检查。这允许你不经意地做一些没有意义的事情，而编译器不会抱怨它。例如，以下内容是有效的：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> nValue&#123; <span class="number">5</span> &#125;;</span><br><span class="line"><span class="built_in">printValue</span>(&amp;nValue, Type::tCString);</span><br></pre></td></tr></table></figure>
+
+<p>但谁知道结果会是怎样呢！</p>
+<p>虽然上面的函数看起来是一种让单个函数处理多种数据类型的巧妙方法，但 C++ 实际上提供了一种更好的方法来做同样的事情（通过函数重载），它保留类型检查以帮助防止误用。许多其他曾经使用 void 指针处理多种数据类型的地方现在最好使用模板来完成，模板也提供强类型检查。</p>
+<p>然而，在极少数情况下，您仍然可以找到 void 指针的合理用途。只要确保没有更好（更安全）的方法来首先使用其他语言机制来做同样的事情！ </p>
+<h2 id="void-pointer和null-pointer有什么区别"><a href="#void-pointer和null-pointer有什么区别" class="headerlink" title="void pointer和null pointer有什么区别?"></a>void pointer和null pointer有什么区别?</h2><p>void pointer是可以指向任何类型对象的指针，但不知道它指向的是什么类型的对象。必须将 void pointer显式转换为另一种类型的指针才能执行间接寻址。</p>
+<p>null pointe是不指向地址的指针。void pointer可以是null pointer。</p>
+<p>因此，void pointer指的是指针的类型，而null pointe指的是指针的值（地址）。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-11/" rel="tag"># LearnCpp——Chapter 11</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.13%20%E2%80%94%20For-each%20%E5%BE%AA%E7%8E%AF/" rel="prev" title="11.13 — For-each 循环">
+      <i class="fa fa-chevron-left"></i> 11.13 — For-each 循环
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.15%20%E2%80%94%20%E6%8C%87%E5%90%91%E6%8C%87%E9%92%88%E5%92%8C%E5%8A%A8%E6%80%81%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84%E7%9A%84%E6%8C%87%E9%92%88/" rel="next" title="11.15 — 指向指针和动态多维数组的指针">
+      11.15 — 指向指针和动态多维数组的指针 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#11-14-%E2%80%94-%E7%A9%BA%E6%8C%87%E9%92%88"><span class="nav-number">1.</span> <span class="nav-text">11.14 — 空指针</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Void-pointer-%E6%9D%82%E9%A1%B9"><span class="nav-number">1.1.</span> <span class="nav-text">Void pointer 杂项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">1.2.</span> <span class="nav-text">结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#void-pointer%E5%92%8Cnull-pointer%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="nav-number">1.3.</span> <span class="nav-text">void pointer和null pointer有什么区别?</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuj10n</p>
+  <div class="site-description" itemprop="description">wuj10n的个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">72</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wuj10n" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wuj10n" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:542211073@qq.com" title="E-Mail → mailto:542211073@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuj10n</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

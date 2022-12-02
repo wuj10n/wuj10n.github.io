@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuj10n.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="11.11 — 使用 new 和 delete 进行动态内存分配动态内存分配的必要性 C++ 支持三种基本类型的内存分配，您已经看到了其中两种。  静态内存分配发生在静态和全局变量上。这些类型的变量的内存在程序运行时分配一次，并在程序的整个生命周期中持续存在。 自动内存分配发生在函数参数和局部变量上。这些类型的变量的内存在进入相关块时分配，并在块退出时释放，根据需要多次。 动态内存分配是本文的主题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="11.11 — 使用 new 和 delete 进行动态内存分配">
+<meta property="og:url" content="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.11%20%E2%80%94%20%E4%BD%BF%E7%94%A8%20new%20%E5%92%8C%20delete%20%E8%BF%9B%E8%A1%8C%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/index.html">
+<meta property="og:site_name" content="wuj10n">
+<meta property="og:description" content="11.11 — 使用 new 和 delete 进行动态内存分配动态内存分配的必要性 C++ 支持三种基本类型的内存分配，您已经看到了其中两种。  静态内存分配发生在静态和全局变量上。这些类型的变量的内存在程序运行时分配一次，并在程序的整个生命周期中持续存在。 自动内存分配发生在函数参数和局部变量上。这些类型的变量的内存在进入相关块时分配，并在块退出时释放，根据需要多次。 动态内存分配是本文的主题">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-25T07:14:37.000Z">
+<meta property="article:modified_time" content="2022-12-01T14:39:40.145Z">
+<meta property="article:author" content="wuj10n">
+<meta property="article:tag" content="LearnCpp——Chapter 11">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.11%20%E2%80%94%20%E4%BD%BF%E7%94%A8%20new%20%E5%92%8C%20delete%20%E8%BF%9B%E8%A1%8C%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>11.11 — 使用 new 和 delete 进行动态内存分配 | wuj10n</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">wuj10n</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.11%20%E2%80%94%20%E4%BD%BF%E7%94%A8%20new%20%E5%92%8C%20delete%20%E8%BF%9B%E8%A1%8C%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          11.11 — 使用 new 和 delete 进行动态内存分配
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-25 15:14:37" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:37+08:00">2022-11-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-12-01 22:39:40" itemprop="dateModified" datetime="2022-12-01T22:39:40+08:00">2022-12-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="11-11-—-使用-new-和-delete-进行动态内存分配"><a href="#11-11-—-使用-new-和-delete-进行动态内存分配" class="headerlink" title="11.11 — 使用 new 和 delete 进行动态内存分配"></a>11.11 — 使用 new 和 delete 进行动态内存分配</h1><p><strong>动态内存分配的必要性</strong></p>
+<p>C++ 支持三种基本类型的内存分配，您已经看到了其中两种。</p>
+<ul>
+<li><strong>静态内存分配</strong>发生在静态和全局变量上。这些类型的变量的内存在程序运行时分配一次，并在程序的整个生命周期中持续存在。</li>
+<li><strong>自动内存分配</strong>发生在函数参数和局部变量上。这些类型的变量的内存在进入相关块时分配，并在块退出时释放，根据需要多次。</li>
+<li><strong>动态内存分配</strong>是本文的主题。</li>
+</ul>
+<p>静态分配和自动分配都有两个共同点：</p>
+<ul>
+<li>变量/数组的大小必须在编译时已知。</li>
+<li>内存分配和释放自动发生（当变量被实例化/销毁时）。</li>
+</ul>
+<p>大多数时候，这很好。但是，您会遇到其中一个或两个约束导致问题的情况，通常是在处理外部（用户或文件）输入时。</p>
+<p>例如，我们可能想用一个字符串来保存某人的名字，但是在输入之前我们不知道他们的名字有多长。或者我们可能想从磁盘中读入一些记录，但是我们事先并不知道有多少条记录。或者我们可能正在创建一个游戏，其中有可变数量的怪物（随着时间的推移，随着一些怪物的死亡和新怪物的产生而变化）试图杀死玩家。</p>
+<p>如果我们必须在编译时声明所有内容的大小，我们能做的最好的事情就是尝试猜测我们需要的变量的最大大小并希望这就足够了：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> name[<span class="number">25</span>]; <span class="comment">// let&#x27;s hope their name is less than 25 chars!</span></span><br><span class="line">Record record[<span class="number">500</span>]; <span class="comment">// let&#x27;s hope there are less than 500 records!</span></span><br><span class="line">Monster monster[<span class="number">40</span>]; <span class="comment">// 40 monsters maximum</span></span><br><span class="line">Polygon rendering[<span class="number">30000</span>]; <span class="comment">// this 3d rendering better not have more than 30,000 polygons!</span></span><br></pre></td></tr></table></figure>
+
+<p>这是一个糟糕的解决方案，至少有四个原因：</p>
+<p>首先，如果实际上没有使用变量，则会导致内存浪费。例如，如果我们为每个名称分配 25 个字符，但名称平均只有 12 个字符长，那么我们使用的是我们真正需要的两倍多。或者考虑上面的渲染数组：如果渲染只使用 10,000 个多边形，我们有 20,000 个多边形的内存未被使用！</p>
+<p>其次，我们如何判断实际使用了哪些内存位？对于字符串，很简单：以 \0 开头的字符串显然没有被使用。但是monster[24]呢？它现在是活着还是死了？这需要有某种方法来区分活动项目和非活动项目，这会增加复杂性并可能耗尽额外的内存。</p>
+<p>第三，大多数普通变量（包括固定数组）都分配在称为**栈(stack)**的内存部分中。程序的栈内存量通常很小——Visual Studio 默认堆栈大小为 1MB。如果超过这个数字，就会导致堆栈溢出，操作系统可能会关闭程序。</p>
+<p>在 Visual Studio 上，您可以在运行此程序时看到这种情况：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> array[<span class="number">1000000</span>]; <span class="comment">// allocate 1 million integers (probably 4MB of memory)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>仅限于 1MB 的内存对于许多程序来说都是有问题的，尤其是那些处理图形的程序。</p>
+<p>第四，也是最重要的，它可能导致人为限制和/或数组溢出。当用户试图从磁盘读取 600 条记录时会发生什么，但我们最多只为 500 条记录分配了内存？要么我们必须给用户一个错误，只读取 500 条记录，要么（在我们根本不处理这种情况的最坏情况下）溢出记录数组并观察不好的事情发生。</p>
+<p>幸运的是，这些问题很容易通过动态内存分配来解决。<strong>动态内存分配</strong>是运行程序在需要时向操作系统申请内存的一种方式。该内存并非来自程序的有限栈内存——相反，它是从一个更大的内存池中分配的，该内存池由操作系统管理，称为**堆(heap)**。在现代机器上，堆的大小可以达到千兆字节。</p>
+<h2 id="动态分配单个变量"><a href="#动态分配单个变量" class="headerlink" title="动态分配单个变量"></a>动态分配单个变量</h2><p>要动态分配单个变量，我们使用new运算符的标量（非数组）形式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="type">int</span>; <span class="comment">// dynamically allocate an integer (and discard the result)</span></span><br></pre></td></tr></table></figure>
+
+<p>在上面的例子中，我们从操作系统请求一个整数值的内存。new 运算符使用该内存创建对象，然后返回一个包含已分配内存<em>地址的指针。</em></p>
+<p>大多数情况下，我们会将返回值分配给我们自己的指针变量，以便我们稍后可以访问分配的内存。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>* ptr&#123; <span class="keyword">new</span> <span class="type">int</span> &#125;; <span class="comment">// dynamically allocate an integer and assign the address to ptr so we can access it later</span></span><br></pre></td></tr></table></figure>
+
+<p>然后我们可以通过指针执行间接访问内存：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*ptr = <span class="number">7</span>; <span class="comment">// assign value of 7 to allocated memory</span></span><br></pre></td></tr></table></figure>
+
+<p>如果不是在之前以分配内存，现在至少应该清楚指针有用的一种情况。如果没有指针来保存刚刚分配的内存地址，我们就无法访问刚刚为我们分配的内存！</p>
+<h2 id="动态内存分配如何工作？"><a href="#动态内存分配如何工作？" class="headerlink" title="动态内存分配如何工作？"></a>动态内存分配如何工作？</h2><p>您的计算机有可供应用程序使用的内存（可能很多）。当您运行应用程序时，您的操作系统会将应用程序加载到该内存的某些部分。您的应用程序使用的内存分为不同的区域，每个区域都有不同的用途。一个区域包含您的代码。另一个区域用于正常操作（跟踪调用了哪些函数，创建和销毁全局和局部变量等）。我们稍后会详细讨论这些。然而，大部分可用内存就在那里，等待分配给请求它的程序。</p>
+<p>当您动态分配内存时，您是在要求操作系统保留部分内存供您的程序使用。如果它能满足这个请求，它就会把那块内存的地址返回给你的应用程序。从那时起，您的应用程序可以按需要使用此内存。当您的应用程序用完内存后，它可以将内存返回给操作系统以提供给另一个程序。</p>
+<p>与静态或自动内存不同，程序本身负责请求和处理动态分配的内存。 </p>
+<span id="more"></span>
+
+<h2 id="初始化一个动态分配的变量"><a href="#初始化一个动态分配的变量" class="headerlink" title="初始化一个动态分配的变量"></a><strong>初始化一个动态分配的变量</strong></h2><p>当你动态分配一个变量时，你也可以通过直接初始化或统一初始化来初始化它：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>* ptr1&#123; <span class="keyword">new</span> <span class="built_in">int</span> (<span class="number">5</span>) &#125;; <span class="comment">// use direct initialization</span></span><br><span class="line"><span class="type">int</span>* ptr2&#123; <span class="keyword">new</span> <span class="type">int</span> &#123; <span class="number">6</span> &#125; &#125;; <span class="comment">// use uniform initialization</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="删除单个变量"><a href="#删除单个变量" class="headerlink" title="删除单个变量"></a>删除单个变量</h2><p>当我们完成动态分配的变量时，我们需要显式地告诉 C++ 释放内存以供重用。对于单个变量，这是通过<strong>删除</strong>运算符的标量（非数组）形式完成的：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// assume ptr has previously been allocated with operator new</span></span><br><span class="line"><span class="keyword">delete</span> ptr; <span class="comment">// return the memory pointed to by ptr to the operating system</span></span><br><span class="line">ptr = <span class="literal">nullptr</span>; <span class="comment">// set ptr to be a null pointer</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="delete-memory是什么意思？"><a href="#delete-memory是什么意思？" class="headerlink" title="delete memory是什么意思？"></a>delete memory是什么意思？</h2><p><strong>delete</strong>运算符实际上并没有删除任何东西。它只是将指向的内存返回给操作系统。然后操作系统可以自由地将该内存重新分配给另一个应用程序（或稍后再次分配给该应用程序）。</p>
+<p>虽然看起来我们正在删除一个<em>变量</em>，但事实并非如此！指针变量仍然具有与以前相同的范围，并且可以像任何其他变量一样被分配一个新值。</p>
+<p>请注意，删除未指向动态分配内存的指针可能会导致不好的事情发生。</p>
+<h2 id="悬挂指针"><a href="#悬挂指针" class="headerlink" title="悬挂指针"></a>悬挂指针</h2><p>C++ 不保证释放内存的内容或被删除的指针的值会发生什么。在大多数情况下，返回给操作系统的内存将包含与返回之前相同的值，并且指针将指向现在已释放的内存。</p>
+<p>指向已释放内存的指针称为<strong>悬挂指针</strong>。间接通过或删除悬挂指针将导致未定义的行为。考虑以下程序：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span>* ptr&#123; <span class="keyword">new</span> <span class="type">int</span> &#125;; <span class="comment">// dynamically allocate an integer</span></span><br><span class="line">    *ptr = <span class="number">7</span>; <span class="comment">// put a value in that memory location</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">delete</span> ptr; <span class="comment">// return the memory to the operating system.  ptr is now a dangling pointer.</span></span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; *ptr; <span class="comment">// Indirection through a dangling pointer will cause undefined behavior</span></span><br><span class="line">    <span class="keyword">delete</span> ptr; <span class="comment">// trying to deallocate the memory again will also lead to undefined behavior.</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在上面的程序中，先前分配给已分配内存的值 7 可能仍然存在，但该内存地址处的值可能已更改。内存也可能被分配给另一个应用程序（或供操作系统自己使用），并且尝试访问该内存将导致操作系统关闭程序。</p>
+<p>释放内存可能会产生多个悬空指针。考虑以下示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span>* ptr&#123; <span class="keyword">new</span> <span class="type">int</span>&#123;&#125; &#125;; <span class="comment">// dynamically allocate an integer</span></span><br><span class="line">    <span class="type">int</span>* otherPtr&#123; ptr &#125;; <span class="comment">// otherPtr is now pointed at that same memory location</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">delete</span> ptr; <span class="comment">// return the memory to the operating system.  ptr and otherPtr are now dangling pointers.</span></span><br><span class="line">    ptr = <span class="literal">nullptr</span>; <span class="comment">// ptr is now a nullptr</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// however, otherPtr is still a dangling pointer!</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里有一些最佳实践可以提供帮助。</p>
+<p>首先，尽量避免让多个指针指向同一块动态内存。如果这不可能，请清楚哪个指针“拥有”内存（并负责删除它）以及哪些指针正在访问它。</p>
+<p>其次，当您删除一个指针时，如果该指针之后没有立即离开范围，则将指针设置为 nullptr。我们稍后会详细讨论空指针，以及它们为什么有用。</p>
+<div style="background-color:lightgreen ;">
+   <p >最佳实践：</p>
+   <p>将已删除的指针设置为 nullptr，除非它们随后立即超出范围。
+    </p>
+</div>
+
+<h2 id="运算符-new-可能会失败"><a href="#运算符-new-可能会失败" class="headerlink" title="运算符 new 可能会失败"></a>运算符 new 可能会失败</h2><p>当从操作系统请求内存时，在极少数情况下，操作系统可能没有任何内存来授予请求。</p>
+<p>默认情况下，如果 new 失败，将抛出<em>bad_alloc</em>异常。如果这个异常没有被正确处理（它不会，因为我们还没有涉及异常或异常处理），程序将简单地终止（崩溃）并出现未处理的异常错误。</p>
+<p>在许多情况下，让 new 抛出异常（或让您的程序崩溃）是不可取的，因此可以使用 new 的另一种形式来告诉 new 在无法分配内存时返回空指针。这是通过在 new 关键字和分配类型之间添加常量 std::nothrow 来完成的：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>* value &#123; <span class="keyword">new</span> (std::nothrow) <span class="type">int</span> &#125;; <span class="comment">// value will be set to a null pointer if the integer allocation fails</span></span><br></pre></td></tr></table></figure>
+
+<p>在上面的例子中，如果new分配内存失败，它会返回一个空指针，而不是分配内存的地址。</p>
+<p>请注意，如果您随后尝试通过该指针进行间接访问，则会导致未定义的行为（很可能您的程序会崩溃）。因此，最佳做法是在使用分配的内存之前检查所有内存请求以确保它们确实成功。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>* value &#123; <span class="keyword">new</span> (std::nothrow) <span class="type">int</span>&#123;&#125; &#125;; <span class="comment">// ask for an integer&#x27;s worth of memory</span></span><br><span class="line"><span class="keyword">if</span> (!value) <span class="comment">// handle case where new returned null</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Do error handling here</span></span><br><span class="line">    std::cerr &lt;&lt; <span class="string">&quot;Could not allocate memory\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为向 new 请求内存很少会失败（而且几乎不会在开发环境中失败），所以忘记执行此检查很常见！</p>
+<h2 id="空指针和动态内存分配"><a href="#空指针和动态内存分配" class="headerlink" title="空指针和动态内存分配"></a>空指针和动态内存分配</h2><p>空指针（设置为 nullptr 的指针）在处理动态内存分配时特别有用。在动态内存分配的上下文中，空指针基本上表示“没有内存分配给该指针”。这允许我们做一些事情，比如有条件地分配内存：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// If ptr isn&#x27;t already allocated, allocate it</span></span><br><span class="line"><span class="keyword">if</span> (!ptr)</span><br><span class="line">    ptr = <span class="keyword">new</span> <span class="type">int</span>;</span><br></pre></td></tr></table></figure>
+
+<p>删除空指针没有任何效果。因此，不需要以下内容：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (ptr)</span><br><span class="line">    <span class="keyword">delete</span> ptr;</span><br></pre></td></tr></table></figure>
+
+<p>相反，您可以只写：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> ptr;</span><br></pre></td></tr></table></figure>
+
+<p>如果 ptr 非空，动态分配的变量将被删除。如果它为空，则什么也不会发生。</p>
+<h2 id="内存泄漏"><a href="#内存泄漏" class="headerlink" title="内存泄漏"></a>内存泄漏</h2><p>动态分配的内存一直处于分配状态，直到它被显式释放或直到程序结束（并且操作系统会清理它，假设您的操作系统会这样做）。但是，<strong>用于保存动态分配的内存地址的指针遵循局部变量的正常作用域规则</strong>。这种不匹配会产生有趣的问题。</p>
+<p>考虑以下功能：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">doSomething</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span>* ptr&#123; <span class="keyword">new</span> <span class="type">int</span>&#123;&#125; &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此函数动态分配一个整数，但从不使用 delete 释放它。因为指针变量只是普通变量，所以当函数结束时，ptr 将超出范围。并且因为 ptr 是唯一保存动态分配整数地址的变量，当 ptr 被销毁时，不再有对动态分配内存的引用。这意味着程序现在已经“丢失”了动态分配内存的地址。结果，无法删除这个动态分配的整数。</p>
+<p>这称为<strong>内存泄漏</strong>。当您的<strong>程序在将动态分配的内存返回给操作系统之前丢失了一些地址时</strong>，就会发生内存泄漏。发生这种情况时，您的程序无法删除动态分配的内存，因为它不再知道它在哪里。操作系统也不能使用这块内存，因为那块内存被认为仍在被你的程序使用。</p>
+<p>内存泄漏会在程序运行时耗尽可用内存，导致不仅此程序可用的内存减少，其他程序也可用。存在严重内存泄漏问题的程序会吃掉所有可用内存，导致整机运行缓慢甚至死机。只有在您的程序终止后，操作系统才能清理并“回收”所有泄漏的内存。</p>
+<p>尽管内存泄漏可能<strong>由指针超出范围引</strong>起，但还有其他方式可导致内存泄漏。例如,<strong>如果为保存动态分配内存地址的指针分配了另一个值，则可能会发生内存泄漏</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> value = <span class="number">5</span>;</span><br><span class="line"><span class="type">int</span>* ptr&#123; <span class="keyword">new</span> <span class="type">int</span>&#123;&#125; &#125;; <span class="comment">// allocate memory</span></span><br><span class="line">ptr = &amp;value; <span class="comment">// old address lost, memory leak results</span></span><br></pre></td></tr></table></figure>
+
+<p>这可以通过在重新分配之前删除指针来解决：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> value&#123; <span class="number">5</span> &#125;;</span><br><span class="line"><span class="type">int</span>* ptr&#123; <span class="keyword">new</span> <span class="type">int</span>&#123;&#125; &#125;; <span class="comment">// allocate memory</span></span><br><span class="line"><span class="keyword">delete</span> ptr; <span class="comment">// return memory back to operating system</span></span><br><span class="line">ptr = &amp;value; <span class="comment">// reassign pointer to address of value</span></span><br></pre></td></tr></table></figure>
+
+<p>相关地，也有可能<strong>通过双重分配获得内存泄漏</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>* ptr&#123; <span class="keyword">new</span> <span class="type">int</span>&#123;&#125; &#125;;</span><br><span class="line">ptr = <span class="keyword">new</span> <span class="type">int</span>&#123;&#125;; <span class="comment">// old address lost, memory leak results</span></span><br></pre></td></tr></table></figure>
+
+<p>第二次分配返回的地址会覆盖第一次分配的地址。结果，第一次分配变成了内存泄漏！</p>
+<p>同样，可以通过确保在重新分配之前删除指针来避免这种情况。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>运算符 new 和 delete 允许我们为我们的程序动态分配单个变量。</p>
+<p>动态分配的内存具有动态持续时间，并且将保持分配状态，直到您取消分配它或程序终止。</p>
+<p>注意不要通过悬挂指针或空指针执行间接访问。</p>
+<p>在下一课中，我们将了解使用 new 和 delete 来分配和删除数组。</p>
+<p><a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/dynamically-allocating-arrays/">下一课11.12动态分配数组</a><a target="_blank" rel="noopener" href="https://www.learncpp.com/">返回目录</a><a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/c-style-string-symbolic-constants/">上一课11.10C 风格的字符串符号常量</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-11/" rel="tag"># LearnCpp——Chapter 11</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.10%20%E2%80%94%20C%20%E9%A3%8E%E6%A0%BC%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%AC%A6%E5%8F%B7%E5%B8%B8%E9%87%8F/" rel="prev" title="11.10 — C 风格字符串符号常量">
+      <i class="fa fa-chevron-left"></i> 11.10 — C 风格字符串符号常量
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.12%20%E2%80%94%20%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D%E6%95%B0%E7%BB%84/" rel="next" title="11.12 — 动态分配数组">
+      11.12 — 动态分配数组 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#11-11-%E2%80%94-%E4%BD%BF%E7%94%A8-new-%E5%92%8C-delete-%E8%BF%9B%E8%A1%8C%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">1.</span> <span class="nav-text">11.11 — 使用 new 和 delete 进行动态内存分配</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D%E5%8D%95%E4%B8%AA%E5%8F%98%E9%87%8F"><span class="nav-number">1.1.</span> <span class="nav-text">动态分配单个变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%EF%BC%9F"><span class="nav-number">1.2.</span> <span class="nav-text">动态内存分配如何工作？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%80%E4%B8%AA%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D%E7%9A%84%E5%8F%98%E9%87%8F"><span class="nav-number">1.3.</span> <span class="nav-text">初始化一个动态分配的变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E5%8D%95%E4%B8%AA%E5%8F%98%E9%87%8F"><span class="nav-number">1.4.</span> <span class="nav-text">删除单个变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#delete-memory%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D%EF%BC%9F"><span class="nav-number">1.5.</span> <span class="nav-text">delete memory是什么意思？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%82%AC%E6%8C%82%E6%8C%87%E9%92%88"><span class="nav-number">1.6.</span> <span class="nav-text">悬挂指针</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E7%AE%97%E7%AC%A6-new-%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%A4%B1%E8%B4%A5"><span class="nav-number">1.7.</span> <span class="nav-text">运算符 new 可能会失败</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A9%BA%E6%8C%87%E9%92%88%E5%92%8C%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">1.8.</span> <span class="nav-text">空指针和动态内存分配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">1.9.</span> <span class="nav-text">内存泄漏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">1.10.</span> <span class="nav-text">结论</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuj10n</p>
+  <div class="site-description" itemprop="description">wuj10n的个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">72</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wuj10n" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wuj10n" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:542211073@qq.com" title="E-Mail → mailto:542211073@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuj10n</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

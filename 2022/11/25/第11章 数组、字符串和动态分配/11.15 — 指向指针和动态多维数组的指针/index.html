@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuj10n.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="11.15 — 指向指针和动态多维数组的指针本课程是可选的，适用于想要进一步了解 C++ 的高级读者。以后的课程不会建立在本课程的基础上。 指向指针的指针正是您所期望的：一个指针保存另一个指针的地址。 指向指针的指针使用单个星号声明指向 int 的普通指针： 1int* ptr; &#x2F;&#x2F; pointer to an int, one asterisk  使用两个星号声明指向 int 指针的指针 1i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="11.15 — 指向指针和动态多维数组的指针">
+<meta property="og:url" content="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.15%20%E2%80%94%20%E6%8C%87%E5%90%91%E6%8C%87%E9%92%88%E5%92%8C%E5%8A%A8%E6%80%81%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84%E7%9A%84%E6%8C%87%E9%92%88/index.html">
+<meta property="og:site_name" content="wuj10n">
+<meta property="og:description" content="11.15 — 指向指针和动态多维数组的指针本课程是可选的，适用于想要进一步了解 C++ 的高级读者。以后的课程不会建立在本课程的基础上。 指向指针的指针正是您所期望的：一个指针保存另一个指针的地址。 指向指针的指针使用单个星号声明指向 int 的普通指针： 1int* ptr; &#x2F;&#x2F; pointer to an int, one asterisk  使用两个星号声明指向 int 指针的指针 1i">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-25T07:14:52.000Z">
+<meta property="article:modified_time" content="2022-12-01T15:30:14.711Z">
+<meta property="article:author" content="wuj10n">
+<meta property="article:tag" content="LearnCpp——Chapter 11">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.15%20%E2%80%94%20%E6%8C%87%E5%90%91%E6%8C%87%E9%92%88%E5%92%8C%E5%8A%A8%E6%80%81%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84%E7%9A%84%E6%8C%87%E9%92%88/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>11.15 — 指向指针和动态多维数组的指针 | wuj10n</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">wuj10n</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.15%20%E2%80%94%20%E6%8C%87%E5%90%91%E6%8C%87%E9%92%88%E5%92%8C%E5%8A%A8%E6%80%81%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84%E7%9A%84%E6%8C%87%E9%92%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          11.15 — 指向指针和动态多维数组的指针
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-25 15:14:52" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:52+08:00">2022-11-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-12-01 23:30:14" itemprop="dateModified" datetime="2022-12-01T23:30:14+08:00">2022-12-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="11-15-—-指向指针和动态多维数组的指针"><a href="#11-15-—-指向指针和动态多维数组的指针" class="headerlink" title="11.15 — 指向指针和动态多维数组的指针"></a>11.15 — 指向指针和动态多维数组的指针</h1><p>本课程是可选的，适用于想要进一步了解 C++ 的高级读者。以后的课程不会建立在本课程的基础上。</p>
+<p>指向指针的指针正是您所期望的：一个指针保存另一个指针的地址。</p>
+<h2 id="指向指针的指针"><a href="#指向指针的指针" class="headerlink" title="指向指针的指针"></a>指向指针的指针</h2><p>使用单个星号声明指向 int 的普通指针：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>* ptr; <span class="comment">// pointer to an int, one asterisk</span></span><br></pre></td></tr></table></figure>
+
+<p>使用两个星号声明指向 int 指针的指针</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>** ptrptr; <span class="comment">// pointer to a pointer to an int, two asterisks</span></span><br></pre></td></tr></table></figure>
+
+<p>指向指针的指针就像普通指针一样工作——您可以取消引用它以检索指向的值。因为该值本身就是一个指针，所以您可以再次取消引用它以获取基础值。这些取消引用可以连续完成： <span id="more"></span></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> value &#123; <span class="number">5</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span>* ptr &#123; &amp;value &#125;;</span><br><span class="line">std::cout &lt;&lt; *ptr &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// Dereference pointer to int to get int value</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span>** ptrptr &#123; &amp;ptr &#125;;</span><br><span class="line">std::cout &lt;&lt; **ptrptr &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// dereference to get pointer to int, dereference again to get int value</span></span><br></pre></td></tr></table></figure>
+
+<p>上面的程序打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">5</span><br><span class="line">5</span><br></pre></td></tr></table></figure>
+
+<p>请注意，您不能将指针设置为直接指向值的指针：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> value &#123; <span class="number">5</span> &#125;;</span><br><span class="line"><span class="type">int</span>** ptrptr &#123; &amp;&amp;value &#125;; <span class="comment">// not valid</span></span><br></pre></td></tr></table></figure>
+
+<p>这是因为运算符（operator&amp;）的地址需要一个左值，而&amp;value是一个右值。</p>
+<p>但是，指向指针的指针可以设置为空：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>** ptrptr &#123; <span class="literal">nullptr</span> &#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="指针数组"><a href="#指针数组" class="headerlink" title="指针数组"></a>指针数组</h2><p>指向指针的指针有一些用途。最常见的用途是动态分配指针数组：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>** array &#123; <span class="keyword">new</span> <span class="type">int</span>*[<span class="number">10</span>] &#125;; <span class="comment">// allocate an array of 10 int pointers</span></span><br></pre></td></tr></table></figure>
+
+<p>这就像标准的动态分配数组一样工作，除了数组元素的类型是“指向整数的指针”而不是整数。</p>
+<h2 id="二维动态分配数组"><a href="#二维动态分配数组" class="headerlink" title="二维动态分配数组"></a>二维动态分配数组</h2><p>指向指针的指针的另一个常见用途是促进动态分配的多维数组（有关多维数组的回顾，请参见<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/multidimensional-arrays/">11.5 – 多维数组）。</a></p>
+<p>与二维固定数组不同，它可以很容易地像这样声明：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> array[<span class="number">10</span>][<span class="number">5</span>];</span><br></pre></td></tr></table></figure>
+
+<p>动态分配二维数组更具挑战性。你可能想尝试这样的事情：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>** array &#123; <span class="keyword">new</span> <span class="type">int</span>[<span class="number">10</span>][<span class="number">5</span>] &#125;; <span class="comment">// won’t work!</span></span><br></pre></td></tr></table></figure>
+
+<p>但这是行不通的。</p>
+<p>这里有两种可能的解决方案。如果最右边的数组维度是 constexpr，您可以这样做：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x &#123; <span class="number">7</span> &#125;; <span class="comment">// non-constant</span></span><br><span class="line"><span class="built_in">int</span> (*array)[<span class="number">5</span>] &#123; <span class="keyword">new</span> <span class="type">int</span>[x][<span class="number">5</span>] &#125;; <span class="comment">// rightmost dimension must be constexpr</span></span><br></pre></td></tr></table></figure>
+
+<p>此处需要括号以确保适当的优先级。这是使用自动类型推导的好地方：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x &#123; <span class="number">7</span> &#125;; <span class="comment">// non-constant</span></span><br><span class="line"><span class="keyword">auto</span> array &#123; <span class="keyword">new</span> <span class="type">int</span>[x][<span class="number">5</span>] &#125;; <span class="comment">// so much simpler!</span></span><br></pre></td></tr></table></figure>
+
+<p>不幸的是，如果最右边的数组维度不是编译时常量，这个相对简单的解决方案就不起作用。在那种情况下，我们必须变得更复杂一些。首先，我们分配一个指针数组（如上所述）。然后我们遍历指针数组并为每个数组元素分配一个动态数组。我们的动态二维数组是动态一维数组的动态一维数组！</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>** array &#123; <span class="keyword">new</span> <span class="type">int</span>*[<span class="number">10</span>] &#125;; <span class="comment">// allocate an array of 10 int pointers — these are our rows</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> count &#123; <span class="number">0</span> &#125;; count &lt; <span class="number">10</span>; ++count)</span><br><span class="line">    array[count] = <span class="keyword">new</span> <span class="type">int</span>[<span class="number">5</span>]; <span class="comment">// these are our columns</span></span><br></pre></td></tr></table></figure>
+
+<p>然后我们可以像往常一样访问我们的数组：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">array[<span class="number">9</span>][<span class="number">4</span>] = <span class="number">3</span>; <span class="comment">// This is the same as (array[9])[4] = 3;</span></span><br></pre></td></tr></table></figure>
+
+<p>使用这种方法，因为每个数组列都是独立动态分配的，所以可以动态分配非矩形的二维数组。例如，我们可以制作一个三角形数组：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>** array &#123; <span class="keyword">new</span> <span class="type">int</span>*[<span class="number">10</span>] &#125;; <span class="comment">// allocate an array of 10 int pointers — these are our rows</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> count &#123; <span class="number">0</span> &#125;; count &lt; <span class="number">10</span>; ++count)</span><br><span class="line">    array[count] = <span class="keyword">new</span> <span class="type">int</span>[count+<span class="number">1</span>]; <span class="comment">// these are our columns</span></span><br></pre></td></tr></table></figure>
+
+<p>在上面的例子中，注意 array[0] 是一个长度为 1 的数组，array[1] 是一个长度为 2 的数组，等等……</p>
+<p>使用此方法取消分配动态分配的二维数组也需要一个循环：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> count &#123; <span class="number">0</span> &#125;; count &lt; <span class="number">10</span>; ++count)</span><br><span class="line">    <span class="keyword">delete</span>[] array[count];</span><br><span class="line"><span class="keyword">delete</span>[] array; <span class="comment">// this needs to be done last</span></span><br></pre></td></tr></table></figure>
+
+<p>请注意，我们删除数组的顺序与创建它的顺序相反（首先是元素，然后是数组本身）。如果我们在数组列之前删除数组，那么我们必须访问释放的内存来删除数组列。这将导致未定义的行为。</p>
+<p>因为分配和取消分配二维数组很复杂而且容易搞砸，所以通常更容易将二维数组（大小为 x行y列）“扁平化”为大小为 x * y 的一维数组：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Instead of this:</span></span><br><span class="line"><span class="type">int</span>** array &#123; <span class="keyword">new</span> <span class="type">int</span>*[<span class="number">10</span>] &#125;; <span class="comment">// allocate an array of 10 int pointers — these are our rows</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> count &#123; <span class="number">0</span> &#125;; count &lt; <span class="number">10</span>; ++count)</span><br><span class="line">    array[count] = <span class="keyword">new</span> <span class="type">int</span>[<span class="number">5</span>]; <span class="comment">// these are our columns</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Do this</span></span><br><span class="line"><span class="type">int</span> *array &#123; <span class="keyword">new</span> <span class="type">int</span>[<span class="number">50</span>] &#125;; <span class="comment">// a 10x5 array flattened into a single array</span></span><br></pre></td></tr></table></figure>
+
+<p>然后可以使用简单的数学将矩形二维数组的行和列索引转换为一维数组的单个索引：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">getSingleIndex</span><span class="params">(<span class="type">int</span> row, <span class="type">int</span> col, <span class="type">int</span> numberOfColumnsInArray)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">     <span class="keyword">return</span> (row * numberOfColumnsInArray) + col;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// set array[9,4] to 3 using our flattened array</span></span><br><span class="line">array[<span class="built_in">getSingleIndex</span>(<span class="number">9</span>, <span class="number">4</span>, <span class="number">5</span>)] = <span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="通过地址传递指针"><a href="#通过地址传递指针" class="headerlink" title="通过地址传递指针"></a>通过地址传递指针</h2><p>就像我们可以使用指针参数来更改传入的底层参数的实际值一样，我们可以将指针传递给指向函数的指针，并使用该指针来更改它指向的指针的值（混淆了吗？） .</p>
+<p>但是，如果我们希望函数能够修改指针参数指向的内容，通常最好使用对指针的引用来完成。<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/pass-by-address-part-2/">这在第 9.10</a>课 - 按地址传递（第 2 部分）中有所介绍。</p>
+<h2 id="指向指向指向……的指针的指针"><a href="#指向指向指向……的指针的指针" class="headerlink" title="指向指向指向……的指针的指针"></a>指向指向指向……的指针的指针</h2><p>也可以声明一个指向指针的指针：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>*** ptrx3;</span><br></pre></td></tr></table></figure>
+
+<p>这可用于动态分配三维数组。但是，这样做需要一个循环内的循环，并且要正确起来非常复杂。</p>
+<p>您甚至可以声明一个指向指针的指针的指针：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>**** ptrx4;</span><br></pre></td></tr></table></figure>
+
+<p>或者更高，如果你愿意的话。</p>
+<p>然而，实际上这些并没有太大用处，因为您并不经常需要这么多间接。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>我们建议避免使用指向指针的指针，除非没有其他选项可用，因为它们使用起来很复杂并且存在潜在危险。使用普通指针解引用空指针或悬挂指针非常容易——使用指向指针的指针更加容易，因为您必须执行双重解引用才能获得基础值！</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-11/" rel="tag"># LearnCpp——Chapter 11</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.14%20%E2%80%94%20%E7%A9%BA%E6%8C%87%E9%92%88/" rel="prev" title="11.14 — 空指针">
+      <i class="fa fa-chevron-left"></i> 11.14 — 空指针
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.16%20%E2%80%94%20array%20%E7%AE%80%E4%BB%8B/" rel="next" title="11.16 — std::array 简介">
+      11.16 — std::array 简介 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#11-15-%E2%80%94-%E6%8C%87%E5%90%91%E6%8C%87%E9%92%88%E5%92%8C%E5%8A%A8%E6%80%81%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84%E7%9A%84%E6%8C%87%E9%92%88"><span class="nav-number">1.</span> <span class="nav-text">11.15 — 指向指针和动态多维数组的指针</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E5%90%91%E6%8C%87%E9%92%88%E7%9A%84%E6%8C%87%E9%92%88"><span class="nav-number">1.1.</span> <span class="nav-text">指向指针的指针</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E6%95%B0%E7%BB%84"><span class="nav-number">1.2.</span> <span class="nav-text">指针数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E7%BB%B4%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D%E6%95%B0%E7%BB%84"><span class="nav-number">1.3.</span> <span class="nav-text">二维动态分配数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%9C%B0%E5%9D%80%E4%BC%A0%E9%80%92%E6%8C%87%E9%92%88"><span class="nav-number">1.4.</span> <span class="nav-text">通过地址传递指针</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E5%90%91%E6%8C%87%E5%90%91%E6%8C%87%E5%90%91%E2%80%A6%E2%80%A6%E7%9A%84%E6%8C%87%E9%92%88%E7%9A%84%E6%8C%87%E9%92%88"><span class="nav-number">1.5.</span> <span class="nav-text">指向指向指向……的指针的指针</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">1.6.</span> <span class="nav-text">结论</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuj10n</p>
+  <div class="site-description" itemprop="description">wuj10n的个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">72</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wuj10n" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wuj10n" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:542211073@qq.com" title="E-Mail → mailto:542211073@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuj10n</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

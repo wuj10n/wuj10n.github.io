@@ -164,7 +164,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.5%20%E2%80%94%20%E6%98%BE%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%EF%BC%88%E8%BD%AC%E6%8D%A2%EF%BC%89%E5%92%8C%20static_cast/">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/24/%E8%AF%81%E5%88%B8%E6%8A%95%E8%B5%84%E5%AD%A6/%E7%AC%AC%209%20%E5%9B%9E+2%20%E5%8A%A0%E9%A4%90%E2%80%94%E2%80%94%E8%B6%A3%E8%B0%88%EF%BC%9A%E6%B3%A8%E5%86%8C%E5%88%B6%EF%BC%8C%E5%BC%80%E5%90%AF%E5%A4%A7%E7%89%9B%E5%B8%82%E7%9A%84%E5%BC%95%E6%93%8E/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -178,542 +178,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.5%20%E2%80%94%20%E6%98%BE%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%EF%BC%88%E8%BD%AC%E6%8D%A2%EF%BC%89%E5%92%8C%20static_cast/" class="post-title-link" itemprop="url">8.5 — 显式类型转换（转换）和 static_cast</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-11-20 15:46:04" itemprop="dateCreated datePublished" datetime="2022-11-20T15:46:04+08:00">2022-11-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-22 12:55:33" itemprop="dateModified" datetime="2022-11-22T12:55:33+08:00">2022-11-22</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p> 在第 8.1 课——隐式类型转换（强制）中，我们讨论了编译器可以通过称为<code>implicit type conversion(隐式类型转换)</code>的系统将值从一种数据类型隐式转换为另一种数据类型。 当您想要在数字上将值从一种数据类型提升为更广泛的数据类型时，使用隐式类型转换就可以了。</p>
-<p>许多新的 C++ 程序员尝试这样的事情：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">double</span> d = <span class="number">10</span> / <span class="number">4</span>; <span class="comment">// does integer division, initializes d with value 2.0</span></span><br></pre></td></tr></table></figure>
-
-<p>因为 10 和 4 都是 int 类型，所以执行整数除法，表达式的计算结果为 int 值 2。 然后，该值在用于初始化变量 d 之前经过数字转换为双精度值 2.0。 这很可能不是预期的。</p>
-<p>在您使用文字操作数的情况下，把一个或两个整数文字替换为双精度文字，将会导致浮点除法发生：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">double</span> d = <span class="number">10.0</span> / <span class="number">4.0</span>; <span class="comment">// does floating point division, initializes d with value 2.5</span></span><br></pre></td></tr></table></figure>
-
-<p>但是，如果您使用变量而不是文字怎么办？ 考虑这种情况：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x &#123; <span class="number">10</span> &#125;;</span><br><span class="line"><span class="type">int</span> y &#123; <span class="number">4</span> &#125;;</span><br><span class="line"><span class="type">double</span> d = x / y; <span class="comment">// does integer division, initializes d with value 2.0</span></span><br></pre></td></tr></table></figure>
-
-<p>因为这里使用整数除法，所以变量 d 的最终值为 2.0。 在这种情况下，我们如何告诉编译器我们要使用浮点除法而不是整数除法？ 文字后缀不能与变量一起使用。 我们需要某种方法将一个（或两个）可变操作数转换为浮点类型，以便改为使用浮点除法。</p>
-<p>幸运的是，C++ 附带了许多不同的<code>type casting operators(类型转换运算符)</code>（通常称为强制转换），程序员可以使用它们来请求编译器执行类型转换。 因为强制转换是程序员的显式请求，所以这种形式的类型转换通常称为<code>explicit type conversion(显式类型转换)</code>（与隐式类型转换相反，隐式类型转换是编译器自动执行类型转换）。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.5%20%E2%80%94%20%E6%98%BE%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%EF%BC%88%E8%BD%AC%E6%8D%A2%EF%BC%89%E5%92%8C%20static_cast/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.4%20%E2%80%94%20%E7%AE%97%E6%9C%AF%E8%BD%AC%E6%8D%A2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.4%20%E2%80%94%20%E7%AE%97%E6%9C%AF%E8%BD%AC%E6%8D%A2/" class="post-title-link" itemprop="url">8.4 — 算术转换</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-11-20 15:46:01" itemprop="dateCreated datePublished" datetime="2022-11-20T15:46:01+08:00">2022-11-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-22 10:19:02" itemprop="dateModified" datetime="2022-11-22T10:19:02+08:00">2022-11-22</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="8-4-—-算术转换"><a href="#8-4-—-算术转换" class="headerlink" title="8.4 — 算术转换"></a>8.4 — 算术转换</h1><p><a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/operator-precedence-and-associativity/">在第5.1</a>课——运算符优先级和结合性中，我们讨论了如何根据运算符的优先级和结合性对表达式求值。</p>
-<p>考虑以下表达式：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x &#123; <span class="number">2</span> + <span class="number">3</span> &#125;;</span><br></pre></td></tr></table></figure>
-
-<p>当二元运算符+被调用时，它被赋予两个操作数，都是 int 类型。 因为两个操作数属于同一类型，所以该类型将用于执行计算并返回结果。 因此，2 + 3 将计算为 int 值 5。</p>
-<p>但是当二元运算符的操作数是不同类型时会发生什么？</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">??? y &#123; <span class="number">2</span> + <span class="number">3.5</span> &#125;;</span><br></pre></td></tr></table></figure>
-
-<p>在这种情况下，operator+ 被赋予一个 int 类型的操作数和另一个 double 类型的操作数。 运算符的结果应该以 int、double 还是其他形式返回？ 定义变量时，我们可以选择它的类型。 在其他情况下，例如当使用 std::cout &lt;&lt; 时，计算求值的类型会更改输出内容的行为。</p>
-<p>在 C++ 中，某些运算符要求它们的操作数具有相同的类型。 如果使用不同类型的操作数调用其中一个运算符，则一个或两个操作数将使用一组称为 <strong>usual arithmetic conversions</strong>（通常算术转换）的规则，进而隐式转换为匹配类型。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.4%20%E2%80%94%20%E7%AE%97%E6%9C%AF%E8%BD%AC%E6%8D%A2/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.3%20%E2%80%94%20%E6%95%B0%E5%80%BC%E8%BD%AC%E6%8D%A2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.3%20%E2%80%94%20%E6%95%B0%E5%80%BC%E8%BD%AC%E6%8D%A2/" class="post-title-link" itemprop="url">8.3 — 数值转换</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-11-20 15:45:58" itemprop="dateCreated datePublished" datetime="2022-11-20T15:45:58+08:00">2022-11-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-22 09:47:54" itemprop="dateModified" datetime="2022-11-22T09:47:54+08:00">2022-11-22</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="8-3-—-数值转换"><a href="#8-3-—-数值转换" class="headerlink" title="8.3 — 数值转换"></a>8.3 — 数值转换</h1><p>在上一课（8.2 – 浮点数和整数提升）中，我们介绍了数值提升，它是将特定的较窄数值类型转换为可以高效处理的较宽数值类型（通常为 int 或 double）。</p>
-<p>C++ 支持另一类数字类型转换，称为数字转换，它涵盖数字提升规则未涵盖的其他类型转换。</p>
-<div style="background-color:lavender ;">
-   <p >关键见解：</p>
-   <p> 数字提升规则（8.2 -- 浮点和整数提升）涵盖的任何类型转换都是数字提升，而不是数字转换。
-    </p>
-</div>
-
-<p>有五种基本类型的数字转换。 </p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.3%20%E2%80%94%20%E6%95%B0%E5%80%BC%E8%BD%AC%E6%8D%A2/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.2%20%E2%80%94%20%E6%B5%AE%E7%82%B9%E6%95%B0%E5%92%8C%E6%95%B4%E6%95%B0%E6%8F%90%E5%8D%87/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.2%20%E2%80%94%20%E6%B5%AE%E7%82%B9%E6%95%B0%E5%92%8C%E6%95%B4%E6%95%B0%E6%8F%90%E5%8D%87/" class="post-title-link" itemprop="url">8.2 — 浮点数和整数提升</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-11-20 15:45:55" itemprop="dateCreated datePublished" datetime="2022-11-20T15:45:55+08:00">2022-11-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-21 23:13:47" itemprop="dateModified" datetime="2022-11-21T23:13:47+08:00">2022-11-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="8-2-—-浮点数和整数提升"><a href="#8-2-—-浮点数和整数提升" class="headerlink" title="8.2 — 浮点数和整数提升"></a>8.2 — 浮点数和整数提升</h1><p>在第 4.3 课<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/object-sizes-and-the-sizeof-operator/">——对象大小和 sizeof 运算符</a>中，我们注意到 C++ 对每个基本类型都有最小大小保证。但是，这些类型的实际大小可能因编译器和体系结构而异。</p>
-<p>允许这种可变性，以便可以将<code>int</code>和<code>double</code>数据类型设置为在给定体系结构上最大化性能的大小。例如，一台 32 位计算机通常一次可以处理 32 位数据。在这种情况下，<code>int</code>可能会设置为 32 位的宽度，因为这是 CPU 操作的数据的“自然”大小（并且可能是性能最高的）。</p>
-<div style="background-color:lightgrey ;">
-   <p>一个提醒：</p>
-    <p>数据类型使用的位数称为其宽度。较宽的数据类型是使用更多位的数据类型，而较窄的数据类型是使用较少位的数据类型。
-    </p>
-</div>
-
-<p>但是当我们希望我们的 32 位 CPU 修改一个 8 位值（例如 <code>char</code>）或 16 位值时会发生什么呢？一些 32 位处理器（例如 x86 系列）可以直接操作 8 位或 16 位值。但是，这样做通常<strong>比操作 32 位值慢</strong>！其他 32 位 CPU（如 PowerPC）只能对 32 位值进行操作，必须采用额外的技巧来操作更窄的值。</p>
-<h2 id="数值提升"><a href="#数值提升" class="headerlink" title="数值提升"></a>数值提升</h2><p>因为 C++ 被设计为在广泛的体系结构中具有可移植性和高性能，所以语言设计者不想假设给定的 CPU 能够有效地操作比该 CPU 的自然数据大小更窄的值。</p>
-<p>为了帮助应对这一挑战，C++ 定义了一种类型转换，非正式地称为<code>numeric promotions</code>(数值提升). 数值提升是将较窄的数字类型（例如  <code>char</code>）转换为更宽的数字类型（通常是<code>int</code>或<code>double</code>），可以有效地处理并且不太可能产生溢出的结果。</p>
-<p>所有数字提升都是<strong>保值的</strong>，这意味着原始类型中的所有值都可以表示，而不会丢失新类型中的数据或精度。因为这样的提升是安全的，编译器会根据需要自由使用数字提升，并且不会在这样做时发出警告。 </p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.2%20%E2%80%94%20%E6%B5%AE%E7%82%B9%E6%95%B0%E5%92%8C%E6%95%B4%E6%95%B0%E6%8F%90%E5%8D%87/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.1%20%E2%80%94%20%E9%9A%90%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%EF%BC%88%E5%BC%BA%E5%88%B6%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.1%20%E2%80%94%20%E9%9A%90%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%EF%BC%88%E5%BC%BA%E5%88%B6%EF%BC%89/" class="post-title-link" itemprop="url">8.1 — 隐式类型转换（强制）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-11-20 15:45:52" itemprop="dateCreated datePublished" datetime="2022-11-20T15:45:52+08:00">2022-11-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-21 22:57:57" itemprop="dateModified" datetime="2022-11-21T22:57:57+08:00">2022-11-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="8-1-—-隐式类型转换（强制）"><a href="#8-1-—-隐式类型转换（强制）" class="headerlink" title="8.1 — 隐式类型转换（强制）"></a>8.1 — 隐式类型转换（强制）</h1><h2 id="类型转换简介"><a href="#类型转换简介" class="headerlink" title="类型转换简介"></a>类型转换简介</h2><p>对象的值存储为位序列，对象的数据类型告诉编译器如何将这些位解释为有意义的值。 不同的数据类型可能以不同的方式表示“相同”的数字。 例如，整数值 3 可能存储为二进制 <code>0000 0000 0000 0000 0000 0000 0000 0011</code>，而浮点值 3.0 可能存储为二进制<code> 0100 0000 0100 0000 0000 0000 0000 0000</code>。</p>
-<p>那么当我们这样做时会发生什么？</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> f&#123; <span class="number">3</span> &#125;; <span class="comment">// initialize floating point variable with int 3</span></span><br></pre></td></tr></table></figure>
-
-<p>在这种情况下，编译器不能只将代表int 值3的位复制到分配给 float 变量 f 的内存中。 相反，它需要将整数值 3 转换为等效的浮点数，然后可以将其存储在为 f 分配的内存中。</p>
-<p><strong>将值从一种数据类型转换为另一种数据类型的过程称为类型转换。</strong></p>
-<p>可以通过以下两种方式之一调用类型转换：<strong>隐式（根据编译器需要）</strong>或<strong>显式（当程序员请求时）</strong>。 我们将在本课中介绍隐式类型转换，并在接下来的第 8.5 课中介绍显式类型转换（强制转换）——显式类型转换（强制转换）和 static_cast。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.1%20%E2%80%94%20%E9%9A%90%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%EF%BC%88%E5%BC%BA%E5%88%B6%EF%BC%89/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.14%20%E2%80%94%20%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF%E5%AE%9E%E4%BE%8B%E5%8C%96/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.14%20%E2%80%94%20%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF%E5%AE%9E%E4%BE%8B%E5%8C%96/" class="post-title-link" itemprop="url">8.14 — 函数模板实例化</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-11-20 15:44:40" itemprop="dateCreated datePublished" datetime="2022-11-20T15:44:40+08:00">2022-11-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-21 22:49:16" itemprop="dateModified" datetime="2022-11-21T22:49:16+08:00">2022-11-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p> 在上一课（<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/function-templates/">8.13 – 函数模板</a>）中，我们介绍了函数模板，将一个普通<code>max()</code>函数转换为<code>max&lt;T&gt;</code>函数模板：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function">T <span class="title">max</span><span class="params">(T x, T y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (x &gt; y) ? x : y;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在本课中，我们将重点介绍如何使用函数模板。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.14%20%E2%80%94%20%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF%E5%AE%9E%E4%BE%8B%E5%8C%96/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.13%20%E2%80%94%20%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.13%20%E2%80%94%20%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF/" class="post-title-link" itemprop="url">8.13 — 函数模板</a>
+            <a href="/2022/11/24/%E8%AF%81%E5%88%B8%E6%8A%95%E8%B5%84%E5%AD%A6/%E7%AC%AC%209%20%E5%9B%9E+2%20%E5%8A%A0%E9%A4%90%E2%80%94%E2%80%94%E8%B6%A3%E8%B0%88%EF%BC%9A%E6%B3%A8%E5%86%8C%E5%88%B6%EF%BC%8C%E5%BC%80%E5%90%AF%E5%A4%A7%E7%89%9B%E5%B8%82%E7%9A%84%E5%BC%95%E6%93%8E/" class="post-title-link" itemprop="url">第 9 回+2 加餐——趣谈：注册制，开启大牛市的引擎</a>
         </h2>
 
         <div class="post-meta">
@@ -724,7 +189,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-11-20 15:44:37 / 修改时间：16:04:12" itemprop="dateCreated datePublished" datetime="2022-11-20T15:44:37+08:00">2022-11-20</time>
+              <time title="创建时间：2022-11-24 21:45:42 / 修改时间：21:53:00" itemprop="dateCreated datePublished" datetime="2022-11-24T21:45:42+08:00">2022-11-24</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -732,7 +197,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                  <a href="/categories/%E8%AF%81%E5%88%B8%E6%8A%95%E8%B5%84%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">证券投资学</span></a>
                 </span>
             </span>
 
@@ -747,20 +212,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="8-13-—-函数模板"><a href="#8-13-—-函数模板" class="headerlink" title="8.13 — 函数模板"></a>8.13 — 函数模板</h1><p>假设您想编写一个函数来计算两个数字中的最大值。 你可以这样做：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">max</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (x &gt; y) ? x : y;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>虽然调用者可以将不同的值传递给函数，但参数的类型是固定的，因此调用者只能传递 int 值。 这意味着这个函数实际上只适用于整数（以及可以提升为 int 的类型）。</p>
-<p>那么当你想找到两个双精度值的最大值时会发生什么？ 因为 C++ 要求我们指定所有函数参数的类型，所以<strong>解决方案是创建一个新的 max() 重载版本，参数类型为 double</strong>：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">double</span> <span class="title">max</span><span class="params">(<span class="type">double</span> x, <span class="type">double</span> y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (x &gt; y) ? x: y;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>事实上，此实现适用于许多不同的类型：包括 int、double、long、long double，甚至您自己创建的新类型（我们将在以后的课程中介绍如何操作）。</p>
-<p>必须为我们想要支持的每组参数类型创建具有相同实现的重载函数是一个令人头疼的维护问题，容易出错，并且明显违反了 DRY（不要重复自己）原则。 这里还有一个不太明显的挑战：希望使用 max() 函数的程序员可能希望使用 max() 的作者没有预料到的参数类型来调用它（因此没有编写重载函数为了）。</p>
-<p>我们真正缺少的是一些编写单一版本 max() 的方法，该版本可以处理任何类型的参数（甚至是在编写 max() 代码时可能没有预料到的类型）。 普通功能根本无法胜任这里的任务。 幸运的是，C++ 支持另一个专门为解决此类问题而设计的特性。</p>
-<p>欢迎来到 C++ 模板的世界。</p>
+          <h1 id="加餐——防御-4：上市公司是怎么割-散户韭菜的？"><a href="#加餐——防御-4：上市公司是怎么割-散户韭菜的？" class="headerlink" title="加餐——防御 4：上市公司是怎么割 散户韭菜的？"></a>加餐——防御 4：上市公司是怎么割 散户韭菜的？</h1><p>接下来说一个加餐，上市公司是怎么割散户韭菜的？  </p>
+<p>上市公司，就是邀投资者同甘共苦的企业，我们讲股票，说股 票是企业邀股东同甘共苦的，这么一种制度设计。由于证券市场属 于起步阶段，还不太成熟。我们需要防备上市公司，也就是企业， 割散户韭菜的行为。主要有这么几种，动不动增发新股，铁公鸡不分红，假回购
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.13%20%E2%80%94%20%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF/#more" rel="contents">
+              <a class="btn" href="/2022/11/24/%E8%AF%81%E5%88%B8%E6%8A%95%E8%B5%84%E5%AD%A6/%E7%AC%AC%209%20%E5%9B%9E+2%20%E5%8A%A0%E9%A4%90%E2%80%94%E2%80%94%E8%B6%A3%E8%B0%88%EF%BC%9A%E6%B3%A8%E5%86%8C%E5%88%B6%EF%BC%8C%E5%BC%80%E5%90%AF%E5%A4%A7%E7%89%9B%E5%B8%82%E7%9A%84%E5%BC%95%E6%93%8E/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -784,7 +240,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/19/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.7%20%E2%80%94%20stdstring_view%EF%BC%88%E7%AC%AC%202%20%E9%83%A8%E5%88%86%EF%BC%89/">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/24/%E8%AF%81%E5%88%B8%E6%8A%95%E8%B5%84%E5%AD%A6/%E7%AC%AC%209%20%E5%9B%9E%20%E6%8B%9C%E8%AE%BF%E5%88%B8%E5%95%86%E4%BA%86%E8%A7%A3%E5%8F%91%E8%A1%8C%20%E5%AD%A6%E4%BC%9A%E5%AE%9A%E4%BB%B7%E4%B8%8D%E5%BD%93%E9%9F%AD%E8%8F%9C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -798,7 +254,105 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/11/19/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.7%20%E2%80%94%20stdstring_view%EF%BC%88%E7%AC%AC%202%20%E9%83%A8%E5%88%86%EF%BC%89/" class="post-title-link" itemprop="url">11.7 — std::string_view（第 2 部分）</a>
+            <a href="/2022/11/24/%E8%AF%81%E5%88%B8%E6%8A%95%E8%B5%84%E5%AD%A6/%E7%AC%AC%209%20%E5%9B%9E%20%E6%8B%9C%E8%AE%BF%E5%88%B8%E5%95%86%E4%BA%86%E8%A7%A3%E5%8F%91%E8%A1%8C%20%E5%AD%A6%E4%BC%9A%E5%AE%9A%E4%BB%B7%E4%B8%8D%E5%BD%93%E9%9F%AD%E8%8F%9C/" class="post-title-link" itemprop="url">第 9 回 拜访券商了解发行 学会定价不当韭菜</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-11-24 14:22:18 / 修改时间：21:52:47" itemprop="dateCreated datePublished" datetime="2022-11-24T14:22:18+08:00">2022-11-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%81%E5%88%B8%E6%8A%95%E8%B5%84%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">证券投资学</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="第-9-回-拜访券商了解发行-学会定价不当韭菜"><a href="#第-9-回-拜访券商了解发行-学会定价不当韭菜" class="headerlink" title="第 9 回 拜访券商了解发行 学会定价不当韭菜"></a>第 9 回 拜访券商了解发行 学会定价不当韭菜</h2><p>你好！我是周建国，和你一起学习证券投资学。 </p>
+<p>上文书，我们参观了证券市场，接下来，我们游览证券市场的第二站，证券发行市场， 一块儿到发行市场看一看，看看新的证券是怎么发行的。关注三个问题，发行方式，证券公 司，发行门槛与发行价格。</p>
+<h3 id="1-发行方式"><a href="#1-发行方式" class="headerlink" title="1.发行方式"></a>1.发行方式</h3><p>证券发行，就是证券的发行人，政府和企业，将新的证券，债券，股票什么的，发到投资人手中的过程。 </p>
+<p>先说公募私募，公募私募非常好理解，所谓<strong>公募也就是在社会公开的场合，发行新的证 券</strong>，所谓<strong>私募，就是在私下里向特定的人群发行证券</strong>。</p>
+<p>如果是公募要向社会公开自己的证券的相关信息。比方，一个企业要发行股票，需要发招股说明书，向社会介绍自己的企业的经营状况，主营业务，财务报表，未来的发展前景等。 如是些需要保密公司，就不能采用公募方式。 </p>
+<p>在发行方式上，发行人把新证券直接发给投资者，就是直接发行，借助一个中介机构来 发行，就是间接发行，这个中介机构就是证券公司。 </p>
+<p>中介机构代理发行，有代销和包销两种，<strong>代销</strong>就是代理销售，卖不出去退回，不承担责 任；如果是<strong>包销</strong>，证券公司先要把证券买过来，扣掉一个手续费再卖出去。</p>
+<h3 id="2-证券公司"><a href="#2-证券公司" class="headerlink" title="2.证券公司"></a>2.证券公司</h3><p>接下来，简单介绍一下证券公司，证券公司是代理新证券发行的金融中介机构。又简称 券商，在美国叫投资银行。如果把发行人与投资人之间的证券买卖比作是一场婚姻，一场姻 缘，那么证券公司它不仅是介绍人，是媒婆，还是婚庆公司。</p>
+<p> 有一个菜鸟问：“什么是投行？”前辈拿了一些烂水果问他：“你打算怎么把这些水果卖 出去？”菜鸟想了半天说：“我按照市场价打折处理掉。”这位前辈摇头，拿起一把水果刀， 把烂水果去皮切块，弄个漂亮的水果拼盘：“这样，按照几十倍的价格卖掉”。 投行，是一个非常伟大的工作，收入非常高。适度包装是必须的，如果没有包装幼年期的微软阿里巴巴永远筹集不到资金。但，也不能过度包装，美国的次贷危机，就有投行一半的功劳。</p>
+<h3 id="3-发行门槛与发行价格"><a href="#3-发行门槛与发行价格" class="headerlink" title="3.发行门槛与发行价格"></a>3.发行门槛与发行价格</h3><p> 接下来讲一下，发行门槛和发行定价。</p>
+<h4 id="股票的发行门槛-先说股票的发行门槛。"><a href="#股票的发行门槛-先说股票的发行门槛。" class="headerlink" title="股票的发行门槛 先说股票的发行门槛。"></a>股票的发行门槛 先说股票的发行门槛。</h4><p>为什么发行股票要确定门槛儿呢？核心还是保护投资者的利益。 这个门槛一般的都会在企业的挣钱能力方面，有非常明确的规定，企业的挣钱能力强，那么 投资者的利益，就会获得更多的保护。可是，门槛也是双刃剑，门槛太高，幼年期的伟大企 业，就很难在大陆的证券市场上市融资。阿里巴巴，百度，京东都跑到美国，或我们的香港 融资。证券市场有主板、创业板，门槛不一样，主板要求最高。比如，上海主板要求发行前 3 年的总净利润超过 3000 万，总营业收入超过 3 亿元等；深圳的创业板，则最近 2 年连续 盈利，近两年净利润不少于 1 千万元；或最近一年净利润不少于 5 百万元，近一年营业收入 不少于 5 千万元，近两年营业收入增长率均不低于百分之 30。</p>
+<h4 id="股票发行定价"><a href="#股票发行定价" class="headerlink" title="股票发行定价"></a>股票发行定价</h4><p>接下来说说，新证券定价问题，这个问题，其实非常的重要，如果定的价格过高就会对 投资者带来巨大损失，定的价格过低，发行人利益受到损失。</p>
+<p>我们还是以股票发行定价为例，弄懂了股票定价，其他证券定价就非常简单了。</p>
+<p>股票主要有三种定价方式，<strong>市盈率定价，净资产定价，市场竞价三种</strong>。 </p>
+<p>先说<strong>市盈率定价</strong>，说一下什么叫市盈率，市是市场的市，指股票的价格，盈是盈利，也就是净利润，就是这一股一年的净利润，市盈率就是股票价格除以每股的利润。 </p>
+<p>市盈率有什么意义呢？他告诉投资人要花多长时间，要花多长时间才能回本？ </p>
+<p>比如，投资者花十块钱买了一股的股票，每股的利润，，是一块钱。那么，如果这个企 业能够把所有的利润都给投资人分红，投资者收回这个成本，也需要十年。十年以后，投资 者收回成本，同时，拥有 1 股股票，理论上，资产翻了一番。由于企业肯定不会把全部的利 润作为分红，所以，投资者真正收回成本的时间比十年还要长几年。</p>
+<p>简单说一下，<strong>净资产定价</strong>，打个比方，你有 100 元，借了 40 元，100 元是资产，40 元 是负债，净资产是 60 元。按照净资产定价，每股价格，在净资产的基础上给他乘一个倍数， 比方说 1.5 倍。 </p>
+<p>还有一种方法就是<strong>市场竞价</strong>，由于企业发展具有很大的不确定性，尤其是一些个高科技 企业，所以，有时候也会采取竞价方法，由机构报价。 我国的股票发行价，作用采用市盈率定价，我国股票发行价，一般会按 20 左右市盈率 定价。如果是高科技企业有时会到 22-25 倍。成熟的市场，市盈率一般都在 15 倍左右。</p>
+<p>问题来了，新股上市，发行价就已经很合理，基本就是内在价值，我国目前却流行一种 炒新股，新股一上市当天就要涨 40%，而且接下来，几乎所有的股票都要翻一倍，显然， 一上市，新股价格就远远高于了它的内在价值，那么接下来的话，你接下来就是套人了。很多散户就是因为追新股赔的钱。为什么会这样呢？浮躁。</p>
+<p>总结一下，我们讲了发行的方式，证券公司发行的门槛和发行定价，下一站，我将带你 到证券交易市场转一转。欲知后事如何，请听下回分解。 </p>
+<p>寻访券商了解发行， </p>
+<p>发行门槛清楚明白， </p>
+<p>发行价格估值合理， </p>
+<p>再炒新股必当韭菜。 </p>
+<h3 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h3><p>证券发行市场是发行新证券的场所。 </p>
+<p>（1）发行方式：公募和私募，直接发行和间接发行，代销和包销。 </p>
+<p>（2）证券公司：媒婆+婚庆公司。 </p>
+<p>（3）发行门槛和发行价格：</p>
+<p>发行门槛就是发行条件；</p>
+<p>我国证券发行定价主 要采用市盈率法。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8-15/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8-15/" class="post-title-link" itemprop="url">8.15</a>
         </h2>
 
         <div class="post-meta">
@@ -808,14 +362,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-11-19 23:45:04" itemprop="dateCreated datePublished" datetime="2022-11-19T23:45:04+08:00">2022-11-19</time>
+              <time title="创建时间：2022-11-20 15:46:31" itemprop="dateCreated datePublished" datetime="2022-11-20T15:46:31+08:00">2022-11-20</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-26 14:33:02" itemprop="dateModified" datetime="2022-11-26T14:33:02+08:00">2022-11-26</time>
+                <time title="修改时间：2022-11-21 22:48:34" itemprop="dateModified" datetime="2022-11-21T22:48:34+08:00">2022-11-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -838,135 +392,522 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>在上一课中，我们讨论了 C 风格的字符串，以及使用它们的危险。C 风格的字符串速度很快，但它们不如<code>std::string</code>.</p>
-<p>但是<code>std::string</code>（我们在第 4.17 课<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/introduction-to-stdstring/">– std::string 简介中介绍过</a>）有其自身的一些缺点，尤其是涉及到 const 字符串时。</p>
-<p>考虑以下示例：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">char</span> text[]&#123; <span class="string">&quot;hello&quot;</span> &#125;;</span><br><span class="line">  std::string str&#123; text &#125;;</span><br><span class="line">  std::string more&#123; str &#125;;</span><br><span class="line"></span><br><span class="line">  std::cout &lt;&lt; text &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; str &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; more &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+           <span id="more"></span>
 
-<p>这打印</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hello hello hello</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8-12/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8-12/" class="post-title-link" itemprop="url">8.12</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-20 15:46:25" itemprop="dateCreated datePublished" datetime="2022-11-20T15:46:25+08:00">2022-11-20</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+           <span id="more"></span>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8-11/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8-11/" class="post-title-link" itemprop="url">8.11</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-20 15:46:22" itemprop="dateCreated datePublished" datetime="2022-11-20T15:46:22+08:00">2022-11-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-21 22:48:54" itemprop="dateModified" datetime="2022-11-21T22:48:54+08:00">2022-11-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <span id="more"></span>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8-10/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8-10/" class="post-title-link" itemprop="url">8.1</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-20 15:46:19" itemprop="dateCreated datePublished" datetime="2022-11-20T15:46:19+08:00">2022-11-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-21 22:49:10" itemprop="dateModified" datetime="2022-11-21T22:49:10+08:00">2022-11-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <span id="more"></span>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8-9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8-9/" class="post-title-link" itemprop="url">8.9</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-20 15:46:15" itemprop="dateCreated datePublished" datetime="2022-11-20T15:46:15+08:00">2022-11-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-21 22:48:43" itemprop="dateModified" datetime="2022-11-21T22:48:43+08:00">2022-11-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+           <span id="more"></span>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8-8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8-8/" class="post-title-link" itemprop="url">8.8</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-20 15:46:12" itemprop="dateCreated datePublished" datetime="2022-11-20T15:46:12+08:00">2022-11-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-21 22:48:46" itemprop="dateModified" datetime="2022-11-21T22:48:46+08:00">2022-11-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+           <span id="more"></span>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8-7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8-7/" class="post-title-link" itemprop="url">8.7</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-20 15:46:10" itemprop="dateCreated datePublished" datetime="2022-11-20T15:46:10+08:00">2022-11-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-21 22:48:41" itemprop="dateModified" datetime="2022-11-21T22:48:41+08:00">2022-11-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+           <span id="more"></span>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.6%20%E2%80%94%20Typedef%20%E5%92%8C%E7%B1%BB%E5%9E%8B%E5%88%AB%E5%90%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.6%20%E2%80%94%20Typedef%20%E5%92%8C%E7%B1%BB%E5%9E%8B%E5%88%AB%E5%90%8D/" class="post-title-link" itemprop="url">8.6 — Typedef 和类型别名</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-20 15:46:07" itemprop="dateCreated datePublished" datetime="2022-11-20T15:46:07+08:00">2022-11-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-22 12:34:14" itemprop="dateModified" datetime="2022-11-22T12:34:14+08:00">2022-11-22</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="8-6-—-Typedef-和类型别名"><a href="#8-6-—-Typedef-和类型别名" class="headerlink" title="8.6 — Typedef 和类型别名"></a>8.6 — Typedef 和类型别名</h1><h2 id="类型别名"><a href="#类型别名" class="headerlink" title="类型别名"></a>类型别名</h2><p>在 C++ 中，<strong>using</strong>是为现有数据类型创建别名的关键字。要创建这样的类型别名，我们使用<code>using</code>关键字，后跟类型别名的名称，然后是等号和现有数据类型。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> Distance = <span class="type">double</span>; <span class="comment">// define Distance as an alias for type double</span></span><br></pre></td></tr></table></figure>
+
+<p>一旦定义，类型别名就可以在任何需要类型的地方使用。例如，我们可以创建一个类型为类型别名的变量：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Distance milesToDestination&#123; <span class="number">3.4</span> &#125;; <span class="comment">// defines a variable of type double</span></span><br></pre></td></tr></table></figure>
+
+<p>当编译器遇到类型别名时，它将替换为别名类型。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">using</span> Distance = <span class="type">double</span>; <span class="comment">// define Distance as an alias for type double</span></span><br><span class="line"></span><br><span class="line">    Distance milesToDestination&#123; <span class="number">3.4</span> &#125;; <span class="comment">// defines a variable of type double</span></span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; milesToDestination &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// prints a double value</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">3.4</span><br></pre></td></tr></table></figure>
+
+<p>在上面的程序中，我们首先定义<code>Distance</code>为<code>double</code>的别名。</p>
+<p>接下来，我们定义一个名为<code>milesToDestination</code>alias 类型的变量<code>Distance</code>。因为编译器知道<code>Distance</code>是类型别名，所以它会使用别名类型，即<code>double</code>. 因此， 变量<code>milesToDestination</code>实际上被编译为<code>double</code>类型的变量，并且在所有方面都将表现为 <code>double</code> 。</p>
+<p>最后，我们打印<code>milesToDestination</code> 的值，它打印为一个<code>double</code>值。 </p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/11/19/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.7%20%E2%80%94%20stdstring_view%EF%BC%88%E7%AC%AC%202%20%E9%83%A8%E5%88%86%EF%BC%89/#more" rel="contents">
+              <a class="btn" href="/2022/11/20/%E7%AC%AC8%E7%AB%A0%20%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%92%8C%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/8.6%20%E2%80%94%20Typedef%20%E5%92%8C%E7%B1%BB%E5%9E%8B%E5%88%AB%E5%90%8D/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/18/HTML&CSS/CSS/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/18/HTML&CSS/CSS/" class="post-title-link" itemprop="url">CSS</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-11-18 23:37:41" itemprop="dateCreated datePublished" datetime="2022-11-18T23:37:41+08:00">2022-11-18</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/18/HTML&CSS/%E6%B8%85%E9%99%A4float%E7%9A%84%E6%96%B9%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/18/HTML&CSS/%E6%B8%85%E9%99%A4float%E7%9A%84%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">清除float的方法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-11-18 23:37:02" itemprop="dateCreated datePublished" datetime="2022-11-18T23:37:02+08:00">2022-11-18</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
       
     </div>
 
@@ -984,7 +925,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1050,7 +991,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-count">72</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

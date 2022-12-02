@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuj10n.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="11.10 — C 风格字符串符号常量C 风格的字符串符号常量 在上一课中，我们讨论了如何创建和初始化 C 风格的字符串，如下所示： 123456789#include &lt;iostream&gt;int main()&amp;#123;    char myName[]&amp;#123; &quot;Alex&quot; &amp;#125;; &#x2F;&#x2F; fixed array    std::cout &lt;&amp;l">
+<meta property="og:type" content="article">
+<meta property="og:title" content="11.10 — C 风格字符串符号常量">
+<meta property="og:url" content="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.10%20%E2%80%94%20C%20%E9%A3%8E%E6%A0%BC%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%AC%A6%E5%8F%B7%E5%B8%B8%E9%87%8F/index.html">
+<meta property="og:site_name" content="wuj10n">
+<meta property="og:description" content="11.10 — C 风格字符串符号常量C 风格的字符串符号常量 在上一课中，我们讨论了如何创建和初始化 C 风格的字符串，如下所示： 123456789#include &lt;iostream&gt;int main()&amp;#123;    char myName[]&amp;#123; &quot;Alex&quot; &amp;#125;; &#x2F;&#x2F; fixed array    std::cout &lt;&amp;l">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-25T07:14:34.000Z">
+<meta property="article:modified_time" content="2022-11-28T08:00:17.998Z">
+<meta property="article:author" content="wuj10n">
+<meta property="article:tag" content="LearnCpp——Chapter 11">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.10%20%E2%80%94%20C%20%E9%A3%8E%E6%A0%BC%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%AC%A6%E5%8F%B7%E5%B8%B8%E9%87%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>11.10 — C 风格字符串符号常量 | wuj10n</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">wuj10n</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.10%20%E2%80%94%20C%20%E9%A3%8E%E6%A0%BC%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%AC%A6%E5%8F%B7%E5%B8%B8%E9%87%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          11.10 — C 风格字符串符号常量
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-25 15:14:34" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:34+08:00">2022-11-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-28 16:00:17" itemprop="dateModified" datetime="2022-11-28T16:00:17+08:00">2022-11-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="11-10-—-C-风格字符串符号常量"><a href="#11-10-—-C-风格字符串符号常量" class="headerlink" title="11.10 — C 风格字符串符号常量"></a>11.10 — C 风格字符串符号常量</h1><p><strong>C 风格的字符串符号常量</strong></p>
+<p>在上一课中，我们讨论了如何创建和初始化 C 风格的字符串，如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">char</span> myName[]&#123; <span class="string">&quot;Alex&quot;</span> &#125;; <span class="comment">// fixed array</span></span><br><span class="line">    std::cout &lt;&lt; myName &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>C++ 还支持一种使用指针创建 C 风格字符串符号常量的方法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">char</span>* myName&#123; <span class="string">&quot;Alex&quot;</span> &#125;; <span class="comment">// pointer to symbolic constant</span></span><br><span class="line">    std::cout &lt;&lt; myName &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>虽然上述两个程序运行并产生相同的结果，但 C++ 处理这些程序的内存分配略有不同。</p>
+<p>在固定数组的情况下，程序为长度为 5 的固定数组分配内存，并使用字符串“Alex\0”初始化该内存。因为内存是专门为数组分配的，所以您可以随意更改数组的内容。数组本身被视为一个普通的局部变量，所以当数组超出范围时，数组使用的内存被释放用于其他用途。</p>
+<p>在符号常量的情况下，编译器如何处理它是实现定义的。<em>通常</em>发生的情况是，编译器将字符串“Alex\0”放入某处的只读内存中，然后设置指针指向它。因为这个内存可能是只读的，所以最好的做法是确保字符串是常量。 <span id="more"></span></p>
+<p>出于优化目的，可以将多个字符串文字合并为一个值。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">char</span>* name1&#123; <span class="string">&quot;Alex&quot;</span> &#125;;</span><br><span class="line"><span class="type">const</span> <span class="type">char</span>* name2&#123; <span class="string">&quot;Alex&quot;</span> &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这是两个具有相同值的不同字符串文字。编译器可能会选择将它们组合成一个共享字符串文字，其中 name1 和 name2 都指向同一地址。因此，如果 name1 不是 const，则对 name1 的更改也可能影响 name2（这可能不是预期的）。</p>
+<p>由于字符串文字存储在内存中的固定位置，字符串文字具有静态持续时间而不是自动持续时间（也就是说，它们在程序结束时死亡，而不是在定义它们的块结束时死亡）。这意味着当我们使用字符串文字时，我们不必担心作用域问题。因此，以下是可以的：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">const</span> <span class="type">char</span>* <span class="title">getName</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Alex&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在上面的代码中，<code>getName()</code> 将返回一个指向 C 风格字符串<code>“Alex”</code>的指针。 如果此函数通过地址返回任何其他局部变量，则该变量将在 <code>getName()</code> 结束时被销毁，我们将向调用者返回一个悬空指针。 但是，由于字符串文字具有静态持续时间，因此当<code>getName()</code>终止时<code>“Alex”</code>不会被销毁，因此调用者仍然可以成功访问它。</p>
+<p>C 风格的字符串在很多旧的或低级代码中使用，因为它们占用的内存非常小。现代代码应该支持使用<code>std::string</code>和 <code>std::string_view</code>，因为它们提供了对字符串的安全和轻松访问。</p>
+<h2 id="std-cout-和-char-指针"><a href="#std-cout-和-char-指针" class="headerlink" title="std::cout 和 char 指针"></a>std::cout 和 char 指针</h2><p>此时，您可能已经注意到<code>std::cout</code>处理不同类型指针的方式有些有趣。</p>
+<p>考虑以下示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> nArray[<span class="number">5</span>]&#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125;;</span><br><span class="line">    <span class="type">char</span> cArray[]&#123; <span class="string">&quot;Hello!&quot;</span> &#125;;</span><br><span class="line">    <span class="type">const</span> <span class="type">char</span>* name&#123; <span class="string">&quot;Alex&quot;</span> &#125;;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; nArray &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// nArray will decay to type int*</span></span><br><span class="line">    std::cout &lt;&lt; cArray &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// cArray will decay to type char*</span></span><br><span class="line">    std::cout &lt;&lt; name &lt;&lt; <span class="string">&#x27;\n&#x27;</span>; <span class="comment">// name is already type char*</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在作者的机器上，打印了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">003AF738</span><br><span class="line">Hello!</span><br><span class="line">Alex</span><br></pre></td></tr></table></figure>
+
+<p>为什么int数组打印的是地址，字符数组打印的是字符串？</p>
+<p>答案是<code>std::cout</code>对您的意图做出一些假设。如果您向它传递一个非字符指针，它只会打印该指针的内容（指针所持有的地址）。但是，如果您向它传递一个<code>char*</code>或者<code>const char*</code>类型的对象，它会假定您打算打印一个字符串。因此，它不会打印指针的值，而是打印指向的字符串！</p>
+<p>虽然这在 99% 的情况下都很好，但它可能会导致意想不到的结果。考虑以下情况：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">char</span> c&#123; <span class="string">&#x27;Q&#x27;</span> &#125;;</span><br><span class="line">    std::cout &lt;&lt; &amp;c;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这种情况下，程序员打算打印变量 c 的地址。但是，&amp;c 的类型为 char*，因此 std::cout 尝试将其打印为字符串！在作者的机器上，打印了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Q╠╠╠╠╜╡4;¿■A</span><br></pre></td></tr></table></figure>
+
+<p>它为什么这样做？好吧，它假定 &amp;c（类型为 char*）是一个字符串。所以它打印了’Q’，然后继续前进。记忆中的下一个是一堆垃圾。最终，它遇到了一些包含 0 值的内存，它将其解释为空终止符，因此它停止了。您看到的内容可能会有所不同，具体取决于变量 c 之后内存中的内容。</p>
+<p>这种情况在现实生活中不太可能发生（因为您不太可能真的想要打印内存地址），但它说明了事情在引擎盖下是如何工作的，以及程序是如何无意中偏离轨道的。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-11/" rel="tag"># LearnCpp——Chapter 11</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.9%20%E2%80%94%20%E6%8C%87%E9%92%88%E8%BF%90%E7%AE%97%E5%92%8C%E6%95%B0%E7%BB%84%E7%B4%A2%E5%BC%95/" rel="prev" title="11.9 — 指针运算和数组索引">
+      <i class="fa fa-chevron-left"></i> 11.9 — 指针运算和数组索引
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.11%20%E2%80%94%20%E4%BD%BF%E7%94%A8%20new%20%E5%92%8C%20delete%20%E8%BF%9B%E8%A1%8C%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/" rel="next" title="11.11 — 使用 new 和 delete 进行动态内存分配">
+      11.11 — 使用 new 和 delete 进行动态内存分配 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#11-10-%E2%80%94-C-%E9%A3%8E%E6%A0%BC%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%AC%A6%E5%8F%B7%E5%B8%B8%E9%87%8F"><span class="nav-number">1.</span> <span class="nav-text">11.10 — C 风格字符串符号常量</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#std-cout-%E5%92%8C-char-%E6%8C%87%E9%92%88"><span class="nav-number">1.1.</span> <span class="nav-text">std::cout 和 char 指针</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuj10n</p>
+  <div class="site-description" itemprop="description">wuj10n的个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">72</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wuj10n" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wuj10n" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:542211073@qq.com" title="E-Mail → mailto:542211073@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuj10n</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

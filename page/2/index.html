@@ -164,7 +164,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11-10/">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/26/%E7%AC%AC%204%20%E7%AB%A0%20%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/4.18%20%E2%80%94%20stdstring_view%20%E7%AE%80%E4%BB%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -178,7 +178,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11-10/" class="post-title-link" itemprop="url">11.1</a>
+            <a href="/2022/11/26/%E7%AC%AC%204%20%E7%AB%A0%20%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/4.18%20%E2%80%94%20stdstring_view%20%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">4.18 — std::string_view 简介</a>
         </h2>
 
         <div class="post-meta">
@@ -189,7 +189,87 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-11-25 15:14:34 / 修改时间：19:12:42" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:34+08:00">2022-11-25</time>
+              <time title="创建时间：2022-11-26 10:32:44 / 修改时间：10:54:24" itemprop="dateCreated datePublished" datetime="2022-11-26T10:32:44+08:00">2022-11-26</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="4-18-—-std-string-view-简介"><a href="#4-18-—-std-string-view-简介" class="headerlink" title="4.18 — std::string_view 简介"></a>4.18 — std::string_view 简介</h1><p>考虑以下程序：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> x &#123; <span class="number">5</span> &#125;;</span><br><span class="line">    std::cout &lt;&lt; x &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行for 的定义时，<code>x</code>会将初始化值<code>5</code>复制到为<code>int</code> <code>x</code> 分配的内存中。对于基本类型，初始化（或复制）一个变量很快。</p>
+<p>现在考虑这个类似的程序：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::string s&#123; <span class="string">&quot;Hello, world!&quot;</span> &#125;;</span><br><span class="line">    std::cout &lt;&lt; s &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/11/26/%E7%AC%AC%204%20%E7%AB%A0%20%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/4.18%20%E2%80%94%20stdstring_view%20%E7%AE%80%E4%BB%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11-19/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11-19/" class="post-title-link" itemprop="url">11.19</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-11-25 15:15:03 / 修改时间：19:13:02" itemprop="dateCreated datePublished" datetime="2022-11-25T15:15:03+08:00">2022-11-25</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -232,7 +312,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11-9/">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11-18/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -246,143 +326,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11-9/" class="post-title-link" itemprop="url">11.9</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-11-25 15:14:31 / 修改时间：19:12:40" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:31+08:00">2022-11-25</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-           <span id="more"></span>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11-8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11-8/" class="post-title-link" itemprop="url">11.8</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-11-25 15:14:28 / 修改时间：19:12:38" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:28+08:00">2022-11-25</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-           <span id="more"></span>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.6%20%E2%80%94%20C%20%E9%A3%8E%E6%A0%BC%E5%AD%97%E7%AC%A6%E4%B8%B2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.6%20%E2%80%94%20C%20%E9%A3%8E%E6%A0%BC%E5%AD%97%E7%AC%A6%E4%B8%B2/" class="post-title-link" itemprop="url">11.6 — C 风格字符串</a>
+            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11-18/" class="post-title-link" itemprop="url">11.18 — 迭代器简介</a>
         </h2>
 
         <div class="post-meta">
@@ -392,14 +336,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-11-25 15:14:20" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:20+08:00">2022-11-25</time>
+              <time title="创建时间：2022-11-25 15:15:00" itemprop="dateCreated datePublished" datetime="2022-11-25T15:15:00+08:00">2022-11-25</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-26 13:00:20" itemprop="dateModified" datetime="2022-11-26T13:00:20+08:00">2022-11-26</time>
+                <time title="修改时间：2022-12-01 23:35:01" itemprop="dateModified" datetime="2022-12-01T23:35:01+08:00">2022-12-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -422,11 +366,25 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="11-6-—-C-风格字符串"><a href="#11-6-—-C-风格字符串" class="headerlink" title="11.6 — C 风格字符串"></a>11.6 — C 风格字符串</h1><p><a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/introduction-to-stdstring/">在第4.17</a>课– std::string 简介中，我们将字符串定义为连续字符的集合，例如“Hello, world!”。字符串是我们在 C++ 中处理文本的主要方式，而 std::string 使在 C++ 中处理字符串变得容易。</p>
-<p>现代 C++ 支持两种不同类型的字符串：std::string（作为标准库的一部分）和 C 风格的字符串（从 C 语言继承而来）。事实证明，std::string 是使用 C 风格的字符串实现的。在本课中，我们将仔细研究 C 风格的字符串。
+          <h1 id="11-18-—-迭代器简介"><a href="#11-18-—-迭代器简介" class="headerlink" title="11.18 — 迭代器简介"></a>11.18 — 迭代器简介</h1><p>遍历数据数组（或其他结构）是编程中很常见的事情。 到目前为止，我们已经介绍了许多不同的方法：使用循环和索引（<code>for-loops</code>和<code> while loops</code>），使用指针和指针算法，以及使用<code>range-based for-loops</code>：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;array&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstddef&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// In C++17, the type of variable data is deduced to std::array&lt;int, 7&gt;</span></span><br><span class="line">    <span class="comment">// If you get an error compiling this example, see the warning below</span></span><br><span class="line">    std::array data&#123; <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span> &#125;;</span><br><span class="line">    std::<span class="type">size_t</span> length&#123; std::<span class="built_in">size</span>(data) &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// while-loop with explicit index</span></span><br><span class="line">    std::<span class="type">size_t</span> index&#123; <span class="number">0</span> &#125;;</span><br><span class="line">    <span class="keyword">while</span> (index &lt; length)</span><br><span class="line">    &#123;</span><br><span class="line">        std::cout &lt;&lt; data[index] &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">        ++index;</span><br><span class="line">    &#125;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// for-loop with explicit index</span></span><br><span class="line">    <span class="keyword">for</span> (index = <span class="number">0</span>; index &lt; length; ++index)</span><br><span class="line">    &#123;</span><br><span class="line">        std::cout &lt;&lt; data[index] &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// for-loop with pointer (Note: ptr can&#x27;t be const, because we increment it)</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> ptr&#123; &amp;data[<span class="number">0</span>] &#125;; ptr != (&amp;data[<span class="number">0</span>] + length); ++ptr)</span><br><span class="line">    &#123;</span><br><span class="line">        std::cout &lt;&lt; *ptr &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ranged-based for loop</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i : data)</span><br><span class="line">    &#123;</span><br><span class="line">        std::cout &lt;&lt; i &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><strong>警告</strong></p>
+<p>本课中的示例使用一个 C++17 功能调用<code>class template argument deduction</code>来从其初始值设定项中推导模板变量的模板参数。在上面的例子中，当编译器看到时<code>std::array data&#123; 0, 1, 2, 3, 4, 5, 6 &#125;;</code>，它会推断出我们想要<code>std::array&lt;int, 7&gt; data &#123; 0, 1, 2, 3, 4, 5, 6 &#125;;</code>。</p>
+<p>如果您的编译器未启用 C++17，您将收到类似“’数据’之前缺少模板参数”之类的错误。在这种情况下，您最好的选择是根据第<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/configuring-your-compiler-choosing-a-language-standard/">0.12 课——配置编译器：选择语言标准</a>启用 C++17 。如果不能，您可以将使用类模板参数推导的行替换为具有显式模板参数的行（例如替换<code>std::array data&#123; 0, 1, 2, 3, 4, 5, 6 &#125;;</code>为<code>std::array&lt;int, 7&gt; data &#123; 0, 1, 2, 3, 4, 5, 6 &#125;;</code></p>
+<hr>
+<p>如果我们只使用索引来访问元素，那么使用索引循环比需要的输入更多。它也仅在容器（例如数组）提供对元素的直接访问（数组可以，但某些其他类型的容器，例如列表，则不能）的情况下才有效。</p>
+<p>用指针循环和指针运算是冗长的，并且可能会让不了解指针运算规则的读者感到困惑。指针运算也仅在元素在内存中连续时才有效（这对数组是正确的，但对其他类型的容器（如列表、树和映射）则不是这样）。</p>
+<div style="background-color:lightgrey ;">
+   <p >对于高级读者：</p>
+    <p>指针（没有指针运算）也可用于迭代一些非顺序结构。在链表中，每个元素都通过指针连接到前一个元素。我们可以通过指针链遍历列表。
+    </p>
+</div>
+
+<p><code>range-based for-loops</code>更有趣一些，因为迭代容器的机制是隐藏的——然而，它们仍然适用于各种不同的结构（arrays, lists, trees, maps, etc…）。这些是如何工作的？他们使用迭代器。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.6%20%E2%80%94%20C%20%E9%A3%8E%E6%A0%BC%E5%AD%97%E7%AC%A6%E4%B8%B2/#more" rel="contents">
+              <a class="btn" href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11-18/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -450,7 +408,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.5%20%E2%80%94%20%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84/">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.17%20%E2%80%94%20vector%20%E7%AE%80%E4%BB%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -464,7 +422,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.5%20%E2%80%94%20%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84/" class="post-title-link" itemprop="url">11.5 — 多维数组</a>
+            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.17%20%E2%80%94%20vector%20%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">11.17 — std::vector 简介</a>
         </h2>
 
         <div class="post-meta">
@@ -474,14 +432,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-11-25 15:14:17" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:17+08:00">2022-11-25</time>
+              <time title="创建时间：2022-11-25 15:14:57" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:57+08:00">2022-11-25</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-26 09:11:13" itemprop="dateModified" datetime="2022-11-26T09:11:13+08:00">2022-11-26</time>
+                <time title="修改时间：2022-12-01 23:30:38" itemprop="dateModified" datetime="2022-12-01T23:30:38+08:00">2022-12-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -504,18 +462,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>数组的元素可以是任何数据类型，包括数组！数组的数组称为<strong>多维数组</strong>。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> array[<span class="number">3</span>][<span class="number">5</span>]; <span class="comment">// a 3-element array of 5-element arrays</span></span><br></pre></td></tr></table></figure>
-
-<p>因为我们有 2 个下标，所以这是一个二维数组。</p>
-<p>在二维数组中，将第一个（左）下标视为行，将第二个（右）下标视为列会很方便。这称为<strong>行</strong>优先顺序。从概念上讲，上面的二维数组布局如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[0][0] [0][1] [0][2] [0][3] [0][4] // 第 0 行</span><br><span class="line">[1][0] [1][1] [1][2] [1][3] [1][4] // 第 1 行</span><br><span class="line">[2][0] [2][1] [2][2] [2][3] [2][4] // 第 2 行</span><br></pre></td></tr></table></figure>
-
-<p>要访问二维数组的元素，只需使用两个下标：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">array[<span class="number">2</span>][<span class="number">3</span>] = <span class="number">7</span>;</span><br></pre></td></tr></table></figure>
+          <h1 id="11-17-—-std-vector-简介"><a href="#11-17-—-std-vector-简介" class="headerlink" title="11.17 — std::vector 简介"></a>11.17 — std::vector 简介</h1><p>在上一课中，我们介绍了std::array，它以更安全、更易用的形式提供了C++内置固定数组的功能。</p>
+<p>类似地，C++ 标准库提供的功能使使用动态数组更安全、更容易。 此功能名为 std::vector。</p>
+<p>与严格遵循固定数组的基本功能的 std::array 不同，std::vector 带有一些额外的技巧。 这些有助于使 std::vector 成为 C++ 工具包中最有用和最通用的工具之一。
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.5%20%E2%80%94%20%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84/#more" rel="contents">
+              <a class="btn" href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.17%20%E2%80%94%20vector%20%E7%AE%80%E4%BB%8B/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -539,7 +491,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.4%20%E2%80%94%20%E4%BD%BF%E7%94%A8%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F%E5%AF%B9%E6%95%B0%E7%BB%84%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F/">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.16%20%E2%80%94%20array%20%E7%AE%80%E4%BB%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -553,7 +505,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.4%20%E2%80%94%20%E4%BD%BF%E7%94%A8%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F%E5%AF%B9%E6%95%B0%E7%BB%84%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F/" class="post-title-link" itemprop="url">11.4 — 使用选择排序对数组进行排序</a>
+            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.16%20%E2%80%94%20array%20%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">11.16 — std::array 简介</a>
         </h2>
 
         <div class="post-meta">
@@ -563,14 +515,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-11-25 15:14:14" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:14+08:00">2022-11-25</time>
+              <time title="创建时间：2022-11-25 15:14:54" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:54+08:00">2022-11-25</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-26 09:09:06" itemprop="dateModified" datetime="2022-11-26T09:09:06+08:00">2022-11-26</time>
+                <time title="修改时间：2022-12-01 23:30:22" itemprop="dateModified" datetime="2022-12-01T23:30:22+08:00">2022-12-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -593,10 +545,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="排序案例"><a href="#排序案例" class="headerlink" title="排序案例"></a>排序案例</h1><p>对数组进行排序是按特定顺序排列数组中所有元素的过程。在许多不同的情况下，对数组进行排序很有用。例如，您的电子邮件程序通常按收到时间的顺序显示电子邮件，因为较新的电子邮件通常被认为更相关。当您转到联系人列表时，姓名通常按字母顺序排列，因为这样更容易找到您要查找的姓名。这两种演示都涉及在演示前对数据进行排序。
+          <h1 id="11-16-—-std-array-简介"><a href="#11-16-—-std-array-简介" class="headerlink" title="11.16 — std::array 简介"></a>11.16 — std::array 简介</h1><p>在之前的课程中，我们详细讨论了固定数组和动态数组。尽管两者都内置于 C++ 语言中，但它们都有缺点：固定数组会衰减为指针，当它们衰减时会丢失数组长度信息，而动态数组具有混乱的重新分配问题，并且难以无错误地调整大小。</p>
+<p>为了解决这些问题，C++ 标准库包含使数组管理更容易的功能，<code>std::array</code>以及<code>std::vector</code>. 我们将在本课介绍<code>std::array</code>和在下一课中介绍<code>std::vector</code>。
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.4%20%E2%80%94%20%E4%BD%BF%E7%94%A8%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F%E5%AF%B9%E6%95%B0%E7%BB%84%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F/#more" rel="contents">
+              <a class="btn" href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.16%20%E2%80%94%20array%20%E7%AE%80%E4%BB%8B/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -620,7 +573,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.3%20%E2%80%94%20%E6%95%B0%E7%BB%84%E5%92%8C%E5%BE%AA%E7%8E%AF/">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.15%20%E2%80%94%20%E6%8C%87%E5%90%91%E6%8C%87%E9%92%88%E5%92%8C%E5%8A%A8%E6%80%81%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84%E7%9A%84%E6%8C%87%E9%92%88/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -634,86 +587,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.3%20%E2%80%94%20%E6%95%B0%E7%BB%84%E5%92%8C%E5%BE%AA%E7%8E%AF/" class="post-title-link" itemprop="url">11.3 — 数组和循环</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-11-25 15:14:11 / 修改时间：19:15:31" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:11+08:00">2022-11-25</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>考虑我们想要找到一班学生的平均考试成绩的情况。使用单个变量：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> numStudents&#123; <span class="number">5</span> &#125;;</span><br><span class="line"><span class="type">int</span> score0&#123; <span class="number">84</span> &#125;;</span><br><span class="line"><span class="type">int</span> score1&#123; <span class="number">92</span> &#125;;</span><br><span class="line"><span class="type">int</span> score2&#123; <span class="number">76</span> &#125;;</span><br><span class="line"><span class="type">int</span> score3&#123; <span class="number">81</span> &#125;;</span><br><span class="line"><span class="type">int</span> score4&#123; <span class="number">56</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> totalScore&#123; score0 + score1 + score2 + score3 + score4 &#125;;</span><br><span class="line"><span class="keyword">auto</span> averageScore&#123; <span class="built_in">static_cast</span>&lt;<span class="type">double</span>&gt;(totalScore) / numStudents &#125;;</span><br></pre></td></tr></table></figure>
-
-<p>这是很多变量和大量输入——而这只是 5 个学生！想象一下我们必须为 30 名或 150 名学生做多少工作。</p>
-<p>另外，如果添加了新学生，则必须声明、初始化新变量并将其添加到 totalScore 计算中。任何时候您必须修改旧代码时，都会冒引入错误的风险。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.3%20%E2%80%94%20%E6%95%B0%E7%BB%84%E5%92%8C%E5%BE%AA%E7%8E%AF/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.2%20%E2%80%94%20%E6%95%B0%E7%BB%84%EF%BC%88%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wuj10n">
-      <meta itemprop="description" content="wuj10n的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wuj10n">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.2%20%E2%80%94%20%E6%95%B0%E7%BB%84%EF%BC%88%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%89/" class="post-title-link" itemprop="url">11.2 — 数组（第二部分）</a>
+            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.15%20%E2%80%94%20%E6%8C%87%E5%90%91%E6%8C%87%E9%92%88%E5%92%8C%E5%8A%A8%E6%80%81%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84%E7%9A%84%E6%8C%87%E9%92%88/" class="post-title-link" itemprop="url">11.15 — 指向指针和动态多维数组的指针</a>
         </h2>
 
         <div class="post-meta">
@@ -723,14 +597,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-11-25 15:14:07" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:07+08:00">2022-11-25</time>
+              <time title="创建时间：2022-11-25 15:14:52" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:52+08:00">2022-11-25</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-26 10:28:51" itemprop="dateModified" datetime="2022-11-26T10:28:51+08:00">2022-11-26</time>
+                <time title="修改时间：2022-12-01 23:30:14" itemprop="dateModified" datetime="2022-12-01T23:30:14+08:00">2022-12-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -753,20 +627,18 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>本课继续讨论从<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/arrays-part-i/">第 11.1 课开始的数组——数组（第一部分）</a>。</p>
-<h2 id="初始化固定数组"><a href="#初始化固定数组" class="headerlink" title="初始化固定数组"></a>初始化固定数组</h2><p>数组元素就像普通变量一样对待，因此，它们在创建时不会被初始化。</p>
-<p>“初始化”数组的一种方法是逐个元素地进行：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> prime[<span class="number">5</span>]; <span class="comment">// hold the first 5 prime numbers</span></span><br><span class="line">prime[<span class="number">0</span>] = <span class="number">2</span>;</span><br><span class="line">prime[<span class="number">1</span>] = <span class="number">3</span>;</span><br><span class="line">prime[<span class="number">2</span>] = <span class="number">5</span>;</span><br><span class="line">prime[<span class="number">3</span>] = <span class="number">7</span>;</span><br><span class="line">prime[<span class="number">4</span>] = <span class="number">11</span>;</span><br></pre></td></tr></table></figure>
+          <h1 id="11-15-—-指向指针和动态多维数组的指针"><a href="#11-15-—-指向指针和动态多维数组的指针" class="headerlink" title="11.15 — 指向指针和动态多维数组的指针"></a>11.15 — 指向指针和动态多维数组的指针</h1><p>本课程是可选的，适用于想要进一步了解 C++ 的高级读者。以后的课程不会建立在本课程的基础上。</p>
+<p>指向指针的指针正是您所期望的：一个指针保存另一个指针的地址。</p>
+<h2 id="指向指针的指针"><a href="#指向指针的指针" class="headerlink" title="指向指针的指针"></a>指向指针的指针</h2><p>使用单个星号声明指向 int 的普通指针：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>* ptr; <span class="comment">// pointer to an int, one asterisk</span></span><br></pre></td></tr></table></figure>
 
-<p>然而，这很痛苦，尤其是当数组变大时。此外，它不是初始化，而是赋值。如果是<code>const</code> 数组，则赋值不起作用。</p>
-<p>幸运的是，C++ 提供了一种更方便的方法来通过使用<strong>初始化列表</strong>来初始化整个数组。以下示例使用与上述相同的值初始化数组：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> prime[<span class="number">5</span>]&#123; <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">11</span> &#125;; <span class="comment">// use initializer list to initialize the fixed array</span></span><br></pre></td></tr></table></figure>
+<p>使用两个星号声明指向 int 指针的指针</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>** ptrptr; <span class="comment">// pointer to a pointer to an int, two asterisks</span></span><br></pre></td></tr></table></figure>
 
-<p>如果列表中的初始值设定项多于数组可容纳的数量，编译器将产生错误。</p>
-<p>但是，如果列表中的初始值设定项少于数组可以容纳的数量，则剩余元素将被初始化为 0（或者 0 转换为非整数基本类型的任何值——例如 0.0 表示双精度）。这称为<strong>零初始化</strong>。
+<p>指向指针的指针就像普通指针一样工作——您可以取消引用它以检索指向的值。因为该值本身就是一个指针，所以您可以再次取消引用它以获取基础值。这些取消引用可以连续完成：
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.2%20%E2%80%94%20%E6%95%B0%E7%BB%84%EF%BC%88%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%89/#more" rel="contents">
+              <a class="btn" href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.15%20%E2%80%94%20%E6%8C%87%E5%90%91%E6%8C%87%E9%92%88%E5%92%8C%E5%8A%A8%E6%80%81%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84%E7%9A%84%E6%8C%87%E9%92%88/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -790,7 +662,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.1%20%E2%80%94%20%E6%95%B0%E7%BB%84%EF%BC%88%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%89/">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.14%20%E2%80%94%20%E7%A9%BA%E6%8C%87%E9%92%88/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -804,7 +676,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.1%20%E2%80%94%20%E6%95%B0%E7%BB%84%EF%BC%88%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%89/" class="post-title-link" itemprop="url">11.1 — 数组（第一部分）</a>
+            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.14%20%E2%80%94%20%E7%A9%BA%E6%8C%87%E9%92%88/" class="post-title-link" itemprop="url">11.14 — 空指针</a>
         </h2>
 
         <div class="post-meta">
@@ -813,10 +685,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-11-25 15:14:04 / 修改时间：15:25:03" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:04+08:00">2022-11-25</time>
+              <time title="创建时间：2022-11-25 15:14:49" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:49+08:00">2022-11-25</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-12-01 23:30:33" itemprop="dateModified" datetime="2022-12-01T23:30:33+08:00">2022-12-01</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -838,13 +716,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="11-1-—-数组（第一部分）"><a href="#11-1-—-数组（第一部分）" class="headerlink" title="11.1 — 数组（第一部分）"></a>11.1 — 数组（第一部分）</h1><p>注意：本章比前几章难一些。如果您感到有点气馁，请坚持下去。最好的东西还在后面！</p>
-<p>在第 10.5 课<a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/introduction-to-structs-members-and-member-selection/">- 结构、成员和成员选择简介中</a>，您了解到可以使用结构将许多不同的数据类型聚合到一个标识符中。这对于我们想要对具有许多不同属性的单个对象建模的情况非常有用。然而，这对于我们想要跟踪某些事物的许多相关实例的情况来说并不是很好。</p>
-<p>幸运的是，结构并不是 C++ 中唯一的聚合数据类型。</p>
-<p><strong>数组</strong>是一种聚合数据类型，它使我们可以通过单个标识符访问同一类型的多个变量。
+          <h1 id="11-14-—-空指针"><a href="#11-14-—-空指针" class="headerlink" title="11.14 — 空指针"></a>11.14 — 空指针</h1><p><strong>void 指针</strong>，也称为泛型指针，是一种特殊类型的指针，可以指向任何数据类型的对象！void 指针像普通指针一样声明，使用 void 关键字作为指针的类型：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span>* ptr; <span class="comment">// ptr is a void pointer</span></span><br></pre></td></tr></table></figure>
+
+<p>void 指针可以指向任何数据类型的对象：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> nValue;</span><br><span class="line"><span class="type">float</span> fValue;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Something</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    <span class="type">float</span> f;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Something sValue;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span>* ptr;</span><br><span class="line">ptr = &amp;nValue; <span class="comment">// valid</span></span><br><span class="line">ptr = &amp;fValue; <span class="comment">// valid</span></span><br><span class="line">ptr = &amp;sValue; <span class="comment">// valid</span></span><br></pre></td></tr></table></figure>
+
+<p>但是，因为 void 指针不知道它指向什么类型的对象，所以解引用 void 指针是非法的。相反，必须先将 void 指针转换为另一种指针类型，然后才能执行解引用。
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.1%20%E2%80%94%20%E6%95%B0%E7%BB%84%EF%BC%88%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%89/#more" rel="contents">
+              <a class="btn" href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.14%20%E2%80%94%20%E7%A9%BA%E6%8C%87%E9%92%88/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -868,7 +749,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/24/%E8%AF%81%E5%88%B8%E6%8A%95%E8%B5%84%E5%AD%A6/%E7%AC%AC%2010%20%E5%9B%9E%20%E8%AF%81%E5%88%B8%E6%B6%A8%E8%B7%8C%E4%BA%A4%E6%98%93%E6%9C%89%E5%BA%A6%20%E5%8A%A3%E4%BC%81%E9%80%80%E5%B8%82%E5%BC%BA%E8%80%85%E7%94%9F%E5%AD%98/">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.13%20%E2%80%94%20For-each%20%E5%BE%AA%E7%8E%AF/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -882,7 +763,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/11/24/%E8%AF%81%E5%88%B8%E6%8A%95%E8%B5%84%E5%AD%A6/%E7%AC%AC%2010%20%E5%9B%9E%20%E8%AF%81%E5%88%B8%E6%B6%A8%E8%B7%8C%E4%BA%A4%E6%98%93%E6%9C%89%E5%BA%A6%20%E5%8A%A3%E4%BC%81%E9%80%80%E5%B8%82%E5%BC%BA%E8%80%85%E7%94%9F%E5%AD%98/" class="post-title-link" itemprop="url">第 10 回 证券涨跌交易有度 劣企退市强者生存</a>
+            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.13%20%E2%80%94%20For-each%20%E5%BE%AA%E7%8E%AF/" class="post-title-link" itemprop="url">11.13 — For-each 循环</a>
         </h2>
 
         <div class="post-meta">
@@ -891,17 +772,23 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-11-24 21:53:47 / 修改时间：22:24:19" itemprop="dateCreated datePublished" datetime="2022-11-24T21:53:47+08:00">2022-11-24</time>
+              <time title="创建时间：2022-11-25 15:14:45" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:45+08:00">2022-11-25</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-30 10:30:13" itemprop="dateModified" datetime="2022-11-30T10:30:13+08:00">2022-11-30</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%81%E5%88%B8%E6%8A%95%E8%B5%84%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">证券投资学</span></a>
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
                 </span>
             </span>
 
@@ -916,10 +803,226 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="第-10-回-证券涨跌交易有度-劣企退市强者生存"><a href="#第-10-回-证券涨跌交易有度-劣企退市强者生存" class="headerlink" title="第 10 回 证券涨跌交易有度 劣企退市强者生存"></a>第 10 回 证券涨跌交易有度 劣企退市强者生存</h1><p>你好！我是周建国，和你一起学习证券投资学。上文书，我们说到证券发行市场，接下来，我们拜访证券交易所。证券交易市场包括， <strong>证券交易所</strong>和<strong>场外市场</strong>两部分。我们将以证券交易所为例，看看旧证券是如何交易的？讲 3 个问题，证券交易所与会员，交易规则，停牌与摘牌。</p>
+          <p><a target="_blank" rel="noopener" href="https://www.learncpp.com/cpp-tutorial/arrays-and-loops/">在第11.3</a>课——数组和循环中，我们展示了使用<em>for 循环</em>遍历数组的每个元素的示例。</p>
+<p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iterator&gt;</span> <span class="comment">// std::size</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">constexpr</span> <span class="type">int</span> scores[]&#123; <span class="number">84</span>, <span class="number">92</span>, <span class="number">76</span>, <span class="number">81</span>, <span class="number">56</span> &#125;;</span><br><span class="line">    <span class="keyword">constexpr</span> <span class="type">int</span> numStudents&#123; std::<span class="built_in">size</span>(scores) &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> maxScore&#123; <span class="number">0</span> &#125;; <span class="comment">// keep track of our largest score</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> student&#123; <span class="number">0</span> &#125;; student &lt; numStudents; ++student)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (scores[student] &gt; maxScore)</span><br><span class="line">        &#123;</span><br><span class="line">            maxScore = scores[student];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;The best score was &quot;</span> &lt;&lt; maxScore &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/11/24/%E8%AF%81%E5%88%B8%E6%8A%95%E8%B5%84%E5%AD%A6/%E7%AC%AC%2010%20%E5%9B%9E%20%E8%AF%81%E5%88%B8%E6%B6%A8%E8%B7%8C%E4%BA%A4%E6%98%93%E6%9C%89%E5%BA%A6%20%E5%8A%A3%E4%BC%81%E9%80%80%E5%B8%82%E5%BC%BA%E8%80%85%E7%94%9F%E5%AD%98/#more" rel="contents">
+              <a class="btn" href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.13%20%E2%80%94%20For-each%20%E5%BE%AA%E7%8E%AF/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.12%20%E2%80%94%20%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D%E6%95%B0%E7%BB%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.12%20%E2%80%94%20%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D%E6%95%B0%E7%BB%84/" class="post-title-link" itemprop="url">11.12 — 动态分配数组</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-25 15:14:43" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:43+08:00">2022-11-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-30 09:02:40" itemprop="dateModified" datetime="2022-11-30T09:02:40+08:00">2022-11-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="11-12-—-动态分配数组"><a href="#11-12-—-动态分配数组" class="headerlink" title="11.12 — 动态分配数组"></a>11.12 — 动态分配数组</h1><p>除了动态分配单个值，我们还可以动态分配变量数组。与必须在编译时固定数组大小的固定数组不同，动态分配数组允许我们在运行时选择数组长度。</p>
+<p>动态分配一个数组，我们使用new和delete的数组形式（通常称为new[]和delete[]）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Enter a positive integer: &quot;</span>;</span><br><span class="line">    <span class="type">int</span> length&#123;&#125;;</span><br><span class="line">    std::cin &gt;&gt; length;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span>* array&#123; <span class="keyword">new</span> <span class="type">int</span>[length]&#123;&#125; &#125;; <span class="comment">// use array new.  Note that length does not need to be constant!</span></span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;I just allocated an array of integers of length &quot;</span> &lt;&lt; length &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    array[<span class="number">0</span>] = <span class="number">5</span>; <span class="comment">// set element 0 to value 5</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">delete</span>[] array; <span class="comment">// use array delete to deallocate array</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// we don&#x27;t need to set array to nullptr/0 here because it&#x27;s going out of scope immediately after this anyway</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为我们正在分配一个数组，所以 C++ 知道它应该使用 new 的数组版本而不是 new 的标量版本。本质上，调用了 new[] 运算符，即使 [] 没有放在 new 关键字旁边。</p>
+<p>动态分配数组的长度必须是可转换为<code>std::size_t</code>. 实际上，使用<code>int</code>长度很好，因为<code>int</code>将转换为<code>std::size_t</code>.</p>
+<h2 id="作者的话"><a href="#作者的话" class="headerlink" title="作者的话"></a>作者的话</h2><p>有些人可能会争辩说，因为数组 new 需要一个 size_t 类型的长度，所以我们的长度（例如上面示例中的 length）应该是 size_t 类型或通过 static_cast 转换为 size_t。</p>
+<p>我发现这个论点没有说服力，原因有很多。 首先，它与使用有符号整数而不是无符号整数的最佳实践相矛盾。 其次，当使用整数长度创建动态数组时，通常会这样做：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">double</span>* ptr &#123; <span class="keyword">new</span> <span class="type">double</span>[<span class="number">5</span>] &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>5 是一个 int 字面量，所以我们得到了到 size_t 的隐式转换。 在 C++23 之前，不使用 static_cast 就无法创建 size_t 字面量！ 如果 C++ 的设计者希望我们在这里严格使用 size_t 类型，他们就会提供一种创建 size_t 类型字面量的方法。</p>
+<p>最常见的反对意见是，一些迂腐的编译器可能会将其标记为有符号/无符号转换错误（因为我们总是将警告视为错误）。 但是，值得注意的是，即使启用了此类警告 (-Wconversion)，GCC 也不会将此标记为有符号/无符号转换错误。</p>
+<p>虽然使用 size_t 作为动态分配数组的长度没有错，但在本教程系列中，我们不会迂腐地要求它。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.12%20%E2%80%94%20%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D%E6%95%B0%E7%BB%84/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.11%20%E2%80%94%20%E4%BD%BF%E7%94%A8%20new%20%E5%92%8C%20delete%20%E8%BF%9B%E8%A1%8C%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.11%20%E2%80%94%20%E4%BD%BF%E7%94%A8%20new%20%E5%92%8C%20delete%20%E8%BF%9B%E8%A1%8C%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/" class="post-title-link" itemprop="url">11.11 — 使用 new 和 delete 进行动态内存分配</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-25 15:14:37" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:37+08:00">2022-11-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-12-01 22:39:40" itemprop="dateModified" datetime="2022-12-01T22:39:40+08:00">2022-12-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="11-11-—-使用-new-和-delete-进行动态内存分配"><a href="#11-11-—-使用-new-和-delete-进行动态内存分配" class="headerlink" title="11.11 — 使用 new 和 delete 进行动态内存分配"></a>11.11 — 使用 new 和 delete 进行动态内存分配</h1><p><strong>动态内存分配的必要性</strong></p>
+<p>C++ 支持三种基本类型的内存分配，您已经看到了其中两种。</p>
+<ul>
+<li><strong>静态内存分配</strong>发生在静态和全局变量上。这些类型的变量的内存在程序运行时分配一次，并在程序的整个生命周期中持续存在。</li>
+<li><strong>自动内存分配</strong>发生在函数参数和局部变量上。这些类型的变量的内存在进入相关块时分配，并在块退出时释放，根据需要多次。</li>
+<li><strong>动态内存分配</strong>是本文的主题。</li>
+</ul>
+<p>静态分配和自动分配都有两个共同点：</p>
+<ul>
+<li>变量/数组的大小必须在编译时已知。</li>
+<li>内存分配和释放自动发生（当变量被实例化/销毁时）。</li>
+</ul>
+<p>大多数时候，这很好。但是，您会遇到其中一个或两个约束导致问题的情况，通常是在处理外部（用户或文件）输入时。</p>
+<p>例如，我们可能想用一个字符串来保存某人的名字，但是在输入之前我们不知道他们的名字有多长。或者我们可能想从磁盘中读入一些记录，但是我们事先并不知道有多少条记录。或者我们可能正在创建一个游戏，其中有可变数量的怪物（随着时间的推移，随着一些怪物的死亡和新怪物的产生而变化）试图杀死玩家。</p>
+<p>如果我们必须在编译时声明所有内容的大小，我们能做的最好的事情就是尝试猜测我们需要的变量的最大大小并希望这就足够了：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> name[<span class="number">25</span>]; <span class="comment">// let&#x27;s hope their name is less than 25 chars!</span></span><br><span class="line">Record record[<span class="number">500</span>]; <span class="comment">// let&#x27;s hope there are less than 500 records!</span></span><br><span class="line">Monster monster[<span class="number">40</span>]; <span class="comment">// 40 monsters maximum</span></span><br><span class="line">Polygon rendering[<span class="number">30000</span>]; <span class="comment">// this 3d rendering better not have more than 30,000 polygons!</span></span><br></pre></td></tr></table></figure>
+
+<p>这是一个糟糕的解决方案，至少有四个原因：</p>
+<p>首先，如果实际上没有使用变量，则会导致内存浪费。例如，如果我们为每个名称分配 25 个字符，但名称平均只有 12 个字符长，那么我们使用的是我们真正需要的两倍多。或者考虑上面的渲染数组：如果渲染只使用 10,000 个多边形，我们有 20,000 个多边形的内存未被使用！</p>
+<p>其次，我们如何判断实际使用了哪些内存位？对于字符串，很简单：以 \0 开头的字符串显然没有被使用。但是monster[24]呢？它现在是活着还是死了？这需要有某种方法来区分活动项目和非活动项目，这会增加复杂性并可能耗尽额外的内存。</p>
+<p>第三，大多数普通变量（包括固定数组）都分配在称为**栈(stack)**的内存部分中。程序的栈内存量通常很小——Visual Studio 默认堆栈大小为 1MB。如果超过这个数字，就会导致堆栈溢出，操作系统可能会关闭程序。</p>
+<p>在 Visual Studio 上，您可以在运行此程序时看到这种情况：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> array[<span class="number">1000000</span>]; <span class="comment">// allocate 1 million integers (probably 4MB of memory)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>仅限于 1MB 的内存对于许多程序来说都是有问题的，尤其是那些处理图形的程序。</p>
+<p>第四，也是最重要的，它可能导致人为限制和/或数组溢出。当用户试图从磁盘读取 600 条记录时会发生什么，但我们最多只为 500 条记录分配了内存？要么我们必须给用户一个错误，只读取 500 条记录，要么（在我们根本不处理这种情况的最坏情况下）溢出记录数组并观察不好的事情发生。</p>
+<p>幸运的是，这些问题很容易通过动态内存分配来解决。<strong>动态内存分配</strong>是运行程序在需要时向操作系统申请内存的一种方式。该内存并非来自程序的有限栈内存——相反，它是从一个更大的内存池中分配的，该内存池由操作系统管理，称为**堆(heap)**。在现代机器上，堆的大小可以达到千兆字节。</p>
+<h2 id="动态分配单个变量"><a href="#动态分配单个变量" class="headerlink" title="动态分配单个变量"></a>动态分配单个变量</h2><p>要动态分配单个变量，我们使用new运算符的标量（非数组）形式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="type">int</span>; <span class="comment">// dynamically allocate an integer (and discard the result)</span></span><br></pre></td></tr></table></figure>
+
+<p>在上面的例子中，我们从操作系统请求一个整数值的内存。new 运算符使用该内存创建对象，然后返回一个包含已分配内存<em>地址的指针。</em></p>
+<p>大多数情况下，我们会将返回值分配给我们自己的指针变量，以便我们稍后可以访问分配的内存。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>* ptr&#123; <span class="keyword">new</span> <span class="type">int</span> &#125;; <span class="comment">// dynamically allocate an integer and assign the address to ptr so we can access it later</span></span><br></pre></td></tr></table></figure>
+
+<p>然后我们可以通过指针执行间接访问内存：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*ptr = <span class="number">7</span>; <span class="comment">// assign value of 7 to allocated memory</span></span><br></pre></td></tr></table></figure>
+
+<p>如果不是在之前以分配内存，现在至少应该清楚指针有用的一种情况。如果没有指针来保存刚刚分配的内存地址，我们就无法访问刚刚为我们分配的内存！</p>
+<h2 id="动态内存分配如何工作？"><a href="#动态内存分配如何工作？" class="headerlink" title="动态内存分配如何工作？"></a>动态内存分配如何工作？</h2><p>您的计算机有可供应用程序使用的内存（可能很多）。当您运行应用程序时，您的操作系统会将应用程序加载到该内存的某些部分。您的应用程序使用的内存分为不同的区域，每个区域都有不同的用途。一个区域包含您的代码。另一个区域用于正常操作（跟踪调用了哪些函数，创建和销毁全局和局部变量等）。我们稍后会详细讨论这些。然而，大部分可用内存就在那里，等待分配给请求它的程序。</p>
+<p>当您动态分配内存时，您是在要求操作系统保留部分内存供您的程序使用。如果它能满足这个请求，它就会把那块内存的地址返回给你的应用程序。从那时起，您的应用程序可以按需要使用此内存。当您的应用程序用完内存后，它可以将内存返回给操作系统以提供给另一个程序。</p>
+<p>与静态或自动内存不同，程序本身负责请求和处理动态分配的内存。 </p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.11%20%E2%80%94%20%E4%BD%BF%E7%94%A8%20new%20%E5%92%8C%20delete%20%E8%BF%9B%E8%A1%8C%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -942,7 +1045,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1008,7 +1111,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-count">72</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

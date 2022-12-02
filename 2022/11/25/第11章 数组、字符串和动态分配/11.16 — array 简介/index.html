@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuj10n.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="11.16 — std::array 简介在之前的课程中，我们详细讨论了固定数组和动态数组。尽管两者都内置于 C++ 语言中，但它们都有缺点：固定数组会衰减为指针，当它们衰减时会丢失数组长度信息，而动态数组具有混乱的重新分配问题，并且难以无错误地调整大小。 为了解决这些问题，C++ 标准库包含使数组管理更容易的功能，std::array以及std::vector. 我们将在本课介绍std::arr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="11.16 — std::array 简介">
+<meta property="og:url" content="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.16%20%E2%80%94%20array%20%E7%AE%80%E4%BB%8B/index.html">
+<meta property="og:site_name" content="wuj10n">
+<meta property="og:description" content="11.16 — std::array 简介在之前的课程中，我们详细讨论了固定数组和动态数组。尽管两者都内置于 C++ 语言中，但它们都有缺点：固定数组会衰减为指针，当它们衰减时会丢失数组长度信息，而动态数组具有混乱的重新分配问题，并且难以无错误地调整大小。 为了解决这些问题，C++ 标准库包含使数组管理更容易的功能，std::array以及std::vector. 我们将在本课介绍std::arr">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-25T07:14:54.000Z">
+<meta property="article:modified_time" content="2022-12-01T15:30:22.660Z">
+<meta property="article:author" content="wuj10n">
+<meta property="article:tag" content="LearnCpp——Chapter 11">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.16%20%E2%80%94%20array%20%E7%AE%80%E4%BB%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>11.16 — std::array 简介 | wuj10n</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">wuj10n</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuj10n.github.io/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.16%20%E2%80%94%20array%20%E7%AE%80%E4%BB%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuj10n">
+      <meta itemprop="description" content="wuj10n的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wuj10n">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          11.16 — std::array 简介
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-25 15:14:54" itemprop="dateCreated datePublished" datetime="2022-11-25T15:14:54+08:00">2022-11-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-12-01 23:30:22" itemprop="dateModified" datetime="2022-12-01T23:30:22+08:00">2022-12-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="11-16-—-std-array-简介"><a href="#11-16-—-std-array-简介" class="headerlink" title="11.16 — std::array 简介"></a>11.16 — std::array 简介</h1><p>在之前的课程中，我们详细讨论了固定数组和动态数组。尽管两者都内置于 C++ 语言中，但它们都有缺点：固定数组会衰减为指针，当它们衰减时会丢失数组长度信息，而动态数组具有混乱的重新分配问题，并且难以无错误地调整大小。</p>
+<p>为了解决这些问题，C++ 标准库包含使数组管理更容易的功能，<code>std::array</code>以及<code>std::vector</code>. 我们将在本课介绍<code>std::array</code>和在下一课中介绍<code>std::vector</code>。 <span id="more"></span></p>
+<h2 id="std-array-简介"><a href="#std-array-简介" class="headerlink" title="std::array 简介"></a>std::array 简介</h2><p><code>std::array </code>提供固定的数组功能，在传递给函数时不会衰减。 <code>std::array </code>在 std 命名空间内的 <code>&lt;array&gt; </code>标头中定义。</p>
+<p>声明一个<code>std::array</code>变量很简单：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;array&gt;</span></span></span><br><span class="line"></span><br><span class="line">std::array&lt;<span class="type">int</span>, 3&gt; myArray; <span class="comment">// declare an integer array with length 3</span></span><br></pre></td></tr></table></figure>
+
+<p>就像固定数组的本机实现一样，<code>std::array</code>必须在编译时知道 a 的长度。</p>
+<p><code>std::array</code>可以使用初始化列表或列表初始化来初始化：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">std::array&lt;<span class="type">int</span>, 5&gt; myArray = &#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125;; <span class="comment">// initializer list</span></span><br><span class="line">std::array&lt;<span class="type">int</span>, 5&gt; myArray2 &#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125;; <span class="comment">// list initialization</span></span><br></pre></td></tr></table></figure>
+
+<p>与内置固定数组不同，使用 std::array 时，您不能在提供初始化程序时省略数组长度：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">std::array&lt;<span class="type">int</span>, &gt; myArray &#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125;; <span class="comment">// illegal, array length must be provided</span></span><br><span class="line">std::array&lt;<span class="type">int</span>&gt; myArray &#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125;; <span class="comment">// illegal, array length must be provided</span></span><br></pre></td></tr></table></figure>
+
+<p>但是，<strong>从 C++17 开始，允许省略类型和大小。它们只能一起省略，但不能一个或另一个省略，并且仅当数组被显式初始化时</strong>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">std::array myArray &#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125;; <span class="comment">// The type is deduced to std::array&lt;int, 5&gt;</span></span><br><span class="line">std::array myArray &#123; <span class="number">9.7</span>, <span class="number">7.31</span> &#125;; <span class="comment">// The type is deduced to std::array&lt;double, 2&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>我们赞成这种语法，而不是在声明中键入类型和大小。如果您的编译器不支持 C++17，则需要改用显式语法。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// std::array myArray &#123; 9, 7, 5, 3, 1 &#125;; // Since C++17</span></span><br><span class="line">std::array&lt;<span class="type">int</span>, 5&gt; myArray &#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125;; <span class="comment">// Before C++17</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// std::array myArray &#123; 9.7, 7.31 &#125;; // Since C++17</span></span><br><span class="line">std::array&lt;<span class="type">double</span>, 2&gt; myArray &#123; <span class="number">9.7</span>, <span class="number">7.31</span> &#125;; <span class="comment">// Before C++17</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>从 C++20开始，可以指定元素类型但忽略数组长度</strong>。这使得创建<code>std::array</code>有点像 C 风格数组的创建。要创建具有特定类型和推导大小的数组，我们使用以下<code>std::to_array</code>函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> myArray1 &#123; std::<span class="built_in">to_array</span>&lt;<span class="type">int</span>, <span class="number">5</span>&gt;(&#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125;) &#125;; <span class="comment">// Specify type and size</span></span><br><span class="line"><span class="keyword">auto</span> myArray2 &#123; std::<span class="built_in">to_array</span>&lt;<span class="type">int</span>&gt;(&#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125;) &#125;; <span class="comment">// Specify type only, deduce size</span></span><br><span class="line"><span class="keyword">auto</span> myArray3 &#123; std::<span class="built_in">to_array</span>(&#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125;) &#125;; <span class="comment">// Deduce type and size</span></span><br></pre></td></tr></table></figure>
+
+<p>然而，使用<code>std::to_array</code>比直接创建 <code>std::array</code>更昂贵，因为它实际上将所有元素从 C-Style数组复制到  <code>std::array</code>。出于这个原因，<code>std::to_array</code>应该避免多次创建数组（例如在循环中）。</p>
+<p>您还可以使用初始化列表为数组赋值</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">std::array&lt;<span class="type">int</span>, 5&gt; myArray;</span><br><span class="line">myArray = &#123; <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span> &#125;; <span class="comment">// okay</span></span><br><span class="line">myArray = &#123; <span class="number">9</span>, <span class="number">8</span>, <span class="number">7</span> &#125;; <span class="comment">// okay, elements 3 and 4 are set to zero!</span></span><br><span class="line">myArray = &#123; <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> &#125;; <span class="comment">// not allowed, too many elements in initializer list!</span></span><br></pre></td></tr></table></figure>
+
+<p>使用下标运算符访问<code>std::array</code>值就像您期望的那样：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">std::cout &lt;&lt; myArray[<span class="number">1</span>] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">myArray[<span class="number">2</span>] = <span class="number">6</span>;</span><br></pre></td></tr></table></figure>
+
+<p>就像内置的固定数组一样，下标运算符不进行任何边界检查。如果提供了无效的索引，可能会发生不好的事情。</p>
+<p><code>std::array</code>支持进行（运行时）边界检查的第二种形式的数组元素访问（<code>at()</code>函数）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">std::array myArray &#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125;;</span><br><span class="line">myArray.<span class="built_in">at</span>(<span class="number">1</span>) = <span class="number">6</span>; <span class="comment">// array element 1 is valid, sets array element 1 to value 6</span></span><br><span class="line">myArray.<span class="built_in">at</span>(<span class="number">9</span>) = <span class="number">10</span>; <span class="comment">// array element 9 is invalid, will throw a runtime error</span></span><br></pre></td></tr></table></figure>
+
+<p>在上面的示例中，对 <code>myArray.at(1)</code> 的调用会检查以确保索引 1 有效，因为它是有效的，所以它返回对数组元素 1 的引用。 然后我们将值 6 分配给它。 但是，对<code>myArray.at(9)</code>的调用失败（在运行时），因为数组元素 9 超出了数组的范围。 <code>at()</code> 函数没有返回一个引用，而是抛出一个终止程序的错误（注意：它实际上抛出一个 <code>std::out_of_range</code> 类型的异常——我们在第 14 章中介绍了异常）。 因为它进行边界检查，<code>at()</code> 比 <code>operator[] </code>更慢（但更安全）。</p>
+<p><code>std::array </code>在超出范围时会自行清理，因此无需进行任何类型的手动清理。</p>
+<h2 id="Size-和sorting"><a href="#Size-和sorting" class="headerlink" title="Size 和sorting"></a>Size 和sorting</h2><p>该<code>size()</code>函数可用于检索的长度<code>std::array</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">std::array myArray &#123; <span class="number">9.0</span>, <span class="number">7.2</span>, <span class="number">5.4</span>, <span class="number">3.6</span>, <span class="number">1.8</span> &#125;;</span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;length: &quot;</span> &lt;&lt; myArray.<span class="built_in">size</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">length: 5</span><br></pre></td></tr></table></figure>
+
+<p>因为<code>std::array</code>在传递给函数时不会衰减为指针，所以<code>size()</code>即使您从函数内部调用该函数也会起作用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;array&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">printLength</span><span class="params">(<span class="type">const</span> std::array&lt;<span class="type">double</span>, <span class="number">5</span>&gt;&amp; myArray)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;length: &quot;</span> &lt;&lt; myArray.<span class="built_in">size</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::array myArray &#123; <span class="number">9.0</span>, <span class="number">7.2</span>, <span class="number">5.4</span>, <span class="number">3.6</span>, <span class="number">1.8</span> &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printLength</span>(myArray);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这也打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">length: 5</span><br></pre></td></tr></table></figure>
+
+<p>请注意，标准库使用术语“size”来表示数组长度——不要将其与本机固定数组上的 sizeof() 的结果混淆，后者返回内存中数组的实际大小（一个数组的大小）元素乘以数组长度）。 是的，这个命名法是不一致的。</p>
+<p>另请注意，我们通过 (const) 引用传递了 std::array。 这是为了防止编译器在将 std::array 传递给函数时复制 std::array（出于性能原因）。</p>
+<div style="background-color:lightgreen ;">
+   <p >最佳实践：</p>
+   <p>始终通过std::array引用或const引用传递
+    </p>
+</div>
+
+<p>因为长度总是已知的，所以基于范围的 for 循环适用于<code>std::array</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">std::array myArray&#123; <span class="number">9</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> element : myArray)</span><br><span class="line">    std::cout &lt;&lt; element &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>std::array</code>您可以使用<code>std::sort</code>位于<code>&lt;algorithm&gt;</code>标题中的进行排序：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span> <span class="comment">// for std::sort</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;array&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::array myArray &#123; <span class="number">7</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">9</span>, <span class="number">5</span> &#125;;</span><br><span class="line">    std::<span class="built_in">sort</span>(myArray.<span class="built_in">begin</span>(), myArray.<span class="built_in">end</span>()); <span class="comment">// sort the array forwards</span></span><br><span class="line"><span class="comment">//  std::sort(myArray.rbegin(), myArray.rend()); // sort the array backwards</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> element : myArray)</span><br><span class="line">        std::cout &lt;&lt; element &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这打印：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 3 5 7 9</span><br></pre></td></tr></table></figure>
+
+<h2 id="将不同长度的-std-array-传递给函数"><a href="#将不同长度的-std-array-传递给函数" class="headerlink" title="将不同长度的 std::array 传递给函数"></a>将不同长度的 std::array 传递给函数</h2><p>对于 std::array，元素类型和数组长度是类型信息的一部分。因此，当我们使用 std::array 作为函数参数时，我们必须指定元素类型和数组长度：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;array&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">printArray</span><span class="params">(<span class="type">const</span> std::array&lt;<span class="type">int</span>, <span class="number">5</span>&gt;&amp; myArray)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> element : myArray)</span><br><span class="line">        std::cout &lt;&lt; element &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::array myArray5&#123; <span class="number">9.0</span>, <span class="number">7.2</span>, <span class="number">5.4</span>, <span class="number">3.6</span>, <span class="number">1.8</span> &#125;; <span class="comment">// type deduced as std::array&lt;double, 5&gt;</span></span><br><span class="line">    <span class="built_in">printArray</span>(myArray5); <span class="comment">// error: printArray expects a std::array&lt;int, 5&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>缺点是这将我们的函数限制为只能处理这种特定类型和长度的数组。但是如果我们想让我们的函数处理不同元素类型或长度的数组怎么办？我们必须为每个不同的元素类型和/或我们要使用的数组长度创建函数的副本。这是很多重复。</p>
+<p>幸运的是，我们可以让 C++ 使用模板为我们做这件事。我们可以创建一个参数化部分或全部类型信息的模板函数，然后 C++ 将使用该模板根据需要创建“真正的”函数（具有实际类型）。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;array&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstddef&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// printArray is a template function</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, std::<span class="type">size_t</span> size&gt; <span class="comment">// parameterize the element type and size</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">printArray</span><span class="params">(<span class="type">const</span> std::array&lt;T, size&gt;&amp; myArray)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> element : myArray)</span><br><span class="line">        std::cout &lt;&lt; element &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::array myArray5&#123; <span class="number">9.0</span>, <span class="number">7.2</span>, <span class="number">5.4</span>, <span class="number">3.6</span>, <span class="number">1.8</span> &#125;;</span><br><span class="line">    <span class="built_in">printArray</span>(myArray5);</span><br><span class="line"></span><br><span class="line">    std::array myArray7&#123; <span class="number">9.0</span>, <span class="number">7.2</span>, <span class="number">5.4</span>, <span class="number">3.6</span>, <span class="number">1.8</span>, <span class="number">1.2</span>, <span class="number">0.7</span> &#125;;</span><br><span class="line">    <span class="built_in">printArray</span>(myArray7);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<div style="background-color:lightgrey ;">
+   <p >作为旁白：</p>
+    <p>我们在第8.13课 - 函数模板中介绍了函数模板。
+    </p>
+</div>
+
+<h2 id="通过-size-type-手动索引-std-array"><a href="#通过-size-type-手动索引-std-array" class="headerlink" title="通过 size_type 手动索引 std::array"></a>通过 size_type 手动索引 std::array</h2><p>突击测验：以下代码有什么问题？</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;array&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::array myArray &#123; <span class="number">7</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">9</span>, <span class="number">5</span> &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Iterate through the array and print the value of the elements</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i&#123; <span class="number">0</span> &#125;; i &lt; myArray.<span class="built_in">size</span>(); ++i)</span><br><span class="line">        std::cout &lt;&lt; myArray[i] &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>答案是这段代码中可能signed/unsigned不匹配！ 由于一个奇怪的决定，operator[] 的 size() 函数和数组索引参数使用了一个名为 size_type 的类型，该类型由 C++ 标准定义为无符号整数类型。 我们的循环计数器/索引（变量 i）是一个带符号的整数。 因此，比较 i &lt; myArray.size() 和数组索引 myArray[i] 都有类型不匹配。</p>
+<p>有趣的是，size_type 不是全局类型（如 int 或 std::size_t）。 相反，它是在 std::array 的定义中定义的（C++ 允许嵌套类型）。 这意味着当我们想要使用 size_type 时，我们必须在它前面加上完整的数组类型（考虑 std::array 在这方面充当命名空间）。 在我们上面的例子中，“size_type”的全前缀类型是 std::array&lt;int, 5&gt;::size_type！</p>
+<p>因此，上面代码的正确写法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;array&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::array myArray &#123; <span class="number">7</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">9</span>, <span class="number">5</span> &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// std::array&lt;int, 5&gt;::size_type is the return type of size()!</span></span><br><span class="line">    <span class="keyword">for</span> (std::array&lt;<span class="type">int</span>, <span class="number">5</span>&gt;::size_type i&#123; <span class="number">0</span> &#125;; i &lt; myArray.<span class="built_in">size</span>(); ++i)</span><br><span class="line">        std::cout &lt;&lt; myArray[i] &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这不是很可读。 幸运的是，std::array::size_type 只是 std::size_t 的一个别名(using size_type=size_t)，因此我们可以使用它。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;array&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstddef&gt;</span> <span class="comment">// std::size_t</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::array myArray &#123; <span class="number">7</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">9</span>, <span class="number">5</span> &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (std::<span class="type">size_t</span> i&#123; <span class="number">0</span> &#125;; i &lt; myArray.<span class="built_in">size</span>(); ++i)</span><br><span class="line">        std::cout &lt;&lt; myArray[i] &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>更好的解决方案是首先避免手动索引 std::array 。 相反，如果可能，请使用基于范围的 for 循环（或迭代器）。</p>
+<p>请记住，无符号整数在达到限制时会回绕。 一个常见的错误是递减已经为 0 的索引，导致返回到最大值。 您在有关 for 循环的课程中看到了这一点，但让我们重复一遍。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;array&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::array myArray &#123; <span class="number">7</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">9</span>, <span class="number">5</span> &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Print the array in reverse order.</span></span><br><span class="line">    <span class="comment">// We can use auto, because we&#x27;re not initializing i with 0.</span></span><br><span class="line">    <span class="comment">// Bad:</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> i&#123; myArray.<span class="built_in">size</span>() - <span class="number">1</span> &#125;; i &gt;= <span class="number">0</span>; --i)</span><br><span class="line">        std::cout &lt;&lt; myArray[i] &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这是一个无限循环，一旦 i 回绕就会产生未定义的行为。 这里有两个问题。 如果 myArray 为空，即 size() 返回 0（这可以通过 std::array 实现），则 myArray.size() - 1 环绕。 无论有多少元素，都会出现另一个问题。 i &gt;= 0 始终为真，因为无符号整数不能小于 0。</p>
+<p>无符号整数的工作反向 for 循环采用奇怪的形状：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;array&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::array myArray &#123; <span class="number">7</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">9</span>, <span class="number">5</span> &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Print the array in reverse order.</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> i&#123; myArray.<span class="built_in">size</span>() &#125;; i-- &gt; <span class="number">0</span>; )</span><br><span class="line">        std::cout &lt;&lt; myArray[i] &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>突然我们减少条件中的索引，我们使用后缀 – 运算符。 该条件在每次迭代之前运行，包括第一次迭代。 在第一次迭代中，<code>i</code> 是<code> myArray.size() - 1</code>，因为<code>i</code>在条件语句下被递减。 当 i 为 0 并要回绕时，条件不再为真，循环停止。实际上，当我们做 i– 最后一次时，i 环绕，但之后就不再使用了。</p>
+<h2 id="结构数组"><a href="#结构数组" class="headerlink" title="结构数组"></a>结构数组</h2><p>当然<code>std::array</code>不限于数字作为元素。可以在常规数组中使用的每种类型都可以在<code>std::array</code>. 例如，我们可以有一个<code>std::array</code>of 结构：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;array&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">House</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> number&#123;&#125;;</span><br><span class="line">    <span class="type">int</span> stories&#123;&#125;;</span><br><span class="line">    <span class="type">int</span> roomsPerStory&#123;&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::array&lt;House, 3&gt; houses&#123;&#125;;</span><br><span class="line"></span><br><span class="line">    houses[<span class="number">0</span>] = &#123; <span class="number">13</span>, <span class="number">4</span>, <span class="number">30</span> &#125;;</span><br><span class="line">    houses[<span class="number">1</span>] = &#123; <span class="number">14</span>, <span class="number">3</span>, <span class="number">10</span> &#125;;</span><br><span class="line">    houses[<span class="number">2</span>] = &#123; <span class="number">15</span>, <span class="number">3</span>, <span class="number">40</span> &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">const</span> <span class="keyword">auto</span>&amp; house : houses)</span><br><span class="line">    &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;House number &quot;</span> &lt;&lt; house.number</span><br><span class="line">                  &lt;&lt; <span class="string">&quot; has &quot;</span> &lt;&lt; (house.stories * house.roomsPerStory)</span><br><span class="line">                  &lt;&lt; <span class="string">&quot; rooms\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">House number 13 has 120 rooms</span><br><span class="line">House number 14 has 30 rooms</span><br><span class="line">House number 15 has 120 rooms</span><br></pre></td></tr></table></figure>
+
+<p>但是，当我们尝试初始化其元素类型需要值列表（例如<code>std::array</code>结构）的数组时，事情会变得有点奇怪。您可能会尝试<code>std::array</code>像这样初始化这样的：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Doesn&#x27;t work.</span></span><br><span class="line">std::array&lt;House, 3&gt; houses &#123;</span><br><span class="line">    &#123; <span class="number">13</span>, <span class="number">4</span>, <span class="number">30</span> &#125;,</span><br><span class="line">    &#123; <span class="number">14</span>, <span class="number">3</span>, <span class="number">10</span> &#125;,</span><br><span class="line">    &#123; <span class="number">15</span>, <span class="number">3</span>, <span class="number">40</span> &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>但这不起作用。</p>
+<p>A<code>std::array</code>被定义为包含 C 样式数组成员（其名称由实现定义）的结构。因此，当我们尝试<code>houses</code>按照上述方式进行初始化时，编译器会像这样解释初始化：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Doesn&#x27;t work.</span></span><br><span class="line">std::array&lt;House, 3&gt; houses &#123; <span class="comment">// initializer for houses</span></span><br><span class="line">    &#123; <span class="number">13</span>, <span class="number">4</span>, <span class="number">30</span> &#125;, <span class="comment">// initializer for the C-style array member inside the std::array struct</span></span><br><span class="line">    &#123; <span class="number">14</span>, <span class="number">3</span>, <span class="number">10</span> &#125;, <span class="comment">// ?</span></span><br><span class="line">    &#123; <span class="number">15</span>, <span class="number">3</span>, <span class="number">40</span> &#125;  <span class="comment">// ?</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>编译器将解释<code>&#123; 13, 4, 30 &#125;</code>为整个数组的初始值设定项。这具有使用这些值初始化索引为 0 的结构的效果，并将其余结构元素零初始化。然后编译器会发现我们提供了另外两个初始化值（<code>&#123; 14, 3, 10 &#125;</code>和<code>&#123; 15, 3, 40 &#125;</code>）并产生一个编译错误，告诉我们我们提供了太多的初始化值。</p>
+<p>初始化上面的正确方法是添加一组额外的大括号，如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// This works as expected</span></span><br><span class="line">std::array&lt;House, 3&gt; houses &#123; <span class="comment">// initializer for houses</span></span><br><span class="line">    &#123; <span class="comment">// extra set of braces to initialize the C-style array member inside the std::array struct</span></span><br><span class="line">        &#123; <span class="number">13</span>, <span class="number">4</span>, <span class="number">30</span> &#125;, <span class="comment">// initializer for array element 0</span></span><br><span class="line">        &#123; <span class="number">14</span>, <span class="number">3</span>, <span class="number">10</span> &#125;, <span class="comment">// initializer for array element 1</span></span><br><span class="line">        &#123; <span class="number">15</span>, <span class="number">3</span>, <span class="number">40</span> &#125;, <span class="comment">// initializer for array element 2</span></span><br><span class="line">     &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>请注意所需的额外大括号集（开始初始化 std::array 结构内的 C 样式数组成员）。 在这些大括号内，我们可以单独初始化每个元素，每个元素都在自己的一组大括号内。</p>
+<p>这就是为什么当元素类型需要值列表时，你会看到<code>std::array</code>初始值设定项带有一组额外的大括号。</p>
+<h2 id="概括"><a href="#概括" class="headerlink" title="概括"></a>概括</h2><p><code>std::array </code>是内置固定数组的绝佳替代品。 它很高效，因为它不会使用比内置固定数组更多的内存。 <code>std::array </code>相对于内置固定数组的唯一真正缺点是语法稍微有点笨拙，你必须明确指定数组长度（编译器不会从初始化程序中为你计算它，除非你也省略类型，这并不总是可能的），以及大小和索引的有符号/无符号问题。 但这些问题都是相对较小的问题——对于任何重要的数组用途，我们建议使用 std::array 而不是内置固定数组。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LearnCpp%E2%80%94%E2%80%94Chapter-11/" rel="tag"># LearnCpp——Chapter 11</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.15%20%E2%80%94%20%E6%8C%87%E5%90%91%E6%8C%87%E9%92%88%E5%92%8C%E5%8A%A8%E6%80%81%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84%E7%9A%84%E6%8C%87%E9%92%88/" rel="prev" title="11.15 — 指向指针和动态多维数组的指针">
+      <i class="fa fa-chevron-left"></i> 11.15 — 指向指针和动态多维数组的指针
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/25/%E7%AC%AC11%E7%AB%A0%20%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/11.17%20%E2%80%94%20vector%20%E7%AE%80%E4%BB%8B/" rel="next" title="11.17 — std::vector 简介">
+      11.17 — std::vector 简介 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#11-16-%E2%80%94-std-array-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">11.16 — std::array 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#std-array-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">std::array 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Size-%E5%92%8Csorting"><span class="nav-number">1.2.</span> <span class="nav-text">Size 和sorting</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86%E4%B8%8D%E5%90%8C%E9%95%BF%E5%BA%A6%E7%9A%84-std-array-%E4%BC%A0%E9%80%92%E7%BB%99%E5%87%BD%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">将不同长度的 std::array 传递给函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87-size-type-%E6%89%8B%E5%8A%A8%E7%B4%A2%E5%BC%95-std-array"><span class="nav-number">1.4.</span> <span class="nav-text">通过 size_type 手动索引 std::array</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E6%95%B0%E7%BB%84"><span class="nav-number">1.5.</span> <span class="nav-text">结构数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E6%8B%AC"><span class="nav-number">1.6.</span> <span class="nav-text">概括</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuj10n</p>
+  <div class="site-description" itemprop="description">wuj10n的个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">72</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wuj10n" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wuj10n" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:542211073@qq.com" title="E-Mail → mailto:542211073@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuj10n</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
